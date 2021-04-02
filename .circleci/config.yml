@@ -96,27 +96,27 @@ workflows:
           context: asimov-gcr
           filters:
             branches:
-              ignore: master
+              ignore: main
           requires:
             - test
       - deploy_dev:
           context: asimov-dev-cluster
           filters:
             branches:
-              ignore: master
+              ignore: main
           requires:
             - push_dev
       - push_prod:
           context: asimov-gcr
           filters:
             branches:
-              only: master
+              only: main
           requires:
             - test
       - deploy_prod:
           context: asimov-prod-cluster
           filters:
             branches:
-              only: master
+              only: main
           requires:
             - push_prod
