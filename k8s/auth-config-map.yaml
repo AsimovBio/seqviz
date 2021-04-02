@@ -1,0 +1,10 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: kernel-universal-auth
+data:
+  auth0_base_url: https://kv2.dev.asimov.io
+  auth0_client_id: 29GHYoT8san5B1FE2G7KQKaF4xuXZI1p
+  auth0_client_secret: xZXoGZFOtKeW0ydim5hBrCHiGTi3fOdmYxUJYfn_ZYKxJMeB2Pm8YXT6ePQeu5gI
+  auth0_issuer_base_url: https://asimov-dev.auth0.com
+  auth0_secret: ZE3q4q48bgRRCSvkOKw9f9GU6k8AFdCZ

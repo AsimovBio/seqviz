@@ -1,0 +1,122 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2.1
+orbs:
+  node: circleci/node@4.2.0
+jobs:
+  test:
+    docker:
+      # specify the version you desire here
+      - image: cimg/node:14.16
+    resource_class: large
+    steps:
+      - checkout
+      - node/install-yarn:
+          version: '2'
+      - run: node -v
+      - run: yarn -v
+
+      # Download and cache dependencies
+      - restore_cache:
+          name: Restore Yarn Package Cache
+          keys:
+            - yarn-packages-{{ checksum "yarn.lock" }}
+
+      - run:
+          name: Install Dependencies
+          command: yarn --immutable
+
+      - save_cache:
+          name: Save Yarn Package Cache
+          key: yarn-packages-{{ checksum "yarn.lock" }}
+          paths:
+            - .yarn/cache
+
+      - run: yarn test --bail --coverage --runInBand --silent --passWithNoTests
+  push: &push
+    docker:
+      - image: cimg/base:2021.03
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 19.03.13
+      - attach_workspace:
+          at: target
+      - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://gcr.io
+      - run: >
+          TAG=$CIRCLE_SHA1 docker-compose build
+          --build-arg FEDERATED_URL_COMMON=${FEDERATED_URL_COMMON}
+          --build-arg FEDERATED_URL_SHELL=${FEDERATED_URL_SHELL}
+      - run: TAG=$CIRCLE_SHA1 docker-compose push
+  deploy: &deploy
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - checkout
+      - run:
+          name: deploy to dev
+          command: |
+            # I'd normally prefer to have this prebaked, but kustomize isn't in any package managers, so I've
+            # configured a release version in the context to grab.
+            curl -s -L "${KUSTOMIZE_RELEASE}" > /usr/local/bin/kustomize
+            chmod +x /usr/local/bin/kustomize
+            echo "${GCLOUD_SERVICE_KEY}" | gcloud auth activate-service-account --key-file=-
+            gcloud --quiet config set project "${GOOGLE_PROJECT_ID}"
+            gcloud --quiet config set compute/zone "${GOOGLE_COMPUTE_ZONE}"
+            gcloud container clusters get-credentials "${CLUSTER_NAME}"
+            cd k8s/${DEPLOY_DIRECTORY}
+            kustomize edit set image gcr.io/hosting-infrastructure/kernel-universal="gcr.io/hosting-infrastructure/kernel-universal:$CIRCLE_SHA1"
+            kubectl apply -k .
+  push_dev:
+    <<: *push
+    environment:
+      FEDERATED_URL_COMMON: $FEDERATED_URL_COMMON_DEV
+      FEDERATED_URL_SHELL: $FEDERATED_URL_SHELL_DEV
+  push_prod:
+    <<: *push
+    environment:
+      FEDERATED_URL_COMMON: $FEDERATED_URL_COMMON
+      FEDERATED_URL_SHELL: $FEDERATED_URL_SHELL
+  deploy_dev:
+    <<: *deploy
+    environment:
+      DEPLOY_DIRECTORY: dev
+  deploy_prod:
+    <<: *deploy
+    environment:
+      DEPLOY_DIRECTORY: prod
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - test
+      - push_dev:
+          context: asimov-gcr
+          filters:
+            branches:
+              ignore: master
+          requires:
+            - test
+      - deploy_dev:
+          context: asimov-dev-cluster
+          filters:
+            branches:
+              ignore: master
+          requires:
+            - push_dev
+      - push_prod:
+          context: asimov-gcr
+          filters:
+            branches:
+              only: master
+          requires:
+            - test
+      - deploy_prod:
+          context: asimov-prod-cluster
+          filters:
+            branches:
+              only: master
+          requires:
+            - push_prod

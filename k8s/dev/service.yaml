@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kernel-universal
+  labels:
+    app: kernel-universal
+spec:
+  ports:
+    - protocol: TCP
+      name: kernel-shell-port
+      port: 8080
+      targetPort: 3000
+    - protocol: TCP
+      name: kernel-common-port
+      port: 8081
+      targetPort: 3001
+  selector:
+    app: kernel-universal
+---
+apiVersion: getambassador.io/v1
+kind: Mapping
+metadata:
+  name: kernel-shell-mapping
+spec:
+  prefix: /
+  service: kernel-universal.default.svc.cluster.local.:8080
+  host: kv2.dev.asimov.io
+---
+apiVersion: getambassador.io/v1
+kind: Mapping
+metadata:
+  name: kernel-common-mapping
+spec:
+  prefix: /
+  service: kernel-universal.default.svc.cluster.local.:8081
+  host: common.kv2.dev.asimov.io

@@ -1,0 +1,14 @@
+diff --git a/dist/frontend/use-config.js b/dist/frontend/use-config.js
+index e52f121ebd9bd56d87d47abb0c5c0c2825a8eef7..943080112f3f8a8507f349519da0e139f79b373d 100644
+--- a/dist/frontend/use-config.js
++++ b/dist/frontend/use-config.js
+@@ -6,7 +6,7 @@ const react_1 = tslib_1.__importStar(require("react"));
+ const Config = react_1.createContext({});
+ const useConfig = () => react_1.useContext(Config);
+ exports.useConfig = useConfig;
+-exports.default = ({ children, loginUrl = process.env.NEXT_PUBLIC_AUTH0_LOGIN || '/api/auth/login' }) => {
++exports.default = ({ children, loginUrl = process && process.env.NEXT_PUBLIC_AUTH0_LOGIN || '/api/auth/login' }) => {
+     return react_1.default.createElement(Config.Provider, { value: { loginUrl } }, children);
+ };
+ //# sourceMappingURL=use-config.js.map
+\ No newline at end of file

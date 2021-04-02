@@ -1,0 +1,26 @@
+version: '3.6'
+services:
+  kernel-common:
+    image: gcr.io/hosting-infrastructure/kernel-common:${TAG}
+    ports:
+      - 3001:3001
+    build:
+      context: ./
+      dockerfile: packages/common/Dockerfile
+    volumes:
+      - /kernel-universal/packages/shell/public
+      - /kernel-universal/packages/shell/.next
+      - /kernel-universal/packages/common/public
+      - /kernel-universal/packages/common/.next
+  kernel-shell:
+    image: gcr.io/hosting-infrastructure/kernel-shell:${TAG}
+    ports:
+      - 3000:3000
+    build:
+      context: ./
+      dockerfile: packages/shell/Dockerfile
+    volumes:
+      - /kernel-universal/packages/shell/public
+      - /kernel-universal/packages/shell/.next
+      - /kernel-universal/packages/common/public
+      - /kernel-universal/packages/common/.next

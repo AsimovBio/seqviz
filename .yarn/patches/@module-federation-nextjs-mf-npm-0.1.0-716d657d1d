@@ -1,0 +1,66 @@
+diff --git a/merge-runtime.js b/merge-runtime.js
+index 2a5945a72eee27db6f35c428285a32402453ba3a..faf47b6f760c453ef738539e183ac998fe4c7abc 100644
+--- a/merge-runtime.js
++++ b/merge-runtime.js
+@@ -1,21 +1,50 @@
+ const ConcatSource = require('webpack-sources/lib/ConcatSource');
++const Compilation = require("webpack/lib/Compilation");
+ 
+-module.exports = class ModuleFedSingleRuntimePlugin {
++const PLUGIN_NAME = "ModuleFedSingleRuntimePlugin";
++
++/**
++ * Merge a runtime with your remote entry.
++ */
++class ModuleFedSingleRuntimePlugin {
++  /**
++   * @param {object} options
++   * @param {string} [options.filename= remoteEntry.js] The file name to concat the runtime with
++   * @param {string} [options.runtime= runtime.js] The runtime to merge
++   */
+   constructor(options) {
+-    this._options = {fileName: 'remoteEntry.js', ...options};
++    this._options = {filename: 'static/runtime/remoteEntry.js', runtime: 'static/chunks/webpack.js', ...options};
+   }
+   // Define `apply` as its prototype method which is supplied with compiler as its argument
+   apply(compiler) {
+     if (!this._options) return null;
+     const options = this._options;
+ 
+-    // Specify the event hook to attach to
+-    compiler.hooks.emit.tap("EnableSingleRunTimeForFederationPlugin", (compilation) => {
+-      const { assets } = compilation;
+-      const runtime  = assets['runtime.js'];
+-      const remoteEntry = assets[this._options.fileName];
+-      const mergedSource = new ConcatSource(runtime, remoteEntry);
+-      assets[this._options.fileName] = mergedSource;
+-    });
++    compiler.hooks.thisCompilation.tap(
++      "EnableSingleRunTimeForFederationPlugin",
++      (compilation) => {
++        compilation.hooks.processAssets.tap(
++          {
++            name: "EnableSingleRunTimeForFederationPlugin",
++            stage: Compilation.PROCESS_ASSETS_STAGE_DERIVED,
++          },
++          (assets) => {
++            Object.keys(assets).forEach((asset) => {
++              if (asset.startsWith("static/chunks/webpack") || asset.startsWith("webpack-runtime")) {
++                compilation.updateAsset(
++                  options.filename,
++                  new ConcatSource(
++                    compilation.getAsset(asset).source.buffer().toString(),
++                    compilation.getAsset(options.filename).source.buffer().toString()
++                  )
++                );
++              }
++            });
++          }
++        );
++      }
++    );
+   }
+ };
++
++module.exports = ModuleFedSingleRuntimePlugin;
+\ No newline at end of file
