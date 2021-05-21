@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
+    "debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start -p 3001",
     "type-check": "tsc --pretty --noEmit",
@@ -25,8 +26,8 @@
     ]
   },
   "dependencies": {
-    "@module-federation/nextjs-mf": "^0.1.0",
-    "next": "canary",
+    "@module-federation/nextjs-mf": "^0.1.1",
+    "next": "10.2.1-canary.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "swr": "^0.5.2",

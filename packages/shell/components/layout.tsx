@@ -1,8 +1,8 @@
 /** @jsxRuntime classic */
 /** @jsx jsx */
 import Head from 'next/head';
-import type { FC, ReactElement, ReactNode } from 'react';
-import React, { Suspense } from 'react';
+import type { ReactNode } from 'react';
+import React from 'react';
 import { jsx } from 'theme-ui';
 
 import Header from './header';
@@ -33,7 +33,7 @@ export default function Layout({ children }: Props) {
         >
           {children}
         </main>
-        <footer sx={{ bg: 'primary', p: 3 }}>Footer</footer>
+        <footer sx={{ p: 3 }}>Footer</footer>
       </div>
     </>
   );

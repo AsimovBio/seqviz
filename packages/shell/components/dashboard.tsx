@@ -1,26 +1,28 @@
 /** @jsxRuntime classic */
 /** @jsx jsx */
-import React, { FC, ReactElement } from 'react';
 import { jsx } from 'theme-ui';
 
-// @ts-ignore
-const Button = (await import('common/components/button')).default;
-
-export default function Dashboard() {
+export default function Dashboard({ projects }) {
   return (
     <div
       sx={{
         display: 'grid',
         flex: 1,
         gridGap: 2,
-        gridTemplateColumns: '1.618fr 1fr',
+        gridTemplateColumns: '1fr 1.618fr',
         gridTemplateRows: 'auto',
       }}
     >
       <section
-        sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center' }}
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+        }}
       >
-        <Button>I'm a federated button</Button>
+        <ul>
+          {Array.isArray(projects) &&
+            projects.map(({ id, name }) => <li key={id}>{name}</li>)}
+        </ul>
       </section>
       <section sx={{ alignItems: 'center', display: 'flex' }}></section>
     </div>

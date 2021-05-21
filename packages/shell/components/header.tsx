@@ -15,7 +15,6 @@ export default function Header() {
         <ul
           sx={{
             alignItems: 'center',
-            bg: 'primary',
             display: 'flex',
             justifyContent: 'space-between',
             listStyle: 'none',
@@ -25,20 +24,19 @@ export default function Header() {
         >
           <li>
             <Link href="/">
-              <Image
-                alt="Asimov logo"
-                height={50}
-                src="/asimov_logo.svg"
-                layout="fixed"
-                width={50}
-              />
+              <>
+                <Image
+                  alt="Asimov"
+                  height={50}
+                  src="/asimov_logo.svg"
+                  layout="fixed"
+                  width={50}
+                />
+              </>
             </Link>
           </li>
           {user ? (
             <>
-              <li>
-                <a href="/profile-ssr">Profile (SSR)</a>
-              </li>{' '}
               <li>
                 <a href="/api/auth/logout" data-testid="logout">
                   Logout
@@ -46,13 +44,11 @@ export default function Header() {
               </li>
             </>
           ) : (
-            <>
-              <li>
-                <a href="/api/auth/login" data-testid="login">
-                  Login
-                </a>
-              </li>
-            </>
+            <li>
+              <a href="/api/auth/login" data-testid="login">
+                Login
+              </a>
+            </li>
           )}
         </ul>
       </nav>

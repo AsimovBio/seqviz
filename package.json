@@ -5,6 +5,7 @@
   "scripts": {
     "clean": "rimraf packages/**/.next",
     "dev": "yarn workspaces foreach -vip run dev",
+    "debug": "yarn workspaces foreach -vip run debug",
     "build": "yarn workspaces foreach -vip run build",
     "start": "yarn workspaces foreach -vip run start",
     "type-check": "yarn workspaces foreach -vip run type-check",
@@ -20,7 +21,7 @@
   "resolutions": {
     "next": "10.0.5",
     "webpack": "5.11.1",
-    "@module-federation/nextjs-mf": "patch:@module-federation/nextjs-mf@npm:0.1.0#.yarn/patches/@module-federation-nextjs-mf-npm-0.1.0-716d657d1d"
+    "@module-federation/nextjs-mf": "patch:@module-federation/nextjs-mf@npm:0.1.1#.yarn/patches/@module-federation-nextjs-mf-npm-0.1.1-a31fff85db"
   },
   "devDependencies": {
     "eslint": "^7.21.0",
@@ -34,7 +35,7 @@
     "webpack": "^5.26.3"
   },
   "dependencies": {
-    "next": "canary",
+    "next": "10.2.1-canary.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "swr": "^0.5.2",

@@ -11,14 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <StrictMode>
       <UserProvider user={user}>
-        <SWRConfig
-          value={{
-            dedupingInterval: 150000,
-            fetcher: fetch,
-            focusThrottleInterval: 15000,
-            suspense: true,
-          }}
-        >
+        <SWRConfig value={{}}>
           <ThemeProvider theme={theme}>
             <Component {...pageProps} />
           </ThemeProvider>

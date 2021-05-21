@@ -36,6 +36,10 @@ jobs:
 
       - run: yarn test --bail --coverage --runInBand --silent --passWithNoTests
   push: &push
+    parameters:
+      tag:
+        type: string
+        default: dev-$CIRCLE_SHA1
     docker:
       - image: cimg/base:2021.03
     steps:
@@ -45,12 +49,16 @@ jobs:
       - attach_workspace:
           at: target
       - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://gcr.io
-      - run: >
-          TAG=$CIRCLE_SHA1 docker-compose build
-          --build-arg FEDERATED_URL_COMMON=${FEDERATED_URL_COMMON}
-          --build-arg FEDERATED_URL_SHELL=${FEDERATED_URL_SHELL}
-      - run: TAG=$CIRCLE_SHA1 docker-compose push
+      - run: TAG=<< parameters.tag >> docker-compose build
+      - run: TAG=<< parameters.tag >> docker-compose push
   deploy: &deploy
+    parameters:
+      directory:
+        type: string
+        default: dev
+      tag:
+        type: string
+        default: dev-$CIRCLE_SHA1
     docker:
       - image: google/cloud-sdk
     steps:
@@ -66,27 +74,18 @@ jobs:
             gcloud --quiet config set project "${GOOGLE_PROJECT_ID}"
             gcloud --quiet config set compute/zone "${GOOGLE_COMPUTE_ZONE}"
             gcloud container clusters get-credentials "${CLUSTER_NAME}"
-            cd k8s/${DEPLOY_DIRECTORY}
-            kustomize edit set image gcr.io/hosting-infrastructure/kernel-universal="gcr.io/hosting-infrastructure/kernel-universal:$CIRCLE_SHA1"
+            cd k8s/<< parameters.directory >>
+            kustomize edit set image gcr.io/hosting-infrastructure/kernel-shell="gcr.io/hosting-infrastructure/kernel-shell:<< parameters.tag >>"
+            kustomize edit set image gcr.io/hosting-infrastructure/kernel-common="gcr.io/hosting-infrastructure/kernel-common:<< parameters.tag >>"
             kubectl apply -k .
   push_dev:
     <<: *push
-    environment:
-      FEDERATED_URL_COMMON: $FEDERATED_URL_COMMON_DEV
-      FEDERATED_URL_SHELL: $FEDERATED_URL_SHELL_DEV
   push_prod:
     <<: *push
-    environment:
-      FEDERATED_URL_COMMON: $FEDERATED_URL_COMMON
-      FEDERATED_URL_SHELL: $FEDERATED_URL_SHELL
   deploy_dev:
     <<: *deploy
-    environment:
-      DEPLOY_DIRECTORY: dev
   deploy_prod:
     <<: *deploy
-    environment:
-      DEPLOY_DIRECTORY: prod
 workflows:
   version: 2
   build_test_deploy:
@@ -101,11 +100,13 @@ workflows:
             - test
       - deploy_dev:
           context: asimov-dev-cluster
+          directory: dev
           filters:
             branches:
               ignore: main
           requires:
             - push_dev
+          tag: dev-$CIRCLE_SHA1
       - push_prod:
           context: asimov-gcr
           filters:
@@ -115,8 +116,10 @@ workflows:
             - test
       - deploy_prod:
           context: asimov-prod-cluster
+          directory: prod
           filters:
             branches:
               only: main
           requires:
             - push_prod
+          tag: $CIRCLE_SHA1

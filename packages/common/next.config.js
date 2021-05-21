@@ -1,17 +1,12 @@
-const {
-  withModuleFederation,
-  MergeRuntime,
-} = require('@module-federation/nextjs-mf');
+const { withModuleFederation } = require('@module-federation/nextjs-mf');
 const path = require('path');
 const deps = require('./package.json').dependencies;
 
 module.exports = {
+  compress: false,
   poweredByHeader: false,
-  future: {
-    webpack5: true,
-  },
   webpack: (config, options) => {
-    const { buildId, dev, isServer, defaultLoaders, webpack } = options;
+    const { isServer } = options;
 
     const mfConf = {
       mergeRuntime: true,

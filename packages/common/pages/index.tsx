@@ -1,16 +1,16 @@
 import Head from 'next/head';
 
-export const Home = (): JSX.Element => (
-  <div className="container">
-    <Head>
-      <title>Asimov Kernel</title>
-      <link rel="icon" href="/favicon.png" />
-    </Head>
+export default function App() {
+  return (
+    <div className="container">
+      <Head>
+        <title>Asimov Kernel</title>
+        <link rel="icon" href="/favicon.png" />
+      </Head>
 
-    <main></main>
+      <main></main>
 
-    <footer></footer>
-  </div>
-);
-
-export default Home;
+      <footer></footer>
+    </div>
+  );
+}

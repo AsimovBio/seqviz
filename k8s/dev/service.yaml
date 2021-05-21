@@ -18,20 +18,39 @@ spec:
   selector:
     app: kernel-universal
 ---
-apiVersion: getambassador.io/v1
-kind: Mapping
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
 metadata:
-  name: kernel-shell-mapping
+  name: dev-kv2-ingress
+  annotations:
+    kubernetes.io/ingress.class: 'nginx'
+    kubernetes.io/ingress.allow-http: 'true'
 spec:
-  prefix: /
-  service: kernel-universal.default.svc.cluster.local.:8080
-  host: kv2.dev.asimov.io
----
-apiVersion: getambassador.io/v1
-kind: Mapping
-metadata:
-  name: kernel-common-mapping
-spec:
-  prefix: /
-  service: kernel-universal.default.svc.cluster.local.:8081
-  host: common.kv2.dev.asimov.io
+  rules:
+    - host: kv2.dev.asimov.io
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: kernel-universal
+              servicePort: 8080
+          - path: /v1/graphql
+            backend:
+              serviceName: kernel-hasura
+              servicePort: 8080
+    - host: common.kv2.dev.asimov.io
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: kernel-universal
+              servicePort: 8081
+          - path: /v1/graphql
+            backend:
+              serviceName: kernel-hasura
+              servicePort: 8080
+  tls:
+    - secretName: wildcard-asimov-io-tls
+  backend:
+    serviceName: kernel-universal
+    servicePort: 80
