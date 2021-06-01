@@ -13,7 +13,7 @@ export default class CustomDocument extends Document<unknown> {
       <Html>
         {patchSharing()}
         <script
-          src={`${process.env.FEDERATED_URL_COMMON}/_next/static/runtime/remoteEntry.js`}
+          src={`${process.env.NEXT_PUBLIC_FEDERATED_URL_COMMON}/_next/static/runtime/remoteEntry.js`}
         />
         <Head />
         <body>

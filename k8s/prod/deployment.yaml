@@ -49,10 +49,10 @@ spec:
                   key: auth0_secret
             - name: GRAPHQL_API_URL
               value: https://kv2.asimov.io/v1/graphql
-            - name: FEDERATED_URL_COMMON
-              value: https://common.kv2.dev.asimov.io
-            - name: FEDERATED_URL_SHELL
-              value: https://kv2.dev.asimov.io
+            - name: NEXT_PUBLIC_FEDERATED_URL_COMMON
+              value: https://kv2.asimov.io/remote/common
+            - name: NEXT_PUBLIC_FEDERATED_URL_SHELL
+              value: https://kv2.asimov.io
           ports:
             - containerPort: 3000
           resources:
@@ -100,6 +100,10 @@ spec:
                   key: auth0_secret
             - name: GRAPHQL_API_URL
               value: https://kv2.asimov.io/v1/graphql
+            - name: NEXT_PUBLIC_FEDERATED_URL_COMMON
+              value: https://kv2.asimov.io/remote/common
+            - name: NEXT_PUBLIC_FEDERATED_URL_SHELL
+              value: https://kv2.asimov.io
           ports:
             - containerPort: 3001
           resources:

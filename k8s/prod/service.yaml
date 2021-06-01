@@ -25,30 +25,27 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: 'nginx'
     kubernetes.io/ingress.allow-http: 'true'
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+    # NOTE: the rewrite rules below are overly complex due to a bug with k8s regex validation rules
+    # see https://github.com/kubernetes/kubernetes/issues/90210
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   rules:
     - host: kv2.asimov.io
       http:
         paths:
-          - path: /
+          - path: /()(.*)
             backend:
               serviceName: kernel-universal
               servicePort: 8080
-          - path: /v1/graphql
+          - path: /()(v1/graphql)
             backend:
               serviceName: kernel-hasura
               servicePort: 8080
-    - host: common.kv2.asimov.io
-      http:
-        paths:
-          - path: /
+          - path: /remote/common(/|$)(.*)
             backend:
               serviceName: kernel-universal
               servicePort: 8081
-          - path: /v1/graphql
-            backend:
-              serviceName: kernel-hasura
-              servicePort: 8080
   tls:
     - secretName: wildcard-asimov-io-tls
   backend:

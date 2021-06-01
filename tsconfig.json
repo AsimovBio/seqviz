@@ -12,10 +12,10 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": false,
-    "target": "es2017"
-  },
-  "paths": {
-    "common/*": ["./packages/common/*"],
-    "shell/*": ["./packages/shell/*"]
+    "target": "es2017",
+    "paths": {
+      "common/*": ["./packages/common/*"],
+      "shell/*": ["./packages/shell/*"]
+    }
   }
 }

@@ -30,7 +30,7 @@ module.exports = {
     };
 
     if (!isServer) {
-      config.output.publicPath = `${process.env.FEDERATED_URL_SHELL}/_next/`;
+      config.output.publicPath = `${process.env.NEXT_PUBLIC_FEDERATED_URL_SHELL}/_next/`;
     }
 
     // Configures ModuleFederation and other Webpack properties

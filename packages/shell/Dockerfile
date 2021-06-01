@@ -4,6 +4,7 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /kernel-universal
 
+
 COPY .yarnrc.yml yarn.lock package.json tsconfig.json ./
 COPY .yarn ./.yarn
 COPY packages/shell/package.json ./packages/shell/
@@ -16,6 +17,11 @@ RUN yarn --immutable
 # Rebuild the source code only when needed
 FROM node:14-alpine AS builder
 WORKDIR /kernel-universal
+
+ARG NEXT_PUBLIC_FEDERATED_URL_SHELL
+ARG NEXT_PUBLIC_FEDERATED_URL_COMMON
+ENV NEXT_PUBLIC_FEDERATED_URL_SHELL=${NEXT_PUBLIC_FEDERATED_URL_SHELL}
+ENV NEXT_PUBLIC_FEDERATED_URL_COMMON=${NEXT_PUBLIC_FEDERATED_URL_COMMON}
 
 COPY . .
 COPY --from=deps /kernel-universal/.yarn ./.yarn
