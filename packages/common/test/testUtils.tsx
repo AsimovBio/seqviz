@@ -1,8 +1,7 @@
 import { render } from '@testing-library/react';
-import { ThemeProvider } from 'theme-ui';
 
 const Wrapper = ({ children }) => {
-  return <ThemeProvider theme={{}}>{children}</ThemeProvider>;
+  return children;
 };
 
 const customRender = (ui, options = {}) =>

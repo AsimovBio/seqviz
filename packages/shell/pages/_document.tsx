@@ -1,23 +1,19 @@
-import { patchSharing } from '@module-federation/nextjs-mf';
 import Document, { Head, Html, Main, NextScript } from 'next/document';
-import { InitializeColorMode } from 'theme-ui';
+import dynamic from 'next/dynamic';
 
-export default class CustomDocument extends Document<unknown> {
-  static async getInitialProps(ctx) {
-    const initialProps = await Document.getInitialProps(ctx);
-    return { ...initialProps };
-  }
+const StitchesTag = dynamic(() => import('common/components/stitches-tag'));
 
+export default class CustomDocument extends Document {
   render() {
     return (
-      <Html>
-        {patchSharing()}
-        <script
-          src={`${process.env.NEXT_PUBLIC_FEDERATED_URL_COMMON}/_next/static/runtime/remoteEntry.js`}
-        />
-        <Head />
+      <Html lang="en">
+        <Head>
+          <script
+            src={`${process.env.NEXT_PUBLIC_FEDERATED_URL_COMMON}/_next/static/runtime/remoteEntry.js`}
+          />
+          <StitchesTag />
+        </Head>
         <body>
-          <InitializeColorMode />
           <Main />
           <NextScript />
         </body>

@@ -12,10 +12,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": false,
-    "target": "es2017",
-    "paths": {
-      "common/*": ["./packages/common/*"],
-      "shell/*": ["./packages/shell/*"]
-    }
+    "target": "esnext",
+    "types": ["node", "jest", "@types/testing-library__jest-dom"]
   }
 }

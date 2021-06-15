@@ -1,10 +1,22 @@
-import Layout from '../components/layout';
-import { getSession, useUser } from '@auth0/nextjs-auth0';
-import useSWR from 'swr';
-import { getAccessToken, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import Header from 'components/header';
+import Layout from 'components/layout';
+import Sidebar from 'components/sidebar';
 import { gql, request } from 'graphql-request';
+import type { GetServerSidePropsContext, NextApiRequest } from 'next';
 import { GetServerSideProps } from 'next';
-import Dashboard from '../components/dashboard';
+import dynamic from 'next/dynamic';
+import type { ReactNode } from 'react';
+import { useCallback } from 'react';
+import useSWR from 'swr';
+import requestUtil from 'utils/request';
+
+const Box: any = dynamic(() => import('common/components/box'));
+
+type Props = {
+  data?: unknown;
+  children?: ReactNode;
+};
 
 const PROJECTS_QUERY = gql`
   query ProjectsQuery {
@@ -15,6 +27,7 @@ const PROJECTS_QUERY = gql`
       created_at
       project_constructs {
         construct {
+          id
           name
         }
       }
@@ -22,7 +35,7 @@ const PROJECTS_QUERY = gql`
   }
 `;
 
-function App({ data: initialData }) {
+export function Dashboard({ children, data: initialData }: Props) {
   const { error, isLoading } = useUser();
 
   const { data } = useSWR(
@@ -32,6 +45,10 @@ function App({ data: initialData }) {
       initialData,
     }
   );
+
+  const handleCreate = useCallback((type) => {
+    alert(`Create ${type} not yet implemented!`);
+  }, []);
 
   const { project: projects } = data ?? {};
 
@@ -45,28 +62,32 @@ function App({ data: initialData }) {
           <pre>{error.message}</pre>
         </>
       )}
-
-      <Dashboard projects={projects} />
+      <Sidebar projects={projects} onCreate={handleCreate} />
+      <Header />
+      <Box
+        css={{
+          display: 'flex',
+          flex: '1 1 auto',
+          gridArea: 'main',
+          justifyContent: 'stretch',
+          px: '$3',
+          py: '$2',
+        }}
+      >
+        {children}
+      </Box>
     </Layout>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
   returnTo: '/',
-  async getServerSideProps({ req, res }) {
+  async getServerSideProps({ req, res }: GetServerSidePropsContext) {
     let data = null;
-    const client = require('./api/graphql').client;
 
     try {
-      const { idToken } = await getSession(req, res);
-
-      if (!idToken) {
-        throw new Error('invalid session!');
-      }
-
-      client.setHeader('authorization', `Bearer ${idToken}`);
-
-      data = await client.request(PROJECTS_QUERY);
+      (req as NextApiRequest).body = { query: PROJECTS_QUERY };
+      data = await requestUtil(req, res);
     } catch (err) {
       console.error(err);
     }
@@ -85,4 +106,4 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
   },
 });
 
-export default withPageAuthRequired(App);
+export default withPageAuthRequired(Dashboard);

@@ -9,7 +9,7 @@ jobs:
   test:
     docker:
       # specify the version you desire here
-      - image: cimg/node:14.16
+      - image: cimg/node:16.2
     resource_class: large
     steps:
       - checkout
@@ -40,6 +40,12 @@ jobs:
       tag:
         type: string
         default: dev-$CIRCLE_SHA1
+      url_common:
+        type: string
+        default: $NEXT_PUBLIC_FEDERATED_URL_COMMON_DEV
+      url_shell:
+        type: string
+        default: $NEXT_PUBLIC_FEDERATED_URL_SHELL_DEV
     docker:
       - image: cimg/base:2021.03
     steps:
@@ -49,7 +55,10 @@ jobs:
       - attach_workspace:
           at: target
       - run: echo $GCLOUD_SERVICE_KEY | docker login -u _json_key --password-stdin https://gcr.io
-      - run: TAG=<< parameters.tag >> docker-compose build
+      - run: >
+          TAG=<< parameters.tag >> docker-compose build
+          --build-arg NEXT_PUBLIC_FEDERATED_URL_COMMON=<< parameters.url_common >>
+          --build-arg NEXT_PUBLIC_FEDERATED_URL_SHELL=<< parameters.url_shell >>
       - run: TAG=<< parameters.tag >> docker-compose push
   deploy: &deploy
     parameters:
@@ -98,6 +107,8 @@ workflows:
               ignore: main
           requires:
             - test
+          url_shell: $NEXT_PUBLIC_FEDERATED_URL_SHELL_DEV
+          url_common: $NEXT_PUBLIC_FEDERATED_URL_COMMON_DEV
       - deploy_dev:
           context: asimov-dev-cluster
           directory: dev
@@ -114,6 +125,8 @@ workflows:
               only: main
           requires:
             - test
+          url_shell: $NEXT_PUBLIC_FEDERATED_URL_SHELL
+          url_common: $NEXT_PUBLIC_FEDERATED_URL_COMMON
       - deploy_prod:
           context: asimov-prod-cluster
           directory: prod

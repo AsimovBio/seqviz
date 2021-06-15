@@ -1,5 +1,18 @@
 {
   "extends": "../../tsconfig.json",
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js",
+    "jest-setup.ts"
+  ],
   "exclude": ["node_modules", ".next", "out"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.js"]
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "common/*": ["../common/*"]
+    },
+    "esModuleInterop": true
+  }
 }

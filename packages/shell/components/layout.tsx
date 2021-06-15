@@ -1,11 +1,9 @@
-/** @jsxRuntime classic */
-/** @jsx jsx */
+import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import type { ReactNode } from 'react';
 import React from 'react';
-import { jsx } from 'theme-ui';
 
-import Header from './header';
+const Box: any = dynamic(() => import('common/components/box'));
 
 type Props = { children: ReactNode };
 
@@ -14,27 +12,47 @@ export default function Layout({ children }: Props) {
     <>
       <Head>
         <title>Asimov – Intelligent Design of Living Systems</title>
-        <link rel="icon" href="/favicon.png" />
+        <link
+          rel="apple-touch-icon"
+          sizes="180x180"
+          href="/apple-touch-icon.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="32x32"
+          href="/favicon-32x32.png"
+        />
+        <link
+          rel="icon"
+          type="image/png"
+          sizes="16x16"
+          href="/favicon-16x16.png"
+        />
+        <link rel="manifest" href="/site.webmanifest" />
+        <link rel="mask-icon" href="/safari-pinned-tab.svg" />
+        <meta name="msapplication-TileColor" content="#6d08f6" />
+        <meta name="theme-color" content="#F8F8F8" />
       </Head>
-      <div
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
+      <Box
+        css={{
+          display: 'grid',
+          gridTemplateColumns: 'auto 1fr',
+          gridTemplateRows: '2.75em 1fr',
+          gridTemplateAreas:
+            '"sidebar header" \
+            "sidebar main" \
+            "sidebar footer"',
+          gridGap: '$1',
+          p: '$1',
           minHeight: '100vh',
+          '> *': {
+            backgroundColor: '$overlay',
+          },
         }}
       >
-        <Header />
-        <main
-          sx={{
-            display: 'flex',
-            flex: '1 1 auto',
-            justifyContent: 'stretch',
-          }}
-        >
-          {children}
-        </main>
-        <footer sx={{ p: 3 }}>Footer</footer>
-      </div>
+        {children}
+      </Box>
     </>
   );
 }

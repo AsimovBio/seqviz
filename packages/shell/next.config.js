@@ -1,12 +1,22 @@
+// @ts-check
+
+/**
+ * @type {import('next/dist/next-server/server/config').NextConfig}
+ **/
 const { withModuleFederation } = require('@module-federation/nextjs-mf');
 const path = require('path');
-const deps = require('./package.json').dependencies;
+
+const ssrRemoteEntryPath =
+  process.env.NODE_ENV === 'production'
+    ? '../common/.next/server/chunks/static/runtime/remoteEntry.js'
+    : '../common/.next/server/static/runtime/remoteEntry.js';
 
 module.exports = {
   compress: false,
   poweredByHeader: false,
+  future: { webpack5: true },
   webpack: (config, options) => {
-    const { isServer } = options;
+    const { defaultLoaders, isServer } = options;
 
     const mfConf = {
       name: 'shell',
@@ -17,17 +27,14 @@ module.exports = {
       filename: 'static/runtime/remoteEntry.js',
       remotes: {
         common: isServer
-          ? path.resolve(
-              __dirname,
-              '../common/.next/server/static/runtime/remoteEntry.js'
-            )
+          ? path.resolve(__dirname, ssrRemoteEntryPath)
           : 'common',
       },
-      exposes: {
-        './components/layout': './components/layout',
-      },
+      exposes: {},
       shared: [],
     };
+
+    defaultLoaders.babel.options.rootMode = 'upward';
 
     if (!isServer) {
       config.output.publicPath = `${process.env.NEXT_PUBLIC_FEDERATED_URL_SHELL}/_next/`;
@@ -36,19 +43,16 @@ module.exports = {
     // Configures ModuleFederation and other Webpack properties
     withModuleFederation(config, options, mfConf);
 
-    config.module.rules.push(
-      // gets rid of noisy "Critical dependency: the request of a dependency is an expression" warning
-      // see https://github.com/lukechilds/keyv/pull/119
-      {
-        test: /keyv/,
-        use: 'ignore-loader',
-      },
-      {
-        test: /\.pnp\.cjs$/,
-        loader: 'ignore-loader',
-      }
-    );
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      process: require.resolve('process/browser'),
+    };
 
+    return config;
+  },
+  webpackDevMiddleware: (config) => {
+    // Perform customizations to webpack dev middleware config
+    // Important: return the modified config
     return config;
   },
 };

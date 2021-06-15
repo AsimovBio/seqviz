@@ -1,12 +1,16 @@
+// @ts-check
+
+/**
+ * @type {import('next/dist/next-server/server/config').NextConfig}
+ **/
 const { withModuleFederation } = require('@module-federation/nextjs-mf');
-const path = require('path');
-const deps = require('./package.json').dependencies;
 
 module.exports = {
   compress: false,
   poweredByHeader: false,
+  future: { webpack5: true },
   webpack: (config, options) => {
-    const { isServer } = options;
+    const { defaultLoaders, isServer } = options;
 
     const mfConf = {
       mergeRuntime: true,
@@ -18,30 +22,26 @@ module.exports = {
       filename: 'static/runtime/remoteEntry.js',
       remotes: {},
       exposes: {
+        './components/accordion': './components/accordion',
         './components/button': './components/button',
+        './components/icon': './components/icon',
+        './components/box': './components/box',
+        './components/popover': './components/popover',
+        './components/stitches-tag': './components/stitches-tag',
+        './components/text': './components/text',
+        './components/tooltip': './components/tooltip',
+        './stitches.config': './stitches.config',
       },
       shared: [],
     };
 
+    defaultLoaders.babel.options.rootMode = 'upward';
+
     if (!isServer) {
       config.output.publicPath = `${process.env.NEXT_PUBLIC_FEDERATED_URL_COMMON}/_next/`;
     }
-
     // Configures ModuleFederation and other Webpack properties
     withModuleFederation(config, options, mfConf);
-
-    config.module.rules.push(
-      // gets rid of noisy "Critical dependency: the request of a dependency is an expression" warning
-      // see https://github.com/lukechilds/keyv/pull/119
-      {
-        test: /keyv/,
-        use: 'ignore-loader',
-      },
-      {
-        test: /\.pnp\.cjs$/,
-        loader: 'ignore-loader',
-      }
-    );
 
     return config;
   },
