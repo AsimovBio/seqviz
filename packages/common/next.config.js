@@ -28,6 +28,7 @@ module.exports = {
         './components/box': './components/box',
         './components/popover': './components/popover',
         './components/stitches-tag': './components/stitches-tag',
+        './components/svg': './components/svg',
         './components/text': './components/text',
         './components/tooltip': './components/tooltip',
         './stitches.config': './stitches.config',

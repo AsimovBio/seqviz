@@ -26,6 +26,9 @@ export default styled('p', {
       heading: {
         fontFamily: '$heading',
       },
+      bold: {
+        fontWeight: '$bold',
+      }
     },
     uppercase: {
       true: {
