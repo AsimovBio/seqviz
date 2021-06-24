@@ -23,9 +23,10 @@ module.exports = {
       remotes: {},
       exposes: {
         './components/accordion': './components/accordion',
+        './components/box': './components/box',
         './components/button': './components/button',
         './components/icon': './components/icon',
-        './components/box': './components/box',
+        './components/form': './components/form',
         './components/popover': './components/popover',
         './components/stitches-tag': './components/stitches-tag',
         './components/svg': './components/svg',

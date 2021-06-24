@@ -59,7 +59,7 @@ export const { css, getCssString, global, keyframes, styled, theme } =
         primary: '#ff7017',
         secondary: '#b017c6',
         tertiary: '#6d08f6',
-        text: '#222',
+        text: '#383838',
       },
       shadows: {
         primary: '0 0 12px $colors$shadow',

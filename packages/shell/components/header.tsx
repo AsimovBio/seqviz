@@ -10,6 +10,7 @@ export default function Header() {
 
   return (
     <Box
+      as="header"
       css={{
         alignItems: 'center',
         display: 'flex',

@@ -1,0 +1,42 @@
+fragment ProjectFields on project {
+  id
+  name
+  description
+}
+
+query Projects {
+  project(order_by: { created_at: desc }) {
+    ...ProjectFields
+    project_constructs(order_by: { construct: { created_at: desc } }) {
+      construct {
+        ...ConstructFields
+      }
+    }
+  }
+}
+
+query Project($id: uuid!) {
+  project(where: { id: { _eq: $id } }) {
+    ...ProjectFields
+  }
+}
+
+mutation CreateProject($input: project_insert_input!) {
+  insert_project_one(object: $input) {
+    id
+    name
+  }
+}
+
+mutation UpdateProject($id: uuid!, $input: project_set_input!) {
+  update_project_by_pk(pk_columns: { id: $id }, _set: $input) {
+    ...ProjectFields
+  }
+}
+
+mutation CreateProjectConstruct($input: project_construct_insert_input!) {
+  insert_project_construct_one(object: $input) {
+    project_id
+    construct_id
+  }
+}

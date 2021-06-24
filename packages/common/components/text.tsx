@@ -3,6 +3,7 @@ import { styled } from '../stitches.config';
 export default styled('p', {
   color: '$body',
   fontFamily: '$body',
+  m: 0,
 
   variants: {
     size: {

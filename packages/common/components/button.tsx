@@ -15,6 +15,11 @@ const StyledButton = styled('button', {
   '&.active, &:active': {
     backgroundColor: '$active',
   },
+  '&:disabled, &[disabled]': {
+    cursor: 'not-allowed',
+    opacity: 0.5,
+    pointerEvents: 'none',
+  },
   variants: {
     color: {
       primary: {

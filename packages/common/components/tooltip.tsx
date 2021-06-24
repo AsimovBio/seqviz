@@ -1,12 +1,13 @@
 import type { TooltipContentOwnProps } from '@radix-ui/react-tooltip';
 import { Arrow, Content, Root, Trigger } from '@radix-ui/react-tooltip';
-import type { ReactNode } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 
 import { styled } from '../stitches.config';
 
 type Props = {
-  children: ReactNode;
+  children: ReactElement<any, any>;
   content: ReactNode;
+  disabled?: boolean;
 } & TooltipContentOwnProps;
 
 const StyledContent = styled(Content, {
@@ -21,13 +22,22 @@ const StyledArrow = styled(Arrow, {
 });
 
 const StyledTrigger = styled(Trigger, {
+  aligntItems: 'center',
   background: 'transparent',
   border: 'none',
+  display: 'flex',
   p: 0,
 });
 
-export default function Tooltip({ children, content, ...props }: Props) {
-  return (
+export default function Tooltip({
+  children,
+  content,
+  disabled = false,
+  ...props
+}: Props) {
+  return disabled ? (
+    children
+  ) : (
     <Root>
       <StyledTrigger>{children}</StyledTrigger>
       <StyledContent {...props}>

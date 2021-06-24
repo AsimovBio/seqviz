@@ -9,6 +9,8 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:jest-dom/recommended',
+    'plugin:jsx-a11y/recommended',
+    'plugin:react-hooks/recommended',
     'prettier',
   ],
   env: {
@@ -34,8 +36,8 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 0,
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/no-use-before-define': 0,
-    'simple-import-sort/imports': 'error',
-    'simple-import-sort/exports': 'error',
+    'simple-import-sort/imports': 'warn',
+    'simple-import-sort/exports': 'warn',
     '@typescript-eslint/no-unused-vars': [
       2,
       {

@@ -1,5 +1,11 @@
 import type { AccordionOwnProps } from '@radix-ui/react-accordion';
-import { Button, Header, Item, Panel, Root } from '@radix-ui/react-accordion';
+import {
+  Content,
+  Header,
+  Item,
+  Root,
+  Trigger,
+} from '@radix-ui/react-accordion';
 import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { ReactNode } from 'react';
 
@@ -30,9 +36,10 @@ export const StyledHeader = styled(Header, {
   margin: 0,
 });
 
-export const StyledButton = styled(Button, {
+export const StyledTrigger = styled(Trigger, {
   backgroundColor: '$overlay',
   border: 'none',
+  color: 'inherit',
   display: 'flex',
   flex: 1,
   fontSize: '$2',
@@ -55,7 +62,7 @@ const StyledChevron = styled(ChevronDownIcon, {
   },
 });
 
-export const StyledPanel = styled(Panel, {
+export const StyledContent = styled(Content, {
   a: {
     alignItems: 'center',
     backgroundColor: '$overlay',
@@ -78,6 +85,7 @@ export const StyledPanel = styled(Panel, {
 });
 
 export const StyledDiv = styled('div', {
+  alignItems: 'center',
   display: 'flex',
   width: '100%',
   svg: { flex: '0 2.75em', path: { fill: '$primary' } },
@@ -95,15 +103,15 @@ export default function Accordion({
     <StyledAccordion type={type} {...props}>
       <StyledItem value={title}>
         <StyledHeader>
-          <StyledButton>
+          <StyledTrigger>
             <StyledDiv>
               {icon && <Icon name={icon} />}
               <span className="text">{title}</span>
             </StyledDiv>
             {isChevronShown && <StyledChevron aria-hidden />}
-          </StyledButton>
+          </StyledTrigger>
         </StyledHeader>
-        <StyledPanel>{children}</StyledPanel>
+        <StyledContent>{children}</StyledContent>
       </StyledItem>
     </StyledAccordion>
   );

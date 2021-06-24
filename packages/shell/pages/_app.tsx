@@ -1,5 +1,3 @@
-import 'normalize.css';
-
 import { UserProvider } from '@auth0/nextjs-auth0';
 import { IdProvider } from '@radix-ui/react-id';
 import type { AppProps } from 'next/app';

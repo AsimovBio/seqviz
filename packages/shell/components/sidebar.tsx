@@ -1,6 +1,6 @@
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import ActiveLink from 'components/active-link';
-import CreatePopover from 'components/popover';
+import PopoverCreate from 'components/popover';
 import useLocalStorage from 'hooks/useLocalStorage';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
@@ -19,7 +19,6 @@ type Props = { projects: unknown[]; onCreate: (type: string) => void };
 
 export default function Sidebar({ projects, onCreate }: Props) {
   const [isNavOpen, setNavOpen] = useState(true);
-
   const handleToggleNav = () => {
     setNavOpen(!isNavOpen);
   };
@@ -42,7 +41,7 @@ export default function Sidebar({ projects, onCreate }: Props) {
         display: 'flex',
         flexDirection: 'column',
         gridArea: 'sidebar',
-        backgroundColor: '$background',
+        backgroundColor: '$overlay',
         overflow: 'hidden',
         transition: 'width $standard',
         width: '2.75em',
@@ -54,6 +53,9 @@ export default function Sidebar({ projects, onCreate }: Props) {
           '.text': {
             display: 'unset',
           },
+        },
+        nav: {
+          backgroundColor: '$background',
         },
       }}
       className={isNavOpen ? 'open' : undefined}
@@ -72,7 +74,7 @@ export default function Sidebar({ projects, onCreate }: Props) {
           <HiddenWrapper>
             <Link href="/">
               <Box css={{ display: 'flex', alignItems: 'center', flex: 1 }}>
-                <Box css={{ p: '$1' }}>
+                <Box css={{ p: '$2' }}>
                   <Image
                     alt="Asimov"
                     height={28}
@@ -86,7 +88,7 @@ export default function Sidebar({ projects, onCreate }: Props) {
                 </Text>
               </Box>
             </Link>
-            <CreatePopover onCreate={onCreate} />
+            <PopoverCreate onCreate={onCreate} projectId={query?.pid} />
           </HiddenWrapper>
           <Button
             aria-label="Toggle sidebar"
@@ -104,12 +106,12 @@ export default function Sidebar({ projects, onCreate }: Props) {
           type="single"
         >
           {projects?.map(
-            ({ project_constructs: constructs, id: projectId, name }) => {
+            ({ name, project_constructs: constructs, id: projectId }) => {
               const isActiveProject = query?.pid === projectId;
               return (
                 <Fragment key={projectId}>
                   <ActiveLink href={`/project/${projectId}`}>
-                    <a>
+                    <a href={`/project/${projectId}`}>
                       <Tooltip content={name} side="right">
                         <Icon name="Circle" />
                       </Tooltip>
@@ -123,10 +125,11 @@ export default function Sidebar({ projects, onCreate }: Props) {
                           <ActiveLink
                             href={`/project/${projectId}/construct/${constructId}`}
                             key={constructId}
+                            passHref
                           >
                             <Box as="a" css={{ pl: isNavOpen ? '1.75em' : 0 }}>
                               <Tooltip content={name} side="right">
-                                <Icon name="BoxModel" />
+                                <Icon name="Box" />
                               </Tooltip>
                               <span className="text">{name}</span>
                             </Box>
@@ -153,8 +156,10 @@ export default function Sidebar({ projects, onCreate }: Props) {
                   href={`/project/${project_id}/construct/${id}`}
                   key={id}
                 >
-                  <a>
-                    <Icon name="BoxModel" />
+                  <a href={`/project/${project_id}/construct/${id}`}>
+                    <Tooltip content={name}>
+                      <Icon name="Box" />
+                    </Tooltip>
                     <span className="text">{name}</span>
                   </a>
                 </ActiveLink>

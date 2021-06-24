@@ -6,7 +6,12 @@ const Button = dynamic(() => import('common/components/button'));
 const Icon = dynamic(() => import('common/components/icon'));
 const Popover = dynamic(() => import('common/components/popover'));
 
-export default function CreatePopover({ onCreate }) {
+type Props = {
+  onCreate: (type: string) => void;
+  projectId?: string | string[];
+};
+
+export default function PopoverCreate({ projectId, onCreate }: Props) {
   const handleClick = (e: SyntheticEvent<HTMLButtonElement>) => {
     onCreate(e.currentTarget.value);
   };
@@ -34,6 +39,7 @@ export default function CreatePopover({ onCreate }) {
           </Button>
           <Button
             aria-label="Create construct"
+            disabled={!projectId}
             css={{ p: '$2' }}
             onClick={handleClick}
             value="construct"
@@ -45,8 +51,8 @@ export default function CreatePopover({ onCreate }) {
       }
     >
       <>
-        <Icon name="PlusCircled" />
-        <Box as="span" css={{ mx: '$2' }}>
+        <Icon name="PlusCircled" css={{ mr: '$2' }} />
+        <Box as="span" css={{ mr: '$3' }}>
           New
         </Box>
       </>

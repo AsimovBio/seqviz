@@ -1,0 +1,25 @@
+fragment ConstructFields on construct {
+  id
+  name
+}
+
+query Construct($id: uuid!) {
+  construct(where: { id: { _eq: $id } }) {
+    ...ConstructFields
+    construct_projects {
+      project_id
+    }
+  }
+}
+
+mutation CreateConstruct($input: construct_insert_input!) {
+  insert_construct_one(object: $input) {
+    ...ConstructFields
+  }
+}
+
+mutation UpdateConstruct($id: uuid!, $input: construct_set_input!) {
+  update_construct_by_pk(pk_columns: { id: $id }, _set: $input) {
+    ...ConstructFields
+  }
+}

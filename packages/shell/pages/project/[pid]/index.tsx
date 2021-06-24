@@ -1,37 +1,48 @@
-import type { WithPageAuthRequiredProps } from '@auth0/nextjs-auth0';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import { gql, request } from 'graphql-request';
+import type { ProjectQuery } from 'models/graphql';
+import { ProjectDocument } from 'models/graphql';
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
   NextApiRequest,
 } from 'next';
+import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import { Dashboard } from 'pages';
-import useSWR from 'swr';
-import requestUtil from 'utils/request';
+import type { ReactNode } from 'react';
+import { useCallback } from 'react';
+import { mutate } from 'swr';
+import { debounce } from 'ts-debounce';
+import requestUtil, { sdk } from 'utils/request';
 
 type Props = {
-  data?: unknown;
-} & WithPageAuthRequiredProps;
+  data?: ProjectQuery;
+  children?: ReactNode;
+};
 
-const PROJECT_QUERY = gql`
-  query ProjectQuery($id: uuid!) {
-    project(where: { id: { _eq: $id } }) {
-      id
-      name
-    }
-  }
-`;
+const Box: any = dynamic(() => import('common/components/box'));
+const Icon = dynamic(() => import('common/components/icon'));
+
+const Input = dynamic(async () => {
+  const { Input } = await import('common/components/form');
+  return Input;
+});
+
+const Label = dynamic(async () => {
+  const { Label } = await import('common/components/form');
+  return Label;
+});
+
+const Text: any = dynamic(() => import('common/components/text'));
 
 export function Project({ data: initialData }: Props) {
   const router = useRouter();
-  const pid = router.query.pid || [];
+  const pid = router.query?.pid;
   let project;
 
-  const { data } = useSWR(
-    pid ? PROJECT_QUERY : null,
-    (query) => request('/api/graphql', query, { id: pid }),
+  const { data } = sdk.useProject(
+    pid ? pid : null,
+    { id: pid },
     {
       initialData,
     }
@@ -43,9 +54,74 @@ export function Project({ data: initialData }: Props) {
     } = data);
   }
 
+  const handleChange = useCallback(
+    ({ target: { name, value } }) => {
+      mutate(
+        'Projects',
+        async (data) => {
+          if (data) {
+            try {
+              const { project: projects } = data;
+
+              const { update_project_by_pk: updatedProject } =
+                await sdk.UpdateProject({
+                  id: project.id,
+                  input: { [name]: value },
+                });
+
+              const idx = projects.findIndex(({ id }) => id === project?.id);
+
+              if (idx !== -1) {
+                projects.splice(idx, 1, updatedProject);
+
+                return { project: projects };
+              }
+            } catch (err) {
+              console.error(err);
+            }
+          }
+
+          return data;
+        },
+        true
+      );
+    },
+    [project?.id]
+  );
+
   return (
     <Dashboard>
-      <h1>Project: {project?.name}</h1>
+      <>
+        <Box
+          css={{
+            alignItems: 'center',
+            background: '$overlay',
+            borderColor: '$highlight',
+            borderStyle: 'solid',
+            borderWidth: '0 0 $space$1 0',
+            display: 'flex',
+            px: '$3',
+            py: '$2',
+            width: '100%',
+            svg: { mr: '$2', path: { fill: '$primary' } },
+          }}
+        >
+          <Label htmlFor="project-name">
+            <Icon name="Circle" />
+          </Label>
+          <Input
+            css={{ border: 'none', flex: 1, m: 0 }}
+            defaultValue={project?.name}
+            id="project-name"
+            key={pid as string}
+            name="name"
+            onChange={debounce(handleChange, 500)}
+          />
+        </Box>
+        <Text css={{ px: '$3', py: '$2' }} uppercase>
+          Create or select a construct
+        </Text>
+      </>
     </Dashboard>
   );
 }
@@ -54,11 +130,12 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
   returnTo: '/',
   async getServerSideProps({ req, res, query }: GetServerSidePropsContext) {
     const { pid } = query;
+
     let data = null;
 
     try {
       (req as NextApiRequest).body = {
-        query: PROJECT_QUERY,
+        query: ProjectDocument,
         variables: { id: pid },
       };
       data = await requestUtil(req, res);

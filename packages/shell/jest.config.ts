@@ -7,7 +7,8 @@ const config: Config.InitialOptions = {
   preset: 'ts-jest',
   roots: ['<rootDir>/test'],
   modulePaths: ['<rootDir>'],
-  setupFilesAfterEnv: ['<rootDir>/jest-setup.ts'],
+  setupFiles: ['<rootDir>/jest.bootstrap.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testEnvironment: 'jsdom',
   collectCoverageFrom: [
     '**/*.{js,jsx,ts,tsx}',
@@ -16,7 +17,6 @@ const config: Config.InitialOptions = {
   ],
   globals: {
     'ts-jest': {
-      // useESM: true,
       tsconfig: '<rootDir>/test/tsconfig.test.json',
     },
   },
@@ -29,6 +29,7 @@ const config: Config.InitialOptions = {
     'jest-watch-typeahead/filename',
     'jest-watch-typeahead/testname',
   ],
+  testURL: 'http://localhost',
 };
 
 export default config;

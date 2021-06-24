@@ -19,7 +19,7 @@ export default function ActiveLink({
   const { asPath } = useRouter();
   const child = Children.only(children);
   const childClassName = child.props.className || '';
-  const isActive = asPath.startsWith(href);
+  const isActive = asPath?.startsWith(href);
 
   const className = isActive
     ? `${childClassName} ${activeClassName}`.trim()

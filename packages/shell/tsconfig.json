@@ -5,7 +5,7 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.js",
-    "jest-setup.ts"
+    "jest.setup.ts"
   ],
   "exclude": ["node_modules", ".next", "out"],
   "compilerOptions": {
