@@ -29,7 +29,7 @@ export default styled('p', {
       },
       bold: {
         fontWeight: '$bold',
-      }
+      },
     },
     uppercase: {
       true: {

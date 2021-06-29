@@ -1,54 +1,9 @@
 module.exports = {
-  parser: '@typescript-eslint/parser',
-  parserOptions: {
-    sourceType: 'module',
-  },
-  plugins: ['@typescript-eslint', 'simple-import-sort', 'jest-dom'],
-  extends: [
-    'eslint:recommended',
-    'plugin:react/recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:jest-dom/recommended',
-    'plugin:jsx-a11y/recommended',
-    'plugin:react-hooks/recommended',
-    'prettier',
-  ],
-  env: {
-    es6: true,
-    browser: true,
-    jest: true,
-    node: true,
-  },
-  settings: {
-    react: {
-      version: 'detect',
-    },
-  },
+  extends: ['next', 'next/core-web-vitals', 'prettier'],
+  plugins: ['jest-dom', 'simple-import-sort'],
   rules: {
-    'react/react-in-jsx-scope': 0,
-    'react/display-name': 0,
-    'react/prop-types': 0,
-    '@typescript-eslint/explicit-function-return-type': 0,
-    '@typescript-eslint/explicit-module-boundary-types': 0,
-    '@typescript-eslint/explicit-member-accessibility': 0,
-    '@typescript-eslint/indent': 0,
-    '@typescript-eslint/member-delimiter-style': 0,
-    '@typescript-eslint/no-explicit-any': 0,
-    '@typescript-eslint/no-var-requires': 0,
-    '@typescript-eslint/no-use-before-define': 0,
-    'simple-import-sort/imports': 'warn',
+    'react/jsx-sort-props': 'warn',
     'simple-import-sort/exports': 'warn',
-    '@typescript-eslint/no-unused-vars': [
-      2,
-      {
-        argsIgnorePattern: '^_',
-      },
-    ],
-    'no-console': [
-      2,
-      {
-        allow: ['warn', 'error'],
-      },
-    ],
+    'simple-import-sort/imports': 'warn',
   },
 };

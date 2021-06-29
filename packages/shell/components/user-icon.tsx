@@ -10,11 +10,7 @@ type Props = {
 export default function UserIcon({ text, className }: Props) {
   return (
     <SVG
-      width="35px"
-      height="35px"
       className={className}
-      viewBox="0 0 70 70"
-      xmlns="http://www.w3.org/2000/svg"
       css={{
         '& circle.primary': {
           fill: '$primary',
@@ -45,6 +41,10 @@ export default function UserIcon({ text, className }: Props) {
           text: { fontSize: '34px' },
         },
       }}
+      height="35px"
+      viewBox="0 0 70 70"
+      width="35px"
+      xmlns="http://www.w3.org/2000/svg"
     >
       <circle className="primary" />
       <circle className="border" />

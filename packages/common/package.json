@@ -8,35 +8,23 @@
     "start": "next start -p 3001",
     "type-check": "tsc --pretty --noEmit",
     "format": "prettier --write .",
-    "lint": "eslint . --ext ts --ext tsx --ext js",
-    "test": "NODE_OPTIONS='$NODE_OPTIONS --experimental-vm-modules' yarn jest",
+    "lint": "next lint",
+    "test": "jest",
     "test-all": "yarn lint && yarn type-check && yarn test"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "yarn run type-check"
-    }
-  },
-  "lint-staged": {
-    "*.@(ts|tsx)": [
-      "yarn lint",
-      "yarn format"
-    ]
   },
   "dependencies": {
     "@module-federation/nextjs-mf": "^1.1.2",
     "@radix-ui/react-accessible-icon": "^0.0.15",
-    "@radix-ui/react-accordion": "^0.0.16",
+    "@radix-ui/react-accordion": "^0.0.17",
     "@radix-ui/react-icons": "^1.0.3",
     "@radix-ui/react-id": "^0.0.6",
     "@radix-ui/react-label": "^0.0.14",
     "@radix-ui/react-polymorphic": "^0.0.12",
-    "@radix-ui/react-popover": "^0.0.18",
+    "@radix-ui/react-popover": "^0.0.19",
     "@radix-ui/react-primitive": "^0.0.14",
-    "@radix-ui/react-tooltip": "^0.0.19",
+    "@radix-ui/react-tooltip": "^0.0.20",
     "@stitches/react": "^0.1.9",
-    "next": "^10.2.3",
+    "next": "^11.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
@@ -55,23 +43,19 @@
     "babel-eslint": "^10.1.0",
     "dotenv": "^10.0.0",
     "eslint": "^7.28.0",
+    "eslint-config-next": "^11.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jest-dom": "latest",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-react": "^7.24.0",
-    "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
-    "husky": "^6.0.0",
     "identity-obj-proxy": "^3.0.0",
     "ignore-loader": "^0.1.2",
     "jest": "^27.0.4",
     "jest-watch-typeahead": "^0.6.4",
-    "lint-staged": "^11.0.0",
     "prettier": "^2.3.1",
     "supports-color": "^9.0.1",
     "ts-node": "^10.0.0",
     "typescript": "^4.3.2",
-    "webpack": "^5.38.1"
+    "webpack": "^5.40.0"
   }
 }

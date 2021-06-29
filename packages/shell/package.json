@@ -8,21 +8,9 @@
     "start": "next start",
     "type-check": "tsc --pretty --noEmit",
     "format": "prettier --write .",
-    "lint": "eslint . --ext ts --ext tsx --ext js",
-    "test": "jest --no-cache",
+    "lint": "next lint",
+    "test": "jest",
     "test-all": "yarn lint && yarn type-check && yarn test"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "yarn run type-check"
-    }
-  },
-  "lint-staged": {
-    "*.@(ts|tsx)": [
-      "yarn lint",
-      "yarn format"
-    ]
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^1.4.0",
@@ -33,7 +21,7 @@
     "@stitches/react": "^0.1.9",
     "graphql": "^15.5.0",
     "graphql-request": "^3.4.0",
-    "next": "^10.2.3",
+    "next": "^11.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "swr": "^0.5.6",
@@ -55,26 +43,22 @@
     "babel-eslint": "^10.1.0",
     "dotenv": "^10.0.0",
     "eslint": "^7.28.0",
+    "eslint-config-next": "^11.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jest-dom": "latest",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-react": "^7.24.0",
-    "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-simple-import-sort": "^7.0.0",
-    "husky": "^6.0.0",
     "identity-obj-proxy": "^3.0.0",
     "ignore-loader": "^0.1.2",
     "jest": "^27.0.4",
     "jest-watch-typeahead": "^0.6.4",
-    "lint-staged": "^11.0.0",
     "msw": "^0.29.0",
     "prettier": "^2.3.1",
     "process": "^0.11.10",
     "supports-color": "^9.0.1",
     "ts-jest": "^27.0.3",
     "typescript": "^4.3.2",
-    "webpack": "^5.38.1"
+    "webpack": "^5.40.0"
   },
   "msw": {
     "workerDirectory": "public"

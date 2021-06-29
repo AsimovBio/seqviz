@@ -4,7 +4,9 @@ import type { SyntheticEvent } from 'react';
 const Box: any = dynamic(() => import('common/components/box'));
 const Button = dynamic(() => import('common/components/button'));
 const Icon = dynamic(() => import('common/components/icon'));
-const Popover = dynamic(() => import('common/components/popover'));
+const Popover = dynamic(() => import('common/components/popover'), {
+  ssr: false,
+});
 
 type Props = {
   onCreate: (type: string) => void;
@@ -39,8 +41,8 @@ export default function PopoverCreate({ projectId, onCreate }: Props) {
           </Button>
           <Button
             aria-label="Create construct"
-            disabled={!projectId}
             css={{ p: '$2' }}
+            disabled={!projectId}
             onClick={handleClick}
             value="construct"
           >
@@ -51,7 +53,7 @@ export default function PopoverCreate({ projectId, onCreate }: Props) {
       }
     >
       <>
-        <Icon name="PlusCircled" css={{ mr: '$2' }} />
+        <Icon css={{ mr: '$2' }} name="PlusCircled" />
         <Box as="span" css={{ mr: '$3' }}>
           New
         </Box>

@@ -1,5 +1,6 @@
-import dynamic from 'next/dynamic';
 import { UserProfile } from '@auth0/nextjs-auth0';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
 
 import UserIcon from './user-icon';
 
@@ -7,7 +8,9 @@ type Props = {
   user: UserProfile;
 };
 
-const Popover = dynamic(() => import('common/components/popover'));
+const Popover = dynamic(() => import('common/components/popover'), {
+  ssr: false,
+});
 const Box = dynamic(() => import('common/components/box'));
 const Text = dynamic(() => import('common/components/text'));
 const Button = dynamic(() => import('common/components/button'));
@@ -39,7 +42,7 @@ export default function AccountPopover({ user }: Props) {
                 display: 'flex',
               }}
             >
-              <UserIcon text={userIconText} className="full" />
+              <UserIcon className="full" text={userIconText} />
             </Box>
             <Box
               css={{
@@ -63,11 +66,9 @@ export default function AccountPopover({ user }: Props) {
               },
             }}
           >
-            <a
-              href={`${process.env.NEXT_PUBLIC_FEDERATED_URL_SHELL}/api/auth/logout`}
-              data-testid="logout"
-            >
+            <Link data-testid="logout" href="/api/auth/logout" passHref>
               <Button
+                as="a"
                 css={{
                   padding: '$2 $3',
                   justifyContent: 'center',
@@ -77,7 +78,7 @@ export default function AccountPopover({ user }: Props) {
               >
                 <Text css={{ margin: 0 }}>Sign out</Text>
               </Button>
-            </a>
+            </Link>
           </Box>
         </Box>
       }

@@ -13,7 +13,9 @@ const Button = dynamic(() => import('common/components/button'));
 const Icon = dynamic(() => import('common/components/icon'));
 const Text: any = dynamic(() => import('common/components/text'));
 const Tooltip = dynamic(() => import('common/components/tooltip'));
-const Accordion = dynamic(() => import('common/components/accordion'));
+const Accordion = dynamic(() => import('common/components/accordion'), {
+  ssr: false,
+});
 
 type Props = { projects: unknown[]; onCreate: (type: string) => void };
 
@@ -37,11 +39,12 @@ export default function Sidebar({ projects, onCreate }: Props) {
   return (
     <Box
       as="aside"
+      className={isNavOpen ? 'open' : undefined}
       css={{
+        backgroundColor: '$overlay',
         display: 'flex',
         flexDirection: 'column',
         gridArea: 'sidebar',
-        backgroundColor: '$overlay',
         overflow: 'hidden',
         transition: 'width $standard',
         width: '2.75em',
@@ -58,7 +61,6 @@ export default function Sidebar({ projects, onCreate }: Props) {
           backgroundColor: '$background',
         },
       }}
-      className={isNavOpen ? 'open' : undefined}
     >
       <nav>
         <Box
@@ -72,8 +74,17 @@ export default function Sidebar({ projects, onCreate }: Props) {
           }}
         >
           <HiddenWrapper>
-            <Link href="/">
-              <Box css={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+            <Link href="/" passHref>
+              <Box
+                as="a"
+                css={{
+                  alignItems: 'center',
+                  color: 'inherit',
+                  display: 'flex',
+                  flex: 1,
+                  textDecoration: 'none',
+                }}
+              >
                 <Box css={{ p: '$2' }}>
                   <Image
                     alt="Asimov"
@@ -99,6 +110,7 @@ export default function Sidebar({ projects, onCreate }: Props) {
           </Button>
         </Box>
         <Accordion
+          collapsible
           defaultValue="Projects"
           icon="Circle"
           isChevronShown={isNavOpen}
@@ -144,6 +156,7 @@ export default function Sidebar({ projects, onCreate }: Props) {
         </Accordion>
         {isNavOpen && !!recentConstructs?.length && (
           <Accordion
+            collapsible
             defaultValue="Open constructs"
             icon="BoxModel"
             isChevronShown={isNavOpen}

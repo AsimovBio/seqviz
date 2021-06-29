@@ -3,6 +3,7 @@ import Header from 'components/header';
 import Layout from 'components/layout';
 import Sidebar from 'components/sidebar';
 import type { ProjectsQuery } from 'models/graphql';
+import { ProjectsDocument } from 'models/graphql';
 import type { GetServerSidePropsContext, NextApiRequest } from 'next';
 import { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
@@ -98,7 +99,7 @@ export function Dashboard({ children, data: initialData }: Props) {
           <pre>{error.message}</pre>
         </>
       )}
-      <Sidebar projects={projects} onCreate={handleCreate} />
+      <Sidebar onCreate={handleCreate} projects={projects} />
       <Header />
       <Box
         as="main"
@@ -154,7 +155,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
     let data = null;
 
     try {
-      (req as NextApiRequest).body = { query: 'Projects' };
+      (req as NextApiRequest).body = { query: ProjectsDocument };
       data = await requestUtil(req, res);
     } catch (err) {
       console.error(err);

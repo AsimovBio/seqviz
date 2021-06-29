@@ -1,5 +1,7 @@
 import { useUser } from '@auth0/nextjs-auth0';
 import dynamic from 'next/dynamic';
+import Link from 'next/link';
+
 import AccountPopover from './account-popover';
 
 const Box: any = dynamic(() => import('common/components/box'));
@@ -25,9 +27,9 @@ export default function Header() {
       {user ? (
         <AccountPopover user={user} />
       ) : (
-        <a href="/api/auth/login" data-testid="login">
+        <Link data-testid="login" href="/api/auth/login">
           Login
-        </a>
+        </Link>
       )}
     </Box>
   );

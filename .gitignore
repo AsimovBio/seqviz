@@ -74,3 +74,6 @@ typings/
 
 *build/
 *.code-workspace
+
+# TypeScript incremental compilation cache
+*.tsbuildinfo

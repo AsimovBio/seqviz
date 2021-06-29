@@ -1,6 +1,7 @@
 import { fireEvent } from '@testing-library/react';
 import { graphql } from 'msw';
-import Project from 'pages/project/[pid]';
+import { Project } from 'pages/project/[pid]';
+import { cache } from 'swr';
 import { project } from 'test/__mocks__/project';
 import { server } from 'test/msw/server';
 import { render, screen } from 'test/utils';
@@ -37,6 +38,8 @@ describe('Project', () => {
         );
       })
     );
+
+    cache.clear();
 
     fireEvent.change(inputNode, { target: { value: 'New project' } });
 

@@ -1,6 +1,9 @@
 overwrite: true
 schema: http://localhost:8080/v1/graphql
 documents: [packages/**/*.graphql, packages/**/*.tsx, ./src/**/*.ts]
+hooks:
+  afterAllFileWrite:
+    - prettier --write
 generates:
   ./packages/shell/models/graphql.ts:
     plugins:

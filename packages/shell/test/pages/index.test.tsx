@@ -1,6 +1,6 @@
 import { project } from 'test/__mocks__/project';
 
-import Dashboard from '../../pages';
+import { Dashboard } from '../../pages';
 import { render, screen } from '../utils';
 
 jest.mock('next/router', () => ({

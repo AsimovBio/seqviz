@@ -8,7 +8,6 @@ const { withModuleFederation } = require('@module-federation/nextjs-mf');
 module.exports = {
   compress: false,
   poweredByHeader: false,
-  future: { webpack5: true },
   webpack: (config, options) => {
     const { defaultLoaders, isServer } = options;
 

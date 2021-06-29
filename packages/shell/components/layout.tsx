@@ -13,26 +13,26 @@ export default function Layout({ children }: Props) {
       <Head>
         <title>Asimov – Intelligent Design of Living Systems</title>
         <link
+          href="/apple-touch-icon.png"
           rel="apple-touch-icon"
           sizes="180x180"
-          href="/apple-touch-icon.png"
         />
         <link
-          rel="icon"
-          type="image/png"
-          sizes="32x32"
           href="/favicon-32x32.png"
+          rel="icon"
+          sizes="32x32"
+          type="image/png"
         />
         <link
-          rel="icon"
-          type="image/png"
-          sizes="16x16"
           href="/favicon-16x16.png"
+          rel="icon"
+          sizes="16x16"
+          type="image/png"
         />
-        <link rel="manifest" href="/site.webmanifest" />
-        <link rel="mask-icon" href="/safari-pinned-tab.svg" />
-        <meta name="msapplication-TileColor" content="#6d08f6" />
-        <meta name="theme-color" content="#F8F8F8" />
+        <link href="/site.webmanifest" rel="manifest" />
+        <link href="/safari-pinned-tab.svg" rel="mask-icon" />
+        <meta content="#6d08f6" name="msapplication-TileColor" />
+        <meta content="#F8F8F8" name="theme-color" />
       </Head>
       <Box
         css={{

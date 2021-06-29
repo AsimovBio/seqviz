@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { getCssString, global } from '../stitches.config';
 
 const globalStyles = global({
@@ -86,7 +85,7 @@ const globalStyles = global({
 
 export default function StitchesTag() {
   return (
-    <style id="stitches" dangerouslySetInnerHTML={{ __html: getCssString() }} />
+    <style dangerouslySetInnerHTML={{ __html: getCssString() }} id="stitches" />
   );
 }
 

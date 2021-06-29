@@ -1,6 +1,6 @@
 import { fireEvent } from '@testing-library/react';
 import { graphql } from 'msw';
-import Construct from 'pages/project/[pid]/construct/[cid]';
+import { Construct } from 'pages/project/[pid]/construct/[cid]';
 import { construct } from 'test/__mocks__/construct';
 import { project } from 'test/__mocks__/project';
 import { server } from 'test/msw/server';
@@ -16,10 +16,8 @@ jest.mock('next/router', () => ({
 }));
 
 describe('Construct', () => {
-  const renderComponent = () => render(<Construct />);
-
   it('renders without errors', async () => {
-    renderComponent();
+    render(<Construct user={{}} />);
 
     expect(
       await screen.findByDisplayValue('Test construct')
@@ -27,7 +25,7 @@ describe('Construct', () => {
   });
 
   it('calls the API on input change', async () => {
-    renderComponent();
+    render(<Construct user={{}} />);
 
     const inputNode = await screen.findByDisplayValue('Test construct');
 
