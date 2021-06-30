@@ -9,6 +9,7 @@ COPY .yarnrc.yml yarn.lock package.json tsconfig.json ./
 COPY .yarn ./.yarn
 COPY packages/shell/package.json ./packages/shell/
 COPY packages/common/package.json ./packages/common/
+COPY packages/storybook/package.json ./packages/storybook/
 
 # Install dependencies
 RUN yarn -v
