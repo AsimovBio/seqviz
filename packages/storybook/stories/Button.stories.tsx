@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
+import { Story } from '@storybook/react';
 
 export default {
   title: 'Example/Button',
-  loaders: [async () => ({ Button: (await import('common/components/button')).default })]
+  loaders: [
+    async (): Promise<ReactNode> => ({
+      Button: (await import('common/components/button')).default,
+    }),
+  ],
 };
 
-export const Primary = (args, {loaded: { Button }}) => {
-  return <Button {...args}>Federated Button</Button>
+export const Primary: Story = (args, { loaded: { Button } }) => {
+  return <Button {...args}>Federated Button</Button>;
 };

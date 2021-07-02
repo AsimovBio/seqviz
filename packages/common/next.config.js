@@ -26,6 +26,7 @@ module.exports = {
         './components/button': './components/button',
         './components/icon': './components/icon',
         './components/form': './components/form',
+        './components/mini-controller': './components/mini-controller',
         './components/popover': './components/popover',
         './components/stitches-tag': './components/stitches-tag',
         './components/svg': './components/svg',

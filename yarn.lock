@@ -31,6 +31,7 @@ __metadata:
     "@babel/runtime": ^7.14.5
     "@jest/types": ^27.0.2
     "@module-federation/nextjs-mf": ^1.1.2
+    "@next/eslint-plugin-next": latest
     "@radix-ui/react-accessible-icon": ^0.0.15
     "@radix-ui/react-accordion": ^0.0.17
     "@radix-ui/react-icons": ^1.0.3
@@ -56,6 +57,10 @@ __metadata:
     eslint-config-prettier: ^8.3.0
     eslint-plugin-import: ^2.23.4
     eslint-plugin-jest-dom: latest
+    eslint-plugin-jsx-a11y: latest
+    eslint-plugin-next: latest
+    eslint-plugin-react: latest
+    eslint-plugin-react-hooks: latest
     eslint-plugin-simple-import-sort: ^7.0.0
     identity-obj-proxy: ^3.0.0
     ignore-loader: ^0.1.2
@@ -81,6 +86,7 @@ __metadata:
     "@babel/runtime": ^7.14.5
     "@jest/types": ^27.0.2
     "@module-federation/nextjs-mf": ^1.1.2
+    "@next/eslint-plugin-next": latest
     "@radix-ui/react-id": ^0.0.6
     "@radix-ui/react-visually-hidden": ^0.0.14
     "@serverless-jwt/next": ^0.2.1
@@ -101,6 +107,10 @@ __metadata:
     eslint-config-prettier: ^8.3.0
     eslint-plugin-import: ^2.23.4
     eslint-plugin-jest-dom: latest
+    eslint-plugin-jsx-a11y: latest
+    eslint-plugin-next: latest
+    eslint-plugin-react: latest
+    eslint-plugin-react-hooks: latest
     eslint-plugin-simple-import-sort: ^7.0.0
     graphql: ^15.5.0
     graphql-request: ^3.4.0
@@ -136,9 +146,17 @@ __metadata:
     "@storybook/builder-webpack5": ^6.3.0
     "@storybook/manager-webpack5": ^6.3.0
     "@storybook/react": ^6.3.0
+    "@types/jest": ^26.0.23
+    "@types/node": ^15.14.0
     "@types/react": 17.0.11
+    "@types/testing-library__jest-dom": ^5.14.0
+    "@typescript-eslint/eslint-plugin": ^4.28.1
+    "@typescript-eslint/parser": ^4.28.1
     babel-loader: ^8.2.2
     eslint: 7.29.0
+    eslint-config-prettier: ^8.3.0
+    eslint-plugin-react: ^7.24.0
+    process: ^0.11.10
     react: 17.0.2
     react-dom: 17.0.2
     typescript: 4.3.4
@@ -3092,7 +3110,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/eslint-plugin-next@npm:11.0.1":
+"@next/eslint-plugin-next@npm:11.0.1, @next/eslint-plugin-next@npm:latest":
   version: 11.0.1
   resolution: "@next/eslint-plugin-next@npm:11.0.1"
   checksum: 8b1c99780cabe7e941f034a3fc1e492d4f42d45065d1016b2c730649e4757ed293c71c2b36da650ddc7b317b42d9f8f7fa600c4a698946e57bd26d5d56f4ffff
@@ -5501,6 +5519,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/node@npm:^15.14.0":
+  version: 15.14.0
+  resolution: "@types/node@npm:15.14.0"
+  checksum: 94bdbf5e92b915b439478c421b1a9554e3411a6770cb01af2703356c1ea46c202e10fb486264a19fbddf028a6b0e260f21cd970b719e6e8b81dd7c64cc9f69c8
+  languageName: node
+  linkType: hard
+
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.0
   resolution: "@types/normalize-package-data@npm:2.4.0"
@@ -5753,7 +5778,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^4.26.1":
+"@typescript-eslint/eslint-plugin@npm:^4.26.1, @typescript-eslint/eslint-plugin@npm:^4.28.1":
   version: 4.28.1
   resolution: "@typescript-eslint/eslint-plugin@npm:4.28.1"
   dependencies:
@@ -5790,7 +5815,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^4.20.0, @typescript-eslint/parser@npm:^4.26.1":
+"@typescript-eslint/parser@npm:^4.20.0, @typescript-eslint/parser@npm:^4.26.1, @typescript-eslint/parser@npm:^4.28.1":
   version: 4.28.1
   resolution: "@typescript-eslint/parser@npm:4.28.1"
   dependencies:
@@ -10084,7 +10109,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-jsx-a11y@npm:^6.4.1":
+"eslint-plugin-jsx-a11y@npm:^6.4.1, eslint-plugin-jsx-a11y@npm:latest":
   version: 6.4.1
   resolution: "eslint-plugin-jsx-a11y@npm:6.4.1"
   dependencies:
@@ -10105,7 +10130,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react-hooks@npm:^4.2.0":
+"eslint-plugin-next@npm:latest":
+  version: 0.0.0
+  resolution: "eslint-plugin-next@npm:0.0.0"
+  checksum: c083aa1c42df347d7940b07916493c0be6f30c5df9c87200827f71c574958d3e1362e1042fd15f9164e63b673cb7ca94491ea3e8318fc1dcbe4f686e9d9166d5
+  languageName: node
+  linkType: hard
+
+"eslint-plugin-react-hooks@npm:^4.2.0, eslint-plugin-react-hooks@npm:latest":
   version: 4.2.0
   resolution: "eslint-plugin-react-hooks@npm:4.2.0"
   peerDependencies:
@@ -10114,7 +10146,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react@npm:^7.23.1, eslint-plugin-react@npm:^7.24.0":
+"eslint-plugin-react@npm:^7.23.1, eslint-plugin-react@npm:^7.24.0, eslint-plugin-react@npm:latest":
   version: 7.24.0
   resolution: "eslint-plugin-react@npm:7.24.0"
   dependencies:
