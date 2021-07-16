@@ -3,11 +3,28 @@ fragment ConstructFields on construct {
   name
 }
 
+fragment ConstructPartFields on construct_part {
+  construct_id
+  id
+  index
+  orientation
+  part_id
+}
+
 query Construct($id: uuid!) {
   construct(where: { id: { _eq: $id } }) {
     ...ConstructFields
     construct_projects {
       project_id
+    }
+    construct_parts(order_by: { index: asc }) {
+      ...ConstructPartFields
+      construct {
+        ...ConstructFields
+      }
+      part {
+        ...PartFields
+      }
     }
   }
 }
@@ -21,5 +38,26 @@ mutation CreateConstruct($input: construct_insert_input!) {
 mutation UpdateConstruct($id: uuid!, $input: construct_set_input!) {
   update_construct_by_pk(pk_columns: { id: $id }, _set: $input) {
     ...ConstructFields
+  }
+}
+
+mutation InsertConstructPart(
+  $construct_id: uuid!
+  $input: [construct_part_insert_input!]!
+) {
+  delete_construct_part(where: { construct_id: { _eq: $construct_id } }) {
+    affected_rows
+  }
+
+  insert_construct_part(
+    objects: $input
+    on_conflict: {
+      constraint: construct_part_pkey
+      update_columns: [index, orientation, part_id]
+    }
+  ) {
+    returning {
+      ...ConstructPartFields
+    }
   }
 }

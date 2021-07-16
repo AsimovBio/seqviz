@@ -1,4 +1,4 @@
-import { LinkProps } from 'next/dist/client/link';
+import type { LinkProps } from 'next/dist/client/link';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import type { ReactElement } from 'react';

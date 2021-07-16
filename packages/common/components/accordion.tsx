@@ -105,7 +105,7 @@ export default function Accordion({
         <StyledHeader>
           <StyledTrigger>
             <StyledDiv>
-              {icon && <Icon name={icon} />}
+              {icon && <Icon label={icon} />}
               <span className="text">{title}</span>
             </StyledDiv>
             {isChevronShown && <StyledChevron aria-hidden />}

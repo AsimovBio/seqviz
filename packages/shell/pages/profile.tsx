@@ -1,4 +1,5 @@
-import { UserProfile, withPageAuthRequired } from '@auth0/nextjs-auth0';
+import type { UserProfile } from '@auth0/nextjs-auth0';
+import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import * as React from 'react';
 
 import Layout from '../components/layout';

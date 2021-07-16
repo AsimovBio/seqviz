@@ -106,7 +106,7 @@ export default function Sidebar({ projects, onCreate }: Props) {
             color="transparent"
             onClick={handleToggleNav}
           >
-            <Icon name="HamburgerMenu" />
+            <Icon label="HamburgerMenu" />
           </Button>
         </Box>
         <Accordion
@@ -125,7 +125,7 @@ export default function Sidebar({ projects, onCreate }: Props) {
                   <ActiveLink href={`/project/${projectId}`}>
                     <a href={`/project/${projectId}`}>
                       <Tooltip content={name} side="right">
-                        <Icon name="Circle" />
+                        <Icon label="Circle" />
                       </Tooltip>
                       <span className="text">{name}</span>
                     </a>
@@ -141,7 +141,7 @@ export default function Sidebar({ projects, onCreate }: Props) {
                           >
                             <Box as="a" css={{ pl: isNavOpen ? '1.75em' : 0 }}>
                               <Tooltip content={name} side="right">
-                                <Icon name="Box" />
+                                <Icon label="Box" />
                               </Tooltip>
                               <span className="text">{name}</span>
                             </Box>
@@ -171,7 +171,7 @@ export default function Sidebar({ projects, onCreate }: Props) {
                 >
                   <a href={`/project/${project_id}/construct/${id}`}>
                     <Tooltip content={name}>
-                      <Icon name="Box" />
+                      <Icon label="Box" />
                     </Tooltip>
                     <span className="text">{name}</span>
                   </a>

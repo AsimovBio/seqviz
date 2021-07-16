@@ -9,7 +9,7 @@
     "type-check": "tsc --pretty --noEmit",
     "format": "prettier --write .",
     "lint": "next lint",
-    "test": "jest",
+    "test": "jest --detectOpenHandles",
     "test-all": "yarn lint && yarn type-check && yarn test"
   },
   "dependencies": {
@@ -19,13 +19,16 @@
     "@radix-ui/react-visually-hidden": "^0.0.14",
     "@serverless-jwt/next": "^0.2.1",
     "@stitches/react": "^0.1.9",
+    "@xstate/react": "^1.5.1",
     "graphql": "^15.5.0",
     "graphql-request": "^3.4.0",
     "next": "^11.0.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "swr": "^0.5.6",
-    "ts-debounce": "^3.0.0"
+    "ts-debounce": "^3.0.0",
+    "uuid": "^8.3.2",
+    "xstate": "^4.22.0"
   },
   "devDependencies": {
     "@babel/core": "^7.14.5",
@@ -38,8 +41,9 @@
     "@types/node": "^15.12.2",
     "@types/react": "^17.0.11",
     "@types/testing-library__jest-dom": "^5.14.0",
-    "@typescript-eslint/eslint-plugin": "^4.26.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
     "@typescript-eslint/parser": "^4.26.1",
+    "@xstate/inspect": "^0.4.1",
     "@yarnpkg/pnpify": "^3.0.0-rc.6",
     "babel-eslint": "^10.1.0",
     "dotenv": "^10.0.0",
@@ -58,7 +62,7 @@
     "jest": "^27.0.4",
     "jest-watch-typeahead": "^0.6.4",
     "msw": "^0.29.0",
-    "prettier": "^2.3.1",
+    "prettier": "^2.3.2",
     "process": "^0.11.10",
     "supports-color": "^9.0.1",
     "ts-jest": "^27.0.3",

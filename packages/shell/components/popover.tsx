@@ -37,7 +37,7 @@ export default function PopoverCreate({ projectId, onCreate }: Props) {
             value="project"
           >
             Project
-            <Icon name="Plus" />
+            <Icon label="Plus" />
           </Button>
           <Button
             aria-label="Create construct"
@@ -47,14 +47,14 @@ export default function PopoverCreate({ projectId, onCreate }: Props) {
             value="construct"
           >
             Construct
-            <Icon name="Plus" />
+            <Icon label="Plus" />
           </Button>
         </Box>
       }
     >
       <>
-        <Icon css={{ mr: '$2' }} name="PlusCircled" />
-        <Box as="span" css={{ mr: '$3' }}>
+        <Icon label="PlusCircled" />
+        <Box as="span" css={{ ml: '$2', mr: '$3' }}>
           New
         </Box>
       </>

@@ -1,4 +1,4 @@
-import { UserProfile } from '@auth0/nextjs-auth0';
+import type { UserProfile } from '@auth0/nextjs-auth0';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 

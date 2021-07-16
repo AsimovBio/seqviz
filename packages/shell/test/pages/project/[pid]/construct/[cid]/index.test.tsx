@@ -5,6 +5,8 @@ import { construct } from 'test/__mocks__/construct';
 import { project } from 'test/__mocks__/project';
 import { server } from 'test/msw/server';
 import { render, screen } from 'test/utils';
+import { dashboardMachine } from 'pages';
+import { interpret } from 'xstate';
 
 jest.mock('next/router', () => ({
   useRouter() {
@@ -49,5 +51,54 @@ describe('Construct', () => {
     fireEvent.change(inputNode, { target: { value: 'New construct' } });
 
     expect(await screen.findByText('New construct')).toBeInTheDocument();
+  });
+});
+
+describe('dashboardMachine', () => {
+  const dashboardSvc = interpret(dashboardMachine);
+
+  beforeEach(() => {
+    dashboardSvc.start();
+  });
+
+  afterEach(() => {
+    dashboardSvc.stop();
+    jest.clearAllMocks();
+  });
+
+  it('should forward events to partLibSvc', () => {
+    dashboardSvc.onTransition(
+      ({ children: { partLibSvc }, event: { type } }) => {
+        const spy = jest.spyOn(partLibSvc, 'send');
+
+        if (type === 'PARTLIB.ENGAGE') {
+          expect(spy).toHaveBeenCalledWith(
+            expect.objectContaining({ name: 'PARTLIB.ENGAGE' })
+          );
+        }
+      }
+    );
+
+    dashboardSvc.send({
+      type: 'PARTLIB.ENGAGE',
+    });
+  });
+
+  it('should forward events to constructSvc', () => {
+    dashboardSvc.onTransition(
+      ({ children: { constructSvc }, event: { type } }) => {
+        const spy = jest.spyOn(constructSvc, 'send');
+
+        if (type === 'PARTLIB.SELECT') {
+          expect(spy).toHaveBeenCalledWith(
+            expect.objectContaining({ name: 'PARTLIB.SELECT' })
+          );
+        }
+      }
+    );
+
+    dashboardSvc.send({
+      type: 'PARTLIB.SELECT',
+    });
   });
 });

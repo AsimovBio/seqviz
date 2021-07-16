@@ -1,5 +1,6 @@
 import type { WithPageAuthRequiredProps } from '@auth0/nextjs-auth0';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
+import ConstructDesigner from 'components/construct-designer';
 import useLocalStorage from 'hooks/useLocalStorage';
 import type { ConstructQuery } from 'models/graphql';
 import { ConstructDocument } from 'models/graphql';
@@ -110,8 +111,12 @@ export function Construct({ data: initialData }: Props) {
     [construct?.id, pid]
   );
 
+  if (!construct) {
+    return null;
+  }
+
   return (
-    <Dashboard>
+    <Dashboard key={cid as string}>
       <Box
         css={{
           alignItems: 'center',
@@ -127,17 +132,22 @@ export function Construct({ data: initialData }: Props) {
         }}
       >
         <Label htmlFor="construct-name">
-          <Icon name="Circle" />
+          <Icon label="Circle" />
         </Label>
         <Input
           css={{ border: 'none', flex: 1, m: 0 }}
           defaultValue={construct?.name}
           id="construct-name"
-          key={cid as string}
           name="name"
           onChange={debounce(handleChange, 500)}
         />
       </Box>
+      {construct && (
+        <ConstructDesigner
+          construct_parts={construct.construct_parts}
+          id={construct.id}
+        />
+      )}
     </Dashboard>
   );
 }

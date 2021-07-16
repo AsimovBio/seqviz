@@ -90,38 +90,35 @@ export function Project({ data: initialData }: Props) {
   );
 
   return (
-    <Dashboard>
-      <>
-        <Box
-          css={{
-            alignItems: 'center',
-            background: '$overlay',
-            borderColor: '$highlight',
-            borderStyle: 'solid',
-            borderWidth: '0 0 $space$1 0',
-            display: 'flex',
-            px: '$3',
-            py: '$2',
-            width: '100%',
-            svg: { mr: '$2', path: { fill: '$primary' } },
-          }}
-        >
-          <Label htmlFor="project-name">
-            <Icon name="Circle" />
-          </Label>
-          <Input
-            css={{ border: 'none', flex: 1, m: 0 }}
-            defaultValue={project?.name}
-            id="project-name"
-            key={pid as string}
-            name="name"
-            onChange={debounce(handleChange, 500)}
-          />
-        </Box>
-        <Text css={{ px: '$3', py: '$2' }} uppercase>
-          Create or select a construct
-        </Text>
-      </>
+    <Dashboard key={pid as string}>
+      <Box
+        css={{
+          alignItems: 'center',
+          background: '$overlay',
+          borderColor: '$highlight',
+          borderStyle: 'solid',
+          borderWidth: '0 0 $space$1 0',
+          display: 'flex',
+          px: '$3',
+          py: '$2',
+          width: '100%',
+          svg: { mr: '$2', path: { fill: '$primary' } },
+        }}
+      >
+        <Label htmlFor="project-name">
+          <Icon label="Circle" />
+        </Label>
+        <Input
+          css={{ border: 'none', flex: 1, m: 0 }}
+          defaultValue={project?.name}
+          id="project-name"
+          name="name"
+          onChange={debounce(handleChange, 500)}
+        />
+      </Box>
+      <Text css={{ px: '$3', py: '$2' }} uppercase>
+        Create or select a construct
+      </Text>
     </Dashboard>
   );
 }

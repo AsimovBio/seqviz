@@ -17,7 +17,12 @@ export default function App({ Component, pageProps }: AppProps) {
     <StrictMode>
       <GlobalStyles />
       <UserProvider user={user}>
-        <SWRConfig value={{}}>
+        <SWRConfig
+          value={{
+            dedupingInterval: 150000,
+            focusThrottleInterval: 15000,
+          }}
+        >
           <IdProvider>
             <Component {...pageProps} />
           </IdProvider>

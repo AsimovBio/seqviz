@@ -1,128 +1,250 @@
+import type { ReactNode } from 'react';
+import { useEffect } from 'react';
+import { useHoverIntent } from 'react-use-hoverintent';
+
 import { styled } from '../stitches.config';
 import Box from './box';
+import Button from './button';
 import Icon from './icon';
 
 type Props = {
+  children: ReactNode;
+  index: number;
   isActive: boolean;
-  isHovered: boolean;
-  part: any;
+  isFocused: boolean;
+  orientation: 'forward' | 'reverse';
+  part: { glyph: string; name: string };
+  onNotify: ({ type: string, value: unknown }) => void;
 };
 
-export default function MiniController({
-  isHovered = false,
-  isActive = false,
-  part,
-}: Props) {
-  const StyledContainer = styled(Box, {
-    width: '7.5rem',
-    height: '7.5rem',
-    display: 'flex',
-    justifyContent: 'center',
-  });
+const StyledContainer = styled(Box, {
+  display: 'flex',
+  flexDirection: 'column',
+  height: '7.5rem',
+  justifyContent: 'center',
+  position: 'relative',
+  width: '7.5rem',
+  zIndex: 1,
+});
 
-  const StyledRow = styled(Box, {
-    display: 'flex',
-    flex: 1,
-  });
+const StyledRow = styled(Box, {
+  display: 'flex',
+  flex: 1,
+  justifyContent: 'center',
+});
 
-  const StyledButton = styled('button', {
-    $$primary: '#fde5f280',
-    $$secondary: '#ebecff80',
-    $$tertiary: '#ffeee380',
-    $$primaryHover: '#fde5f2',
-    $$secondaryHover: '#ebecff',
-    $$tertiaryHover: '#ffeee3',
+const StyledButton = styled('button', {
+  $$primary: '#fde5f280',
+  $$secondary: '#ebecff80',
+  $$tertiary: '#ffeee380',
+  $$primaryHover: '#fde5f2',
+  $$secondaryHover: '#ebecff',
+  $$tertiaryHover: '#ffeee3',
 
-    border: '1px solid $dark',
-    backgroundColor: '$highlight',
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 'unset',
-    cursor: 'pointer',
+  alignItems: 'center',
+  backgroundColor: '$highlight',
+  border: '1px solid $dark',
+  cursor: 'pointer',
+  display: 'flex',
+  justifyContent: 'center',
+  padding: 'unset',
+  visibility: 'hidden',
 
-    '& svg path': {
-      stroke: '$text',
-      strokeWidth: '0.5px',
+  '& svg path': {
+    stroke: '$text',
+    strokeWidth: '0.5',
+  },
+
+  '.hovered &': {
+    visibility: 'visible',
+  },
+
+  variants: {
+    active: {
+      true: {},
     },
-
-    variants: {
-      color: {
-        primary: {
-          backgroundColor: isActive ? '$$primary' : '$highlight',
-          '&:hover': {
-            backgroundColor: '$$primaryHover',
-          },
+    color: {
+      primary: {
+        backgroundColor: '$highlight',
+        '&:hover': {
+          backgroundColor: '$$primaryHover',
         },
-        secondary: {
-          backgroundColor: isActive ? '$$secondary' : '$highlight',
-          '&:hover': {
-            backgroundColor: '$$secondaryHover',
-          },
+      },
+      secondary: {
+        backgroundColor: '$highlight',
+        '&:hover': {
+          backgroundColor: '$$secondaryHover',
         },
-        tertiary: {
-          backgroundColor: isActive ? '$$tertiary' : '$highlight',
-          '&:hover': {
-            backgroundColor: '$$tertiaryHover',
-          },
+      },
+      tertiary: {
+        backgroundColor: '$highlight',
+        '&:hover': {
+          backgroundColor: '$$tertiaryHover',
         },
       },
     },
-  });
+  },
+  compoundVariants: [
+    {
+      color: 'primary',
+      active: true,
+      css: {
+        backgroundColor: '$$primary',
+      },
+    },
+    {
+      color: 'secondary',
+      active: true,
+      css: {
+        backgroundColor: '$$secondary',
+      },
+    },
+    {
+      color: 'tertiary',
+      active: true,
+      css: {
+        backgroundColor: '$$tertiary',
+      },
+    },
+  ],
+});
 
-  const StyledPartWrapper = styled(Box, {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  });
+const StyledPartWrapper = styled(Button, {
+  alignItems: 'center',
+  display: 'flex',
+  justifyContent: 'center',
+  transition: '$standard',
+  svg: {
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeLinecap: 'square',
+    strokeAlignment: 'inner',
+    strokeWidth: '1.5',
+    width: '2rem',
+    transform: 'translate(0, -50%)',
+  },
+});
 
-  const UndefinedPart = () => (
-    <Icon
-      css={{ width: 40, height: 40, stroke: '$text', strokeWidth: '0.5px' }}
-      name="QuestionMarkCircled"
-    />
+export default function MiniController({
+  index,
+  isActive,
+  isFocused,
+  onNotify,
+  orientation,
+  part: { glyph, name },
+}: Props) {
+  const [isHovering, ref] = useHoverIntent<HTMLDivElement>({ timeout: 200 });
+  const handleEvent = ({ currentTarget: { name, value } }) => {
+    onNotify({ type: name, value });
+  };
+
+  useEffect(() => {
+    onNotify({ type: 'FOCUS', value: isHovering });
+  }, [isHovering, onNotify]);
+
+  const part = (
+    <StyledPartWrapper
+      color="transparent"
+      css={{
+        flex: 1,
+        transform: orientation === 'reverse' ? 'rotate(180deg)' : undefined,
+      }}
+      name="TOGGLE_ACTIVE"
+      onClick={handleEvent}
+    >
+      <Icon label={name}>
+        <span dangerouslySetInnerHTML={{ __html: glyph }} />
+      </Icon>
+    </StyledPartWrapper>
   );
-  if (!isHovered && !isActive) {
-    return (
-      <StyledContainer>
-        <StyledPartWrapper>{part || <UndefinedPart />}</StyledPartWrapper>
-      </StyledContainer>
-    );
-  }
 
   return (
     <StyledContainer
-      css={{ flexDirection: 'column', border: '1px solid $dark' }}
+      className={isFocused || isActive ? 'hovered' : undefined}
+      data-testid="construct-part-container"
+      ref={ref}
     >
       <StyledRow>
-        <StyledButton color="primary" type="button">
-          <Icon name="ArrowLeft" />
+        <StyledButton
+          active={isActive}
+          color="primary"
+          name="MOVE"
+          onClick={handleEvent}
+          type="button"
+          value={index - 1}
+        >
+          <Icon label="ArrowLeft" />
         </StyledButton>
-        <StyledButton color="primary" css={{ flex: 5 }} type="button">
-          <Icon name="Minus" />
+        <StyledButton
+          active={isActive}
+          color="primary"
+          css={{ borderWidth: '1px 0', flex: 1 }}
+          name="DELETE"
+          onClick={handleEvent}
+          type="button"
+        >
+          <Icon label="Minus" />
         </StyledButton>
-        <StyledButton color="primary" type="button">
-          <Icon name="ArrowRight" />
+        <StyledButton
+          active={isActive}
+          color="primary"
+          name="MOVE"
+          onClick={handleEvent}
+          type="button"
+          value={index + 1}
+        >
+          <Icon label="ArrowRight" />
         </StyledButton>
       </StyledRow>
+
       <StyledRow css={{ flex: 5 }}>
-        <StyledButton color="secondary" type="button">
-          <Icon name="Plus" />
+        <StyledButton
+          active={isActive}
+          color="secondary"
+          css={{ borderWidth: '0 1px' }}
+          name="ADD"
+          onClick={handleEvent}
+          type="button"
+          value={index}
+        >
+          <Icon label="Plus" />
         </StyledButton>
-        <StyledPartWrapper css={{ flex: 5, border: '1px solid $dark' }}>
-          {part || <UndefinedPart />}
-        </StyledPartWrapper>
-        <StyledButton color="secondary" type="button">
-          <Icon name="Plus" />
+        {part}
+        <StyledButton
+          active={isActive}
+          color="secondary"
+          css={{ borderWidth: '0 1px' }}
+          name="ADD"
+          onClick={handleEvent}
+          type="button"
+          value={index + 1}
+        >
+          <Icon label="Plus" />
         </StyledButton>
       </StyledRow>
+
       <StyledRow>
-        <StyledButton color="tertiary" type="button">
-          <Icon css={{ width: 12, height: 12 }} name="Reload" />
+        <StyledButton
+          active={isActive}
+          color="tertiary"
+          css={{ flex: 1 }}
+          data-testid="toggle-flip"
+          name="FLIP"
+          onClick={handleEvent}
+          type="button"
+        >
+          <Icon css={{ width: 12, height: 12 }} label="Reload" />
         </StyledButton>
-        <StyledButton color="tertiary" type="button">
-          <Icon name="ChevronDown" />
+        <StyledButton
+          active={isActive}
+          color="tertiary"
+          css={{ flex: 1, borderLeft: 'none' }}
+          data-testid="toggle-active"
+          name="ENGAGE"
+          onClick={handleEvent}
+          type="button"
+        >
+          <Icon label="ChevronDown" />
         </StyledButton>
       </StyledRow>
     </StyledContainer>

@@ -1,0 +1,15 @@
+fragment PartFields on part {
+  id
+  name
+  glyph
+  description
+  alias
+  sequence
+  sequence_length
+}
+
+query Parts {
+  part(order_by: { created_at: desc }) {
+    ...PartFields
+  }
+}

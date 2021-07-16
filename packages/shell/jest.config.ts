@@ -14,6 +14,8 @@ const config: Config.InitialOptions = {
     '**/*.{js,jsx,ts,tsx}',
     '!**/*.d.ts',
     '!**/node_modules/**',
+    '!**/models/graphql.ts',
+    '!**/test/**',
   ],
   globals: {
     'ts-jest': {
