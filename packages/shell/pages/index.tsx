@@ -178,7 +178,7 @@ export function Dashboard({ children, data: initialData }: Props) {
               '"construct detail" \
             "library detail"',
             gridTemplateColumns: '1.5fr 1fr',
-            gridTemplateRows: '1fr 2fr',
+            gridTemplateRows: 'max-content auto',
             justifyContent: 'stretch',
           }}
         >
@@ -188,6 +188,7 @@ export function Dashboard({ children, data: initialData }: Props) {
               flexDirection: 'column',
               gridArea: 'construct',
               justifyContent: 'space-between',
+              overflow: 'hidden',
             }}
           >
             {children}

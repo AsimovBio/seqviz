@@ -1,6 +1,5 @@
 import type { WithPageAuthRequiredProps } from '@auth0/nextjs-auth0';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import ConstructDesigner from 'components/construct-designer';
 import useLocalStorage from 'hooks/useLocalStorage';
 import type { ConstructQuery } from 'models/graphql';
 import { ConstructDocument } from 'models/graphql';
@@ -33,6 +32,16 @@ const Label = dynamic(async () => {
   const { Label } = await import('common/components/form');
   return Label;
 });
+
+/**
+ * Drag'n'drop with react-beautiful-dnd breaks with SSR in Next.js v11, so we cannot use SSR for ConstructDesigner for now.
+ * react-beautiful-dnd does historically support SSR, but that seems to break with more recent versions of Next.
+ * https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/api/reset-server-context.md
+ */
+const ConstructDesigner = dynamic(
+  async () => import('components/construct-designer'),
+  { ssr: false }
+);
 
 export function Construct({ data: initialData }: Props) {
   const router = useRouter();

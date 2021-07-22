@@ -1,9 +1,4 @@
-import type {
-  ConstructQuery,
-  Construct_Mutation_Response,
-  Construct_Part,
-  Part,
-} from 'models/graphql';
+import type { Construct_Part, ConstructQuery, Part } from 'models/graphql';
 import { mutate } from 'swr';
 import { sdk } from 'utils/request';
 import { v4 as uuidv4 } from 'uuid';
@@ -99,6 +94,9 @@ export const constructMachine = createMachine<
     actions: {
       add: assign({
         constructParts: ({ constructId, constructParts }, { index }) => {
+          constructParts.forEach(({ ref }) =>
+            ref.send('CHANGE', { isNew: false })
+          );
           const newPart = createConstructPart({
             construct_id: constructId,
             index,
@@ -136,7 +134,6 @@ export const constructMachine = createMachine<
 
         activeConstructPart?.ref.send('CHANGE', {
           isActive: !isActive,
-          isNew: false,
         });
       },
       commit: assign({

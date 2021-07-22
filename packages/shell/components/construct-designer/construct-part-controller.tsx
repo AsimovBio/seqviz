@@ -1,5 +1,7 @@
 import { useActor } from '@xstate/react';
 import dynamic from 'next/dynamic';
+import type { Ref } from 'react';
+import React, { forwardRef, memo } from 'react';
 import type { ActorRef } from 'xstate/lib/types';
 
 const MiniController = dynamic(
@@ -15,7 +17,10 @@ const Label = dynamic(async () => {
 
 type Props = { constructPartRef: ActorRef<any, any> };
 
-export default function ConstructPartController({ constructPartRef }: Props) {
+function ConstructPartController(
+  { constructPartRef }: Props,
+  ref: Ref<HTMLDivElement>
+) {
   const [state, send] = useActor(constructPartRef);
 
   const {
@@ -23,45 +28,49 @@ export default function ConstructPartController({ constructPartRef }: Props) {
   } = state.context;
 
   return (
-    <Box css={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-      <Box
-        css={{
-          display: 'flex',
-          justifyContent: 'center',
-          position: 'relative',
-          '&::after': {
-            backgroundColor: '$dark',
-            content: '',
-            height: '2px',
-            position: 'absolute',
-            top: '50%',
-            transform: 'translate(0, -1px)',
-            width: '100%',
-          },
-        }}
-      >
-        <MiniController {...state.context} onNotify={send} />
-      </Box>
-      <Label
-        css={{
-          textAlign: 'center',
-          whiteSpace: 'nowrap',
-          py: '$3',
-        }}
-      >
-        <Text
-          as="span"
+    <div ref={ref}>
+      <Box css={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <Box
           css={{
-            display: 'block',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            width: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            position: 'relative',
+            '&::after': {
+              backgroundColor: '$dark',
+              content: '',
+              height: '2px',
+              position: 'absolute',
+              top: '50%',
+              transform: 'translate(0, -1px)',
+              width: '100%',
+            },
           }}
-          size={1}
         >
-          {name}
-        </Text>
-      </Label>
-    </Box>
+          <MiniController {...state.context} onNotify={send} />
+        </Box>
+        <Label
+          css={{
+            textAlign: 'center',
+            whiteSpace: 'nowrap',
+            py: '$3',
+          }}
+        >
+          <Text
+            as="span"
+            css={{
+              display: 'block',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              width: '100%',
+            }}
+            size={1}
+          >
+            {name}
+          </Text>
+        </Label>
+      </Box>
+    </div>
   );
 }
+
+export default memo(forwardRef(ConstructPartController));
