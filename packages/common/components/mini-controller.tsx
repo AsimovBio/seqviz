@@ -13,7 +13,7 @@ type Props = {
   isActive: boolean;
   isFocused: boolean;
   orientation: 'forward' | 'reverse';
-  part: { glyph: string; name: string };
+  part: { part_type: { glyph: string }; name: string };
   onNotify: ({ type: string, value: unknown }) => void;
 };
 
@@ -131,7 +131,10 @@ export default function MiniController({
   isFocused,
   onNotify,
   orientation,
-  part: { glyph, name },
+  part: {
+    name,
+    part_type: { glyph },
+  },
 }: Props) {
   const [isHovering, ref] = useHoverIntent<HTMLDivElement>({ timeout: 200 });
   const handleEvent = ({ currentTarget: { name, value } }) => {

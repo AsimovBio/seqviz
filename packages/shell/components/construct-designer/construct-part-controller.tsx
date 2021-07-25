@@ -41,7 +41,7 @@ function ConstructPartController(
               height: '2px',
               position: 'absolute',
               top: '50%',
-              transform: 'translate(0, -1px)',
+              transform: 'translate(0, -3px)',
               width: '100%',
             },
           }}

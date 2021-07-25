@@ -1,11 +1,11 @@
-import { fireEvent } from '@testing-library/react';
+import { fireEvent, waitFor } from '@testing-library/react';
+import { dashboardMachine } from 'components/dashboard/dashboard-machine';
 import { graphql } from 'msw';
 import { Construct } from 'pages/project/[pid]/construct/[cid]';
 import { construct } from 'test/__mocks__/construct';
 import { project } from 'test/__mocks__/project';
 import { server } from 'test/msw/server';
 import { render, screen } from 'test/utils';
-import { dashboardMachine } from 'pages';
 import { interpret } from 'xstate';
 
 jest.mock('next/router', () => ({
@@ -50,7 +50,9 @@ describe('Construct', () => {
 
     fireEvent.change(inputNode, { target: { value: 'New construct' } });
 
-    expect(await screen.findByText('New construct')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByText('New construct')).toBeInTheDocument();
+    });
   });
 });
 

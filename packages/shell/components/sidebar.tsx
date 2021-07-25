@@ -6,6 +6,9 @@ import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { DashboardContext } from 'pages';
+import { useContext } from 'react';
+import { useCallback } from 'react';
 import { Fragment, useState } from 'react';
 
 const Box: any = dynamic(() => import('common/components/box'));
@@ -17,13 +20,28 @@ const Accordion = dynamic(() => import('common/components/accordion'), {
   ssr: false,
 });
 
-type Props = { projects: unknown[]; onCreate: (type: string) => void };
-
-export default function Sidebar({ projects, onCreate }: Props) {
+export default function Sidebar() {
+  const router = useRouter();
+  const pid = router.query?.pid;
   const [isNavOpen, setNavOpen] = useState(true);
+
   const handleToggleNav = () => {
     setNavOpen(!isNavOpen);
   };
+
+  const {
+    send,
+    state: {
+      context: { projects },
+    },
+  } = useContext(DashboardContext);
+
+  const handleCreate = useCallback(
+    (value: 'construct' | 'project') => {
+      send({ pid, type: 'CREATE', value });
+    },
+    [pid, send]
+  );
 
   const persistedConstructs =
     typeof window !== 'undefined' && localStorage.getItem('recentConstructs');
@@ -99,7 +117,7 @@ export default function Sidebar({ projects, onCreate }: Props) {
                 </Text>
               </Box>
             </Link>
-            <PopoverCreate onCreate={onCreate} projectId={query?.pid} />
+            <PopoverCreate onCreate={handleCreate} projectId={query?.pid} />
           </HiddenWrapper>
           <Button
             aria-label="Toggle sidebar"
@@ -131,24 +149,27 @@ export default function Sidebar({ projects, onCreate }: Props) {
                     </a>
                   </ActiveLink>
                   {isActiveProject &&
-                    constructs?.map(
-                      ({ construct: { id: constructId, name } }) => {
-                        return (
-                          <ActiveLink
-                            href={`/project/${projectId}/construct/${constructId}`}
-                            key={constructId}
-                            passHref
-                          >
-                            <Box as="a" css={{ pl: isNavOpen ? '1.75em' : 0 }}>
-                              <Tooltip content={name} side="right">
-                                <Icon label="Box" />
-                              </Tooltip>
-                              <span className="text">{name}</span>
-                            </Box>
-                          </ActiveLink>
-                        );
+                    constructs?.map(({ construct }) => {
+                      if (!construct) {
+                        return null;
                       }
-                    )}
+
+                      const { id: constructId, name } = construct;
+                      return (
+                        <ActiveLink
+                          href={`/project/${projectId}/construct/${constructId}`}
+                          key={constructId}
+                          passHref
+                        >
+                          <Box as="a" css={{ pl: isNavOpen ? '1.75em' : 0 }}>
+                            <Tooltip content={name} side="right">
+                              <Icon label="Box" />
+                            </Tooltip>
+                            <span className="text">{name}</span>
+                          </Box>
+                        </ActiveLink>
+                      );
+                    })}
                 </Fragment>
               );
             }

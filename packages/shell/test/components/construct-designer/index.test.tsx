@@ -1,19 +1,21 @@
 import ConstructDesigner from 'components/construct-designer';
-import { constructMachine } from 'components/construct-designer/construct-machine';
-import { partLibMachine } from 'components/part-library/part-lib-machine';
+import { dashboardMachine } from 'components/dashboard/dashboard-machine';
 import { DashboardContext } from 'pages';
 import { construct } from 'test/__mocks__/construct';
 import { render, screen } from 'test/utils';
 import { interpret } from 'xstate';
 
 describe('ConstructDesigner', () => {
-  const constructSvc = interpret(constructMachine);
-  const partLibSvc = interpret(partLibMachine);
+  const dashboardSvc = interpret(dashboardMachine);
+  let state;
+  let send;
 
   const renderComponent = () => {
     const DashboardWrapper = ({ children }) => {
       return (
-        <DashboardContext.Provider value={{ constructSvc, partLibSvc }}>
+        <DashboardContext.Provider
+          value={{ state, send, service: dashboardSvc }}
+        >
           {children}
         </DashboardContext.Provider>
       );
@@ -24,16 +26,18 @@ describe('ConstructDesigner', () => {
   };
 
   beforeAll(() => {
-    constructSvc.start();
-    partLibSvc.start();
+    dashboardSvc.start();
+    ({ send, state } = dashboardSvc);
   });
 
   afterAll(() => {
-    constructSvc.stop();
-    partLibSvc.stop();
+    dashboardSvc.stop();
   });
 
   it('renders without errors', async () => {
+    const {
+      children: { constructSvc },
+    } = state;
     const sendSpy = jest.spyOn(constructSvc, 'send');
     renderComponent();
 

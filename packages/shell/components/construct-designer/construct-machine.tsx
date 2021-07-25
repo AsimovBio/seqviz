@@ -13,7 +13,7 @@ export type ConstructContext = {
   constructId: string;
 };
 
-interface ConstructStateSchema {
+export interface ConstructStateSchema {
   context: ConstructContext;
   states: {
     loading: {};
@@ -24,13 +24,15 @@ interface ConstructStateSchema {
 
 export type ConstructEvent = { type: string; [key: string]: any };
 
-const DEFAULT_PART = {
-  glyph:
-    '<svg id="help-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
-  name: 'Untitled',
+export const DEFAULT_PART = {
+  part_type: {
+    glyph:
+      '<svg id="empty" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="20"/></svg>',
+  },
+  name: 'Untitled part',
 };
 
-export const createConstructPart = (props: Partial<Construct_Part>) => ({
+export const createConstructPart = (props?: Partial<Construct_Part>) => ({
   ...props,
   id: uuidv4(),
   isNew: true,

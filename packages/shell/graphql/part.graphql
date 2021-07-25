@@ -1,15 +1,18 @@
 fragment PartFields on part {
+  alias
+  description
   id
   name
-  glyph
-  description
-  alias
   sequence
   sequence_length
+  part_type {
+    glyph
+    name
+  }
 }
 
 query Parts {
-  part(order_by: { created_at: desc }) {
+  part(order_by: { part_type_id: desc }) {
     ...PartFields
   }
 }

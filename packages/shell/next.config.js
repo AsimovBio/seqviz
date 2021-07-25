@@ -38,9 +38,7 @@ module.exports = {
 
     defaultLoaders.babel.options.rootMode = 'upward';
 
-    if (!isServer) {
-      config.output.publicPath = `${process.env.NEXT_PUBLIC_FEDERATED_URL_SHELL}/_next/`;
-    }
+    config.output.publicPath = 'auto';
 
     // Configures ModuleFederation and other Webpack properties
     withModuleFederation(config, options, mfConf);
@@ -50,11 +48,6 @@ module.exports = {
       process: require.resolve('process/browser'),
     };
 
-    return config;
-  },
-  webpackDevMiddleware: (config) => {
-    // Perform customizations to webpack dev middleware config
-    // Important: return the modified config
     return config;
   },
 };

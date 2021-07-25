@@ -27,6 +27,7 @@ module.exports = {
         './components/accordion': './components/accordion',
         './components/box': './components/box',
         './components/button': './components/button',
+        './components/header': './components/header',
         './components/icon': './components/icon',
         './components/form': './components/form',
         './components/mini-controller': './components/mini-controller',
@@ -42,9 +43,8 @@ module.exports = {
 
     defaultLoaders.babel.options.rootMode = 'upward';
 
-    if (!isServer) {
-      config.output.publicPath = `${process.env.NEXT_PUBLIC_FEDERATED_URL_COMMON}/_next/`;
-    }
+    config.output.publicPath = 'auto';
+
     // Configures ModuleFederation and other Webpack properties
     withModuleFederation(config, options, mfConf);
 

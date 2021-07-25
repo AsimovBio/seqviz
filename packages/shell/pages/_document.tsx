@@ -16,14 +16,14 @@ export default class CustomDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <script
-            src={`${process.env.NEXT_PUBLIC_FEDERATED_URL_COMMON}/_next/static/runtime/remoteEntry.js`}
-          />
           <StitchesTag />
         </Head>
         <body>
           <Main />
           <NextScript />
+          <script
+            src={`${process.env.NEXT_PUBLIC_FEDERATED_URL_COMMON}/_next/static/runtime/remoteEntry.js`}
+          />
         </body>
       </Html>
     );

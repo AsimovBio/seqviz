@@ -10,6 +10,7 @@ import type {
   OnDragEndResponder,
 } from 'react-beautiful-dnd';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { createConstructPart } from './construct-machine';
 
 import ConstructPartController from './construct-part-controller';
 
@@ -21,9 +22,14 @@ export default function ConstructDesigner({
   construct_parts: initialConstructParts,
   id: constructId,
 }: Props) {
-  const { constructSvc } = useContext(DashboardContext);
+  const context = useContext(DashboardContext);
+  const {
+    state: {
+      children: { constructSvc },
+    },
+  } = context;
 
-  const [state, send] = useActor(constructSvc);
+  const [state, send] = useActor<any, any>(constructSvc);
 
   const { constructParts } = state?.context;
   /**
@@ -43,9 +49,13 @@ export default function ConstructDesigner({
   }, [newPartRef]);
 
   useEffect(() => {
+    const constructParts = initialConstructParts?.length
+      ? initialConstructParts
+      : [createConstructPart({ construct_id: constructId, index: 0 })];
+
     send({
       type: 'BOOTSTRAP',
-      constructParts: initialConstructParts,
+      constructParts,
       constructId,
     });
   }, [constructId, initialConstructParts, send]);

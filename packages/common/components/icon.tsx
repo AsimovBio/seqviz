@@ -1,6 +1,7 @@
 import { Root } from '@radix-ui/react-accessible-icon';
 import * as icons from '@radix-ui/react-icons';
 import type { ReactNode } from 'react';
+
 import { styled } from '../stitches.config';
 
 const iconsMap = Object.fromEntries(Object.entries(icons));

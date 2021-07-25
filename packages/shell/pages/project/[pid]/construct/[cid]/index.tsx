@@ -20,7 +20,7 @@ type Props = {
   data?: ConstructQuery;
 } & WithPageAuthRequiredProps;
 
-const Box: any = dynamic(() => import('common/components/box'));
+const Header: any = dynamic(() => import('common/components/header'));
 const Icon = dynamic(() => import('common/components/icon'));
 
 const Input = dynamic(async () => {
@@ -120,26 +120,9 @@ export function Construct({ data: initialData }: Props) {
     [construct?.id, pid]
   );
 
-  if (!construct) {
-    return null;
-  }
-
   return (
     <Dashboard key={cid as string}>
-      <Box
-        css={{
-          alignItems: 'center',
-          background: '$overlay',
-          borderColor: '$highlight',
-          borderStyle: 'solid',
-          borderWidth: '0 0 $space$1 0',
-          display: 'flex',
-          px: '$3',
-          py: '$2',
-          width: '100%',
-          svg: { mr: '$2', path: { fill: '$primary' } },
-        }}
-      >
+      <Header as="header">
         <Label htmlFor="construct-name">
           <Icon label="Circle" />
         </Label>
@@ -150,7 +133,7 @@ export function Construct({ data: initialData }: Props) {
           name="name"
           onChange={debounce(handleChange, 500)}
         />
-      </Box>
+      </Header>
       {construct && (
         <ConstructDesigner
           construct_parts={construct.construct_parts}

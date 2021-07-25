@@ -20,7 +20,7 @@ type Props = {
   children?: ReactNode;
 };
 
-const Box: any = dynamic(() => import('common/components/box'));
+const Header: any = dynamic(() => import('common/components/header'));
 const Icon = dynamic(() => import('common/components/icon'));
 
 const Input = dynamic(async () => {
@@ -91,20 +91,7 @@ export function Project({ data: initialData }: Props) {
 
   return (
     <Dashboard key={pid as string}>
-      <Box
-        css={{
-          alignItems: 'center',
-          background: '$overlay',
-          borderColor: '$highlight',
-          borderStyle: 'solid',
-          borderWidth: '0 0 $space$1 0',
-          display: 'flex',
-          px: '$3',
-          py: '$2',
-          width: '100%',
-          svg: { mr: '$2', path: { fill: '$primary' } },
-        }}
-      >
+      <Header as="header">
         <Label htmlFor="project-name">
           <Icon label="Circle" />
         </Label>
@@ -115,7 +102,7 @@ export function Project({ data: initialData }: Props) {
           name="name"
           onChange={debounce(handleChange, 500)}
         />
-      </Box>
+      </Header>
       <Text css={{ px: '$3', py: '$2' }} uppercase>
         Create or select a construct
       </Text>

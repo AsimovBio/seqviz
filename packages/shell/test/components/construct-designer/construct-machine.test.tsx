@@ -56,7 +56,7 @@ describe('constructMachine', () => {
           expect(constructParts[0]).toEqual(
             expect.objectContaining({
               index: 0,
-              part: expect.objectContaining({ name: 'Untitled' }),
+              part: expect.objectContaining({ name: 'Untitled part' }),
             })
           );
         }

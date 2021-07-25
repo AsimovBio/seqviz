@@ -1,12 +1,9 @@
 import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { useMachine } from '@xstate/react';
-import type { ConstructEvent } from 'components/construct-designer/construct-machine';
-import { constructMachine } from 'components/construct-designer/construct-machine';
-import Header from 'components/header';
+import { dashboardMachine } from 'components/dashboard/dashboard-machine';
+import { default as PageHeader } from 'components/header';
 import Layout from 'components/layout';
 import PartsLibrary from 'components/part-library';
-import type { PartLibEvent } from 'components/part-library/part-lib-machine';
-import { partLibMachine } from 'components/part-library/part-lib-machine';
 import Sidebar from 'components/sidebar';
 import type { PartsQuery, ProjectsQuery } from 'models/graphql';
 import { PartsDocument } from 'models/graphql';
@@ -16,14 +13,12 @@ import type { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import type { ReactNode } from 'react';
+import { useEffect } from 'react';
 import { createContext } from 'react';
-import { useCallback } from 'react';
-import { mutate } from 'swr';
 import requestUtil, { sdk } from 'utils/request';
-import { createMachine, forwardTo } from 'xstate';
-import type { ActorRef } from 'xstate/lib/types';
 
 const Box: any = dynamic(() => import('common/components/box'));
+const Header: any = dynamic(() => import('common/components/header'));
 const Text = dynamic(() => import('common/components/text'));
 
 type Props = {
@@ -32,63 +27,23 @@ type Props = {
 };
 
 type ContextProps = {
-  constructSvc: ActorRef<ConstructEvent>;
-  partLibSvc: ActorRef<PartLibEvent>;
+  send: any;
+  service: any;
+  state: any;
 };
-
-export const dashboardMachine = createMachine(
-  {
-    id: 'dashboard',
-    context: {},
-    initial: 'ready',
-    states: {
-      ready: {
-        invoke: [
-          {
-            id: 'partLibSvc',
-            src: 'partLibMachine',
-          },
-          {
-            id: 'constructSvc',
-            src: 'constructMachine',
-          },
-        ],
-        on: {
-          'PARTLIB.ENGAGE': {
-            actions: forwardTo('partLibSvc'),
-          },
-          'PARTLIB.SELECT': { actions: forwardTo('constructSvc') },
-        },
-      },
-    },
-  },
-  { services: { partLibMachine, constructMachine } }
-);
 
 export const DashboardContext = createContext<ContextProps | undefined>(
   undefined
 );
 
-function DashboardProvider({ children }) {
-  const [state] = useMachine(dashboardMachine, {
-    devTools: process.env.NODE_ENV === 'development',
-  });
-
-  const {
-    children: { constructSvc, partLibSvc },
-  } = state;
-
-  return (
-    <DashboardContext.Provider value={{ constructSvc, partLibSvc }}>
-      {children}
-    </DashboardContext.Provider>
-  );
-}
-
 export function Dashboard({ children, data: initialData }: Props) {
-  const { error, isLoading } = useUser();
   const router = useRouter();
   const pid = router.query?.pid;
+  const [state, send, service] = useMachine<any, any>(dashboardMachine, {
+    devTools: process.env.NODE_ENV === 'development',
+  });
+  const { newConstruct, newProject } = state.context;
+  const { error, isLoading } = useUser();
 
   const { data, error: err } = sdk.useProjects('Projects', null, {
     initialData,
@@ -100,72 +55,35 @@ export function Dashboard({ children, data: initialData }: Props) {
 
   const { project: projects } = data ?? {};
 
-  const handleCreate = useCallback(
-    (type) => {
-      switch (type) {
-        case 'project':
-          mutate('Projects', async (data) => {
-            try {
-              const { insert_project_one: newProject } =
-                await sdk.CreateProject({
-                  input: { name: 'New project', description: '' },
-                });
+  useEffect(() => {
+    send('BOOTSTRAP', {
+      projects,
+    });
+  }, [projects, send]);
 
-              data.project.push(newProject);
-            } catch (err) {
-              console.error(err);
-            }
-            return data;
-          });
+  useEffect(() => {
+    let url;
 
-          break;
-        case 'construct':
-          if (!pid) break;
-          mutate('Projects', async (data) => {
-            try {
-              const { project: projects } = data;
+    if (!newProject && !newConstruct) {
+      return;
+    }
 
-              const { insert_construct_one: construct } =
-                await sdk.CreateConstruct({
-                  input: { name: 'New construct' },
-                });
+    if (newProject) {
+      url = `/project/${newProject.id}`;
+    } else if (newConstruct) {
+      url = `/project/${pid}/construct/${newConstruct.id}`;
+    }
 
-              await sdk.CreateProjectConstruct({
-                input: { project_id: pid, construct_id: construct.id },
-              });
+    router.push(url);
+  }, [newConstruct, newProject, pid, router]);
 
-              const activeProject = projects.find(({ id }) => id === pid);
-
-              if (activeProject) {
-                activeProject.project_constructs.push({ construct });
-              }
-            } catch (err) {
-              console.error(err);
-            }
-
-            return data;
-          });
-          break;
-        default:
-          break;
-      }
-    },
-    [pid]
-  );
-
-  return (
-    <DashboardProvider>
+  return isLoading ? (
+    <p>Loading…</p>
+  ) : (
+    <DashboardContext.Provider value={{ state, send, service }}>
       <Layout>
-        {isLoading && <p>Loading...</p>}
-
-        {error && (
-          <>
-            <h4>Error</h4>
-            <pre>{error.message}</pre>
-          </>
-        )}
-        <Sidebar onCreate={handleCreate} projects={projects} />
-        <Header />
+        <Sidebar />
+        <PageHeader />
         <Box
           as="main"
           css={{
@@ -176,7 +94,7 @@ export function Dashboard({ children, data: initialData }: Props) {
             gridGap: '$1',
             gridTemplateAreas:
               '"construct detail" \
-            "library detail"',
+              "library detail"',
             gridTemplateColumns: '1.5fr 1fr',
             gridTemplateRows: 'max-content auto',
             justifyContent: 'stretch',
@@ -195,28 +113,26 @@ export function Dashboard({ children, data: initialData }: Props) {
           </Box>
           <Box
             css={{
-              backgroundColor: '$overlay',
               gridArea: 'detail',
-              px: '$3',
-              py: '$2',
             }}
           >
-            <Text>Parts list</Text>
+            <Header as="header">
+              <Text>Parts list</Text>
+            </Header>
           </Box>
           <Box
             css={{
-              backgroundColor: '$overlay',
               gridArea: 'library',
-              px: '$3',
-              py: '$2',
             }}
           >
-            <Text>Parts library</Text>
+            <Header as="header">
+              <Text>Parts library</Text>
+            </Header>
             <PartsLibrary initialData={initialData} />
           </Box>
         </Box>
       </Layout>
-    </DashboardProvider>
+    </DashboardContext.Provider>
   );
 }
 
