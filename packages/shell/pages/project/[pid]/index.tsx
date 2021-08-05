@@ -13,6 +13,7 @@ import type { ReactNode } from 'react';
 import { useCallback } from 'react';
 import { mutate } from 'swr';
 import { debounce } from 'ts-debounce';
+import { getModule } from 'utils/import';
 import requestUtil, { sdk } from 'utils/request';
 
 type Props = {
@@ -20,20 +21,25 @@ type Props = {
   children?: ReactNode;
 };
 
-const Header: any = dynamic(() => import('common/components/header'));
-const Icon = dynamic(() => import('common/components/icon'));
+const Header: any = dynamic(getModule('./components/header'), { ssr: false });
+const Text: any = dynamic(getModule('./components/text'), { ssr: false });
+const Icon: any = dynamic(getModule('./components/icon'), { ssr: false });
 
-const Input = dynamic(async () => {
-  const { Input } = await import('common/components/form');
-  return Input;
-});
+const Input: any = dynamic(
+  async () => {
+    const mod = await getModule('./components/form');
+    return mod.Input;
+  },
+  { ssr: false }
+);
 
-const Label = dynamic(async () => {
-  const { Label } = await import('common/components/form');
-  return Label;
-});
-
-const Text: any = dynamic(() => import('common/components/text'));
+const Label: any = dynamic(
+  async () => {
+    const mod = await getModule('./components/form');
+    return mod.Label;
+  },
+  { ssr: false }
+);
 
 export function Project({ data: initialData }: Props) {
   const router = useRouter();
@@ -90,7 +96,7 @@ export function Project({ data: initialData }: Props) {
   );
 
   return (
-    <Dashboard key={pid as string}>
+    <Dashboard>
       <Header as="header">
         <Label htmlFor="project-name">
           <Icon label="Circle" />

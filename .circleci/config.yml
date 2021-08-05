@@ -34,7 +34,7 @@ jobs:
           paths:
             - .yarn/cache
 
-      - run: yarn test --bail --coverage --runInBand --silent --passWithNoTests
+      - run: yarn test --bail --coverage --runInBand --silent --passWithNoTests --detectOpenHandles --detectLeaks --testTimeout=7000
   push: &push
     parameters:
       tag:

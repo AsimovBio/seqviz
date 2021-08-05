@@ -140,8 +140,8 @@ export default function Sidebar() {
               const isActiveProject = query?.pid === projectId;
               return (
                 <Fragment key={projectId}>
-                  <ActiveLink href={`/project/${projectId}`}>
-                    <a href={`/project/${projectId}`}>
+                  <ActiveLink href={`/project/${projectId}`} passHref>
+                    <a>
                       <Tooltip content={name} side="right">
                         <Icon label="Circle" />
                       </Tooltip>

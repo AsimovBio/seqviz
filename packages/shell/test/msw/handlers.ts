@@ -42,7 +42,9 @@ export const handlers = [
   graphql.mutation('InsertConstructPart', (req, res, ctx) => {
     return res(
       ctx.data({
-        returning: construct,
+        insert_construct_part: {
+          returning: construct,
+        },
       })
     );
   }),

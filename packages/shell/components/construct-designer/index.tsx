@@ -10,11 +10,12 @@ import type {
   OnDragEndResponder,
 } from 'react-beautiful-dnd';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { createConstructPart } from './construct-machine';
+import { getModule } from 'utils/import';
 
+import { createConstructPart } from './construct-machine';
 import ConstructPartController from './construct-part-controller';
 
-const Box = dynamic(() => import('common/components/box'));
+const Box: any = dynamic(getModule('./components/box'), { ssr: false });
 
 type Props = Partial<Construct>;
 

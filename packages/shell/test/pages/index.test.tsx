@@ -3,6 +3,8 @@ import { project } from 'test/__mocks__/project';
 import { Dashboard } from '../../pages';
 import { render, screen } from '../utils';
 
+jest.mock('utils/import');
+
 jest.mock('next/router', () => ({
   useRouter() {
     return {

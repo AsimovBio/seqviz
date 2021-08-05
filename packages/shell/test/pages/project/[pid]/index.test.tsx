@@ -6,6 +6,8 @@ import { project } from 'test/__mocks__/project';
 import { server } from 'test/msw/server';
 import { render, screen } from 'test/utils';
 
+jest.mock('utils/import');
+
 jest.mock('next/router', () => ({
   useRouter() {
     return {
@@ -16,7 +18,8 @@ jest.mock('next/router', () => ({
 }));
 
 describe('Project', () => {
-  const renderComponent = () => render(<Project />);
+  const renderComponent = () =>
+    render(<Project data={{ project: [project] }} />);
 
   it('renders without errors', async () => {
     renderComponent();

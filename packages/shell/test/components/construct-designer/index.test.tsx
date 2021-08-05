@@ -5,6 +5,8 @@ import { construct } from 'test/__mocks__/construct';
 import { render, screen } from 'test/utils';
 import { interpret } from 'xstate';
 
+jest.mock('utils/import');
+
 describe('ConstructDesigner', () => {
   const dashboardSvc = interpret(dashboardMachine);
   let state;

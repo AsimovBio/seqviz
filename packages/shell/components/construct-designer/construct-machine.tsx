@@ -99,10 +99,12 @@ export const constructMachine = createMachine<
           constructParts.forEach(({ ref }) =>
             ref.send('CHANGE', { isNew: false })
           );
+
           const newPart = createConstructPart({
             construct_id: constructId,
             index,
           });
+
           const ref = spawn(createPartMachine(newPart), {
             name: `constructPart-${newPart.id}`,
           });

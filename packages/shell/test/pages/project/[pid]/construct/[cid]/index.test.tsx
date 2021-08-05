@@ -8,6 +8,8 @@ import { server } from 'test/msw/server';
 import { render, screen } from 'test/utils';
 import { interpret } from 'xstate';
 
+jest.mock('utils/import');
+
 jest.mock('next/router', () => ({
   useRouter() {
     return {

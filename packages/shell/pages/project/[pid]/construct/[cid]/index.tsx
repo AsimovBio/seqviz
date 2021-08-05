@@ -14,24 +14,31 @@ import { Dashboard } from 'pages';
 import { useCallback, useEffect } from 'react';
 import { mutate } from 'swr';
 import { debounce } from 'ts-debounce';
+import { getModule } from 'utils/import';
 import requestUtil, { sdk } from 'utils/request';
 
 type Props = {
   data?: ConstructQuery;
 } & WithPageAuthRequiredProps;
 
-const Header: any = dynamic(() => import('common/components/header'));
-const Icon = dynamic(() => import('common/components/icon'));
+const Header: any = dynamic(getModule('./components/header'), { ssr: false });
+const Icon: any = dynamic(getModule('./components/icon'), { ssr: false });
 
-const Input = dynamic(async () => {
-  const { Input } = await import('common/components/form');
-  return Input;
-});
+const Input: any = dynamic(
+  async () => {
+    const mod = await getModule('./components/form');
+    return mod.Input;
+  },
+  { ssr: false }
+);
 
-const Label = dynamic(async () => {
-  const { Label } = await import('common/components/form');
-  return Label;
-});
+const Label: any = dynamic(
+  async () => {
+    const mod = await getModule('./components/form');
+    return mod.Label;
+  },
+  { ssr: false }
+);
 
 /**
  * Drag'n'drop with react-beautiful-dnd breaks with SSR in Next.js v11, so we cannot use SSR for ConstructDesigner for now.
@@ -39,7 +46,7 @@ const Label = dynamic(async () => {
  * https://github.com/atlassian/react-beautiful-dnd/blob/master/docs/api/reset-server-context.md
  */
 const ConstructDesigner = dynamic(
-  async () => import('components/construct-designer'),
+  () => import('components/construct-designer'),
   { ssr: false }
 );
 
@@ -121,7 +128,7 @@ export function Construct({ data: initialData }: Props) {
   );
 
   return (
-    <Dashboard key={cid as string}>
+    <Dashboard>
       <Header as="header">
         <Label htmlFor="construct-name">
           <Icon label="Circle" />

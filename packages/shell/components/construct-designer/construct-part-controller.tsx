@@ -2,18 +2,22 @@ import { useActor } from '@xstate/react';
 import dynamic from 'next/dynamic';
 import type { Ref } from 'react';
 import React, { forwardRef, memo } from 'react';
+import { getModule } from 'utils/import';
 import type { ActorRef } from 'xstate/lib/types';
 
-const MiniController = dynamic(
-  () => import('common/components/mini-controller'),
+const MiniController = dynamic(getModule('./components/mini-controller'), {
+  ssr: false,
+});
+const Box: any = dynamic(getModule('./components/box'), { ssr: false });
+const Text: any = dynamic(getModule('./components/text'), { ssr: false });
+
+const Label: any = dynamic(
+  async () => {
+    const mod = await getModule('./components/form');
+    return mod.Label;
+  },
   { ssr: false }
 );
-const Box = dynamic(() => import('common/components/box'));
-const Text: any = dynamic(() => import('common/components/text'));
-const Label = dynamic(async () => {
-  const { Label } = await import('common/components/form');
-  return Label;
-});
 
 type Props = { constructPartRef: ActorRef<any, any> };
 

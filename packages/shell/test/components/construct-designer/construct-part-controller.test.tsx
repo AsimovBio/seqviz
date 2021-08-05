@@ -5,6 +5,8 @@ import { constructPart } from 'test/__mocks__/construct';
 import { render, screen } from 'test/utils';
 import { interpret } from 'xstate';
 
+jest.mock('utils/import');
+
 jest.mock('xstate', () => {
   const originalModule = jest.requireActual('xstate');
   return {

@@ -7,7 +7,6 @@ import { Children, cloneElement } from 'react';
 type Props = {
   activeClassName?: string;
   children: ReactElement;
-  href: string;
 } & LinkProps;
 
 export default function ActiveLink({
@@ -19,7 +18,7 @@ export default function ActiveLink({
   const { asPath } = useRouter();
   const child = Children.only(children);
   const childClassName = child.props.className || '';
-  const isActive = asPath?.startsWith(href);
+  const isActive = asPath?.startsWith(href as string);
 
   const className = isActive
     ? `${childClassName} ${activeClassName}`.trim()
