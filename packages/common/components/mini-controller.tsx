@@ -205,6 +205,7 @@ export default function MiniController({
           active={isActive}
           color="secondary"
           css={{ borderWidth: '0 1px' }}
+          data-testid="add-left"
           name="ADD"
           onClick={handleEvent}
           type="button"
@@ -217,6 +218,7 @@ export default function MiniController({
           active={isActive}
           color="secondary"
           css={{ borderWidth: '0 1px' }}
+          data-testid="add-right"
           name="ADD"
           onClick={handleEvent}
           type="button"

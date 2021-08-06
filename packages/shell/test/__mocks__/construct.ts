@@ -1,17 +1,21 @@
-import { part } from './parts';
+import faker from 'faker';
 
-export const constructPart = {
-  construct_id: '00000000-0000-0000-0000-000000000000',
-  id: '00000000-0000-0000-0000-000000000000',
-  index: 0,
-  name: 'Test construct part',
+import { parts } from './parts';
+
+const constructParts = Array.from({ length: 10 }, (element, index) => ({
+  construct_id: faker.datatype.uuid(),
+  id: faker.datatype.uuid(),
+  index,
+  name: `Test construct part ${index + 1}`,
   orientation: 'forward',
-  part,
-  part_id: part.id,
-};
+  part: parts[index],
+  part_id: parts[index].id,
+}));
+
+export const constructPart = constructParts[0];
 
 export const construct = {
-  id: '00000000-0000-0000-0000-000000000000',
+  id: faker.datatype.uuid(),
   name: 'Test construct',
-  construct_parts: [constructPart],
+  construct_parts: constructParts,
 };

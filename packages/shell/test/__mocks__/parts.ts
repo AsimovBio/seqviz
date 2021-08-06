@@ -1,9 +1,13 @@
-export const part = {
-  id: '00000000-0000-0000-0000-000000000000',
-  name: 'Test part',
+import faker from 'faker';
+
+export const parts = Array.from({ length: 10 }, (element, index) => ({
+  id: faker.datatype.uuid(),
+  name: `Test part ${index + 1}`,
   sequence: 'GACT',
   part_type: {
     name: 'Test part type',
     glyph: '<svg><path/></svg>',
   },
-};
+}));
+
+export const part = parts[0];

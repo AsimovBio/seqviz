@@ -116,6 +116,7 @@ __metadata:
     eslint-plugin-react: latest
     eslint-plugin-react-hooks: latest
     eslint-plugin-simple-import-sort: ^7.0.0
+    faker: ^5.5.3
     graphql: ^15.5.0
     graphql-request: ^3.4.0
     identity-obj-proxy: ^3.0.0
@@ -10755,6 +10756,13 @@ __metadata:
   version: 1.0.0
   resolution: "extract-stack@npm:1.0.0"
   checksum: 36b40128ee2cafa12ba232ca79d08e3cd6e29b05edb0e0ab7ad446c3dda7a22abe90bb95644ded38847f0e6ea28388cc5a3008cc33057c5895efee7dfb4e13d2
+  languageName: node
+  linkType: hard
+
+"faker@npm:^5.5.3":
+  version: 5.5.3
+  resolution: "faker@npm:5.5.3"
+  checksum: 684fd64c8d3897e54248f95b4f6319f75d97691b8500cd13adf4af2c28f9204f766c1d1aaa6b41338f0beaaa87256c3132f8708a1a8f189d122b92f6b98081c3
   languageName: node
   linkType: hard
 

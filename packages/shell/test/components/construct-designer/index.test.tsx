@@ -1,3 +1,4 @@
+import { fireEvent, getByTestId } from '@testing-library/react';
 import ConstructDesigner from 'components/construct-designer';
 import { dashboardMachine } from 'components/dashboard/dashboard-machine';
 import { DashboardContext } from 'pages';
@@ -27,6 +28,12 @@ describe('ConstructDesigner', () => {
     });
   };
 
+  const clickPart = (part, triggerId) => {
+    const trigger = getByTestId(part, triggerId);
+    expect(trigger).toBeInTheDocument();
+    fireEvent.click(trigger);
+  };
+
   beforeAll(() => {
     dashboardSvc.start();
     ({ send, state } = dashboardSvc);
@@ -43,12 +50,60 @@ describe('ConstructDesigner', () => {
     const sendSpy = jest.spyOn(constructSvc, 'send');
     renderComponent();
 
-    expect(await screen.findByText('Test part')).toBeInTheDocument();
+    expect(
+      await screen.findAllByTestId('construct-part-container')
+    ).toHaveLength(construct.construct_parts.length);
 
     expect(sendSpy).toHaveBeenCalledWith({
       type: 'BOOTSTRAP',
       constructParts: construct.construct_parts,
       constructId: construct.id,
     });
+  });
+
+  it('handles activation of part when swap mode is clicked', () => {
+    renderComponent();
+
+    const partControllers = screen.getAllByTestId('construct-part-container');
+    const [firstPartController, secondPartController] = partControllers;
+
+    clickPart(firstPartController, 'toggle-active');
+
+    expect(firstPartController.classList.contains('hovered')).toBe(true);
+
+    clickPart(secondPartController, 'toggle-active');
+
+    expect(firstPartController.classList.contains('hovered')).toBe(false);
+    expect(secondPartController.classList.contains('hovered')).toBe(true);
+    expect(
+      partControllers.filter((controller) =>
+        controller.classList.contains('hovered')
+      )
+    ).toHaveLength(1);
+  });
+
+  it('handles activation of newly added part', () => {
+    renderComponent();
+
+    const [firstPartController] = screen.getAllByTestId(
+      'construct-part-container'
+    );
+
+    clickPart(firstPartController, 'add-right');
+
+    expect(firstPartController.classList.contains('hovered')).toBe(false);
+
+    const updatedPartControllers = screen.getAllByTestId(
+      'construct-part-container'
+    );
+
+    const [_, newPartController] = updatedPartControllers;
+
+    expect(newPartController.classList.contains('hovered')).toBe(true);
+    expect(
+      updatedPartControllers.filter((controller) =>
+        controller.classList.contains('hovered')
+      )
+    ).toHaveLength(1);
   });
 });

@@ -85,9 +85,12 @@ export const constructMachine = createMachine<
         cond: 'indexIsWithinBounds',
       },
       'PARTLIB.ENGAGE': {
-        actions: sendParent(() => ({
-          type: 'PARTLIB.ENGAGE',
-        })),
+        actions: [
+          'activate',
+          sendParent(() => ({
+            type: 'PARTLIB.ENGAGE',
+          })),
+        ],
       },
       'PARTLIB.SELECT': { actions: ['swap', 'commit', 'persist'] },
     },
@@ -96,10 +99,6 @@ export const constructMachine = createMachine<
     actions: {
       add: assign({
         constructParts: ({ constructId, constructParts }, { index }) => {
-          constructParts.forEach(({ ref }) =>
-            ref.send('CHANGE', { isNew: false })
-          );
-
           const newPart = createConstructPart({
             construct_id: constructId,
             index,
@@ -138,6 +137,7 @@ export const constructMachine = createMachine<
 
         activeConstructPart?.ref.send('CHANGE', {
           isActive: !isActive,
+          isNew: false,
         });
       },
       commit: assign({

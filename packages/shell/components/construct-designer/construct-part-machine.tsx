@@ -49,7 +49,7 @@ export const createPartMachine = (constructPart) => {
         },
         DELETE: 'deleted',
         ENGAGE: {
-          actions: [assign({ isActive: true }) as any, 'engage'],
+          actions: 'engage',
           target: 'editing',
         },
         FLIP: {
@@ -120,8 +120,9 @@ export const createPartMachine = (constructPart) => {
           type: 'CONSTRUCTPART.DELETE',
           id,
         })),
-        engage: sendParent(() => ({
+        engage: sendParent(({ id }) => ({
           type: 'PARTLIB.ENGAGE',
+          id,
         })),
         move: sendParent(({ id }, { value: index }) => ({
           type: 'CONSTRUCTPART.MOVE',
