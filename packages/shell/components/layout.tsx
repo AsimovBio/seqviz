@@ -45,7 +45,7 @@ export default function Layout({ children }: Props) {
             "sidebar footer"',
           gridGap: '$1',
           p: '$1',
-          minHeight: '100vh',
+          height: '100vh',
           '> *': {
             backgroundColor: '$overlay',
           },

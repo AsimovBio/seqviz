@@ -14,6 +14,7 @@ import Icon from './icon';
 
 type Props = {
   children: ReactNode;
+  headerContent?: ReactNode;
   icon?: string;
   isChevronShown: boolean;
   title: string;
@@ -21,37 +22,59 @@ type Props = {
 
 export const StyledAccordion = styled(Root, {
   backgroundColor: '$background',
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'column',
   marginTop: '$1',
 });
 
 export const StyledItem = styled(Item, {
   color: 'inherit',
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'column',
   textDecoration: 'none',
 });
 
 export const StyledHeader = styled(Header, {
-  backgroundColor: '$background',
-  display: 'flex',
-  justifyContent: 'space-between',
-  margin: 0,
-});
-
-export const StyledTrigger = styled(Trigger, {
+  alignItems: 'center',
   backgroundColor: '$overlay',
-  border: 'none',
   color: 'inherit',
   display: 'flex',
-  flex: 1,
-  fontSize: '$2',
+  fontSize: '$0',
   fontWeight: '$bold',
   justifyContent: 'space-between',
-  px: 0,
-  py: '$2',
+  margin: 0,
   textAlign: 'left',
   textTransform: 'uppercase',
   '&[aria-expanded="true"] > svg:last-of-type': {
     transform: 'rotate(180deg)',
   },
+  px: 0,
+  py: '$2',
+
+  '.text': {
+    marginLeft: '1em',
+  },
+
+  variants: {
+    withIcon: {
+      true: {
+        '.text': {
+          marginLeft: 'unset',
+        },
+      },
+    },
+  },
+});
+
+export const StyledTrigger = styled(Trigger, {
+  backgroundColor: '$overlay',
+  border: 'none',
+  cursor: 'pointer',
+  display: 'flex',
+  flex: 1,
+  justifyContent: 'space-between',
 });
 
 const StyledChevron = styled(ChevronDownIcon, {
@@ -63,11 +86,15 @@ const StyledChevron = styled(ChevronDownIcon, {
 });
 
 export const StyledContent = styled(Content, {
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'column',
   a: {
     alignItems: 'center',
     backgroundColor: '$overlay',
     color: 'inherit',
     display: 'flex',
+    height: '1.5em',
     mt: '$1',
     py: '$1',
     textDecoration: 'none',
@@ -87,12 +114,14 @@ export const StyledContent = styled(Content, {
 export const StyledDiv = styled('div', {
   alignItems: 'center',
   display: 'flex',
+  justifyContent: 'space-between',
   width: '100%',
-  svg: { flex: '0 2.75em', path: { fill: '$primary' } },
+  '> svg': { flex: '0 2.75em', path: { fill: '$primary' } },
 });
 
 export default function Accordion({
   children,
+  headerContent,
   icon,
   isChevronShown = true,
   type = 'single',
@@ -102,12 +131,13 @@ export default function Accordion({
   return (
     <StyledAccordion type={type} {...props}>
       <StyledItem value={title}>
-        <StyledHeader>
+        <StyledHeader withIcon={!!icon}>
+          <StyledDiv>
+            {icon && <Icon label={icon} />}
+            <span className="text">{title}</span>
+            {headerContent}
+          </StyledDiv>
           <StyledTrigger>
-            <StyledDiv>
-              {icon && <Icon label={icon} />}
-              <span className="text">{title}</span>
-            </StyledDiv>
             {isChevronShown && <StyledChevron aria-hidden />}
           </StyledTrigger>
         </StyledHeader>

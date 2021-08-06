@@ -54,11 +54,13 @@ export const { css, getCssString, global, keyframes, styled, theme } =
         dark: '#060606',
         highlight: '#F0F0F0',
         muted: '#e6e6e6',
+        mutedText: '#9a9a9a',
         shadow: '#999',
         overlay: '#FFF',
         primary: '#ff7017',
         secondary: '#b017c6',
         tertiary: '#6d08f6',
+        quaternary: '#6061FF',
         text: '#383838',
       },
       shadows: {

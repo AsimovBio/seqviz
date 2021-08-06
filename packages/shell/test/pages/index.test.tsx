@@ -20,6 +20,5 @@ describe('Dashboard', () => {
     render(<Dashboard>{children}</Dashboard>);
 
     expect(await screen.findByText('children')).toBeInTheDocument();
-    expect(await screen.findByText('Test project')).toBeInTheDocument();
   });
 });

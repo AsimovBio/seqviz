@@ -1,13 +1,15 @@
 import { useUser } from '@auth0/nextjs-auth0';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import type { ReactNode } from 'react';
 
 import AccountPopover from './account-popover';
 
 const Box: any = dynamic(() => import('common/components/box'));
-const Text: any = dynamic(() => import('common/components/text'));
 
-export default function Header() {
+type Props = { children?: ReactNode };
+
+export default function PageHeader({ children }: Props) {
   const { user } = useUser();
 
   return (
@@ -17,13 +19,11 @@ export default function Header() {
         alignItems: 'center',
         display: 'flex',
         gridArea: 'header',
-        justifyContent: 'space-between',
+        justifyContent: !!children ? 'space-between' : 'flex-end',
         px: '$3',
       }}
     >
-      <Text as="h2" font="heading" uppercase>
-        Design
-      </Text>
+      {children}
       {user ? (
         <AccountPopover user={user} />
       ) : (

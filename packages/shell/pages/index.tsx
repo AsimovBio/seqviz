@@ -1,9 +1,9 @@
 import { useUser, withPageAuthRequired } from '@auth0/nextjs-auth0';
 import { useMachine } from '@xstate/react';
 import { dashboardMachine } from 'components/dashboard/dashboard-machine';
-import { default as PageHeader } from 'components/header';
 import Layout from 'components/layout';
 import PartsLibrary from 'components/part-library';
+import ProjectPageHeader from 'components/project-page-header';
 import Sidebar from 'components/sidebar';
 import type { PartsQuery, ProjectsQuery } from 'models/graphql';
 import { PartsDocument } from 'models/graphql';
@@ -19,6 +19,9 @@ import requestUtil, { sdk } from 'utils/request';
 
 const Box: any = dynamic(() => import('common/components/box'));
 const Header: any = dynamic(() => import('common/components/header'));
+const ScrollContainer: any = dynamic(
+  () => import('common/components/scroll-container')
+);
 const Text = dynamic(() => import('common/components/text'));
 
 type Props = {
@@ -45,11 +48,24 @@ export function Dashboard({ children, data: initialData }: Props) {
   const { newConstruct, newProject } = state.context;
   const { error, isLoading } = useUser();
 
+  const { data: projectData, error: projectDataError } = sdk.useProject(
+    pid ? `Project/${pid}` : null,
+    { id: pid }
+  );
+
+  let currentProject;
+
+  if (projectData) {
+    ({
+      project: [currentProject],
+    } = projectData);
+  }
+
   const { data, error: err } = sdk.useProjects('Projects', null, {
     initialData,
   });
 
-  if (error || err) {
+  if (error || err || projectDataError) {
     console.error(error || err);
   }
 
@@ -83,7 +99,7 @@ export function Dashboard({ children, data: initialData }: Props) {
     <DashboardContext.Provider value={{ state, send, service }}>
       <Layout>
         <Sidebar />
-        <PageHeader />
+        <ProjectPageHeader currentProject={currentProject} />
         <Box
           as="main"
           css={{
@@ -92,11 +108,10 @@ export function Dashboard({ children, data: initialData }: Props) {
             flex: '1 1 auto',
             gridArea: 'main',
             gridGap: '$1',
-            gridTemplateAreas:
-              '"construct detail" \
-              "library detail"',
-            gridTemplateColumns: '1.5fr 1fr',
-            gridTemplateRows: 'max-content auto',
+            gridTemplateAreas: '"construct" \
+              "library"',
+            gridTemplateColumns: 'auto',
+            gridTemplateRows: 'max-content 1fr',
             justifyContent: 'stretch',
           }}
         >
@@ -113,22 +128,17 @@ export function Dashboard({ children, data: initialData }: Props) {
           </Box>
           <Box
             css={{
-              gridArea: 'detail',
-            }}
-          >
-            <Header as="header">
-              <Text>Parts list</Text>
-            </Header>
-          </Box>
-          <Box
-            css={{
               gridArea: 'library',
+              display: 'flex',
+              flexDirection: 'column',
             }}
           >
             <Header as="header">
               <Text>Parts library</Text>
             </Header>
-            <PartsLibrary initialData={initialData} />
+            <ScrollContainer>
+              <PartsLibrary initialData={initialData} />
+            </ScrollContainer>
           </Box>
         </Box>
       </Layout>

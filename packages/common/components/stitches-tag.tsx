@@ -77,7 +77,6 @@ const globalStyles = global({
     WebkitAppearance: 'button',
     font: 'inherit',
   },
-  details: { display: 'block' },
   summary: { display: 'list-item' },
   template: { display: 'none' },
   '[hidden]': { display: 'none' },

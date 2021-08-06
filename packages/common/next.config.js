@@ -32,6 +32,7 @@ module.exports = {
         './components/form': './components/form',
         './components/mini-controller': './components/mini-controller',
         './components/popover': './components/popover',
+        './components/scroll-container': './components/scroll-container',
         './components/stitches-tag': './components/stitches-tag',
         './components/svg': './components/svg',
         './components/text': './components/text',
