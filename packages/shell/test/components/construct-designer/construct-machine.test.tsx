@@ -13,7 +13,7 @@ describe('constructMachine', () => {
     constructSvc.stop();
   });
 
-  it('should "rehydrate" constructParts from the loading state', () => {
+  it('should "hydrate" constructParts from the loading state', () => {
     const {
       context: { constructParts },
       matches,

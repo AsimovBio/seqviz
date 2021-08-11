@@ -10,6 +10,7 @@ import type {
   OnDragEndResponder,
 } from 'react-beautiful-dnd';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { getModule } from 'utils/import';
 
 import { createConstructPart } from './construct-machine';
@@ -32,7 +33,19 @@ export default function ConstructDesigner({
 
   const [state, send] = useActor<any, any>(constructSvc);
 
+  useHotkeys('command+z', (e) => {
+    e.preventDefault();
+
+    send('UNDO');
+  });
+
+  useHotkeys('command+shift+z', (e) => {
+    e.preventDefault();
+    send('REDO');
+  });
+
   const { constructParts } = state?.context;
+
   /**
    * Using useState instead of useRef in order to use setNewPartRef as a callback ref.
    * This offers more control over timing of setting newPartRef
@@ -75,7 +88,7 @@ export default function ConstructDesigner({
     });
   };
 
-  if (!constructParts) {
+  if (!constructParts?.length) {
     return null;
   }
 
@@ -93,7 +106,7 @@ export default function ConstructDesigner({
                   padding: '2em',
                 }}
               >
-                {constructParts?.map(({ id, ref }, index) => (
+                {constructParts.map(({ id, ref }, index) => (
                   <Draggable draggableId={id} index={index} key={id}>
                     {(provided: DraggableProvided) => (
                       <div

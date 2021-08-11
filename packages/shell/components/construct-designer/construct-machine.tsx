@@ -9,8 +9,10 @@ import { createPartMachine } from './construct-part-machine';
 type ConstructPart = Partial<Construct_Part> & { isNew: boolean; ref: any };
 
 export type ConstructContext = {
-  constructParts: ConstructPart[];
   constructId: string;
+  constructParts: ConstructPart[];
+  next: ConstructPart[][];
+  prev: ConstructPart[][];
 };
 
 export interface ConstructStateSchema {
@@ -48,7 +50,9 @@ export const constructMachine = createMachine<
   {
     id: 'construct',
     context: {
+      prev: [],
       constructParts: [],
+      next: [],
       constructId: null,
     },
     initial: 'idle',
@@ -57,14 +61,16 @@ export const constructMachine = createMachine<
         on: {
           BOOTSTRAP: {
             target: 'loading',
-            actions: assign(
-              (_, initialData) => initialData as Partial<ConstructContext>
-            ),
+            actions: [
+              assign(
+                (_, initialData) => initialData as Partial<ConstructContext>
+              ),
+            ],
           },
         },
       },
       loading: {
-        entry: 'rehydrate',
+        entry: 'hydrate',
         always: 'ready',
       },
       ready: {},
@@ -72,16 +78,16 @@ export const constructMachine = createMachine<
     on: {
       'CONSTRUCTPART.ACTIVATE': { actions: 'activate' },
       'CONSTRUCTPART.ADD': {
-        actions: ['add', 'sort', 'persist'],
+        actions: ['updatePrev', 'add', 'sort', 'persist'],
       },
       'CONSTRUCTPART.COMMIT': {
-        actions: ['commit', 'persist'],
+        actions: ['updatePrev', 'commit', 'persist'],
       },
       'CONSTRUCTPART.DELETE': {
-        actions: ['delete', 'sort', 'persist'],
+        actions: ['updatePrev', 'delete', 'sort', 'persist'],
       },
       'CONSTRUCTPART.MOVE': {
-        actions: ['move', 'sort', 'persist'],
+        actions: ['updatePrev', 'move', 'sort', 'persist'],
         cond: 'indexIsWithinBounds',
       },
       'PARTLIB.ENGAGE': {
@@ -92,7 +98,17 @@ export const constructMachine = createMachine<
           })),
         ],
       },
-      'PARTLIB.SELECT': { actions: ['swap', 'commit', 'persist'] },
+      'PARTLIB.SELECT': {
+        actions: ['updatePrev', 'swap', 'commit', 'persist'],
+      },
+      UNDO: {
+        actions: ['undo', 'hydrate', 'sort'],
+        cond: ({ prev }) => prev.length > 0,
+      },
+      REDO: {
+        actions: ['redo', 'hydrate', 'sort'],
+        cond: ({ next }) => next.length > 0,
+      },
     },
   },
   {
@@ -231,9 +247,9 @@ export const constructMachine = createMachine<
           true
         );
       },
-      rehydrate: assign({
+      hydrate: assign({
         constructParts: ({ constructParts }, {}) =>
-          constructParts.map((constructPart) => ({
+          constructParts?.map(({ ref, ...constructPart }) => ({
             ...constructPart,
             ref: spawn(createPartMachine(constructPart), {
               name: `constructPart-${constructPart.id}`,
@@ -260,6 +276,29 @@ export const constructMachine = createMachine<
 
         activeConstructPart?.ref.send('CHANGE', { part, part_id });
       },
+      updatePrev: assign(({ constructParts, prev }) => ({
+        prev: [...prev, [...constructParts]],
+        next: [],
+      })),
+      undo: assign(({ constructParts, next, prev }) => {
+        const previous = prev.pop();
+
+        return {
+          constructParts: previous,
+          next: [constructParts, ...next],
+          prev,
+        };
+      }),
+      redo: assign(({ constructParts, next, prev }) => {
+        const future = next[0];
+        const newFuture = next.slice(1);
+
+        return {
+          next: newFuture,
+          constructParts: future,
+          prev: [...prev, constructParts],
+        };
+      }),
     },
     guards: {
       indexIsWithinBounds: ({ constructParts }, { index }) =>

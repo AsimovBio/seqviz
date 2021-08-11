@@ -182,6 +182,7 @@ export default function MiniController({
           active={isActive}
           color="primary"
           css={{ borderWidth: '1px 0', flex: 1 }}
+          data-testid="delete"
           name="DELETE"
           onClick={handleEvent}
           type="button"

@@ -1,4 +1,9 @@
-import { fireEvent, getByTestId } from '@testing-library/react';
+import {
+  findByTestId,
+  fireEvent,
+  getByTestId,
+  waitFor,
+} from '@testing-library/react';
 import ConstructDesigner from 'components/construct-designer';
 import { dashboardMachine } from 'components/dashboard/dashboard-machine';
 import { DashboardContext } from 'pages';
@@ -23,6 +28,7 @@ describe('ConstructDesigner', () => {
         </DashboardContext.Provider>
       );
     };
+
     return render(<ConstructDesigner {...(construct as any)} />, {
       wrapper: DashboardWrapper,
     });
@@ -105,5 +111,49 @@ describe('ConstructDesigner', () => {
         controller.classList.contains('hovered')
       )
     ).toHaveLength(1);
+  });
+
+  it('handles handles keyboard events for undo/redo', async () => {
+    const { container } = renderComponent();
+    const event = {
+      key: 'z',
+      keyCode: 90,
+      code: 'KeyZ',
+      metaKey: true,
+    };
+    const testId = 'construct-part-container';
+
+    const partControllers = screen.getAllByTestId(testId);
+
+    clickPart(partControllers[0], 'add-right');
+
+    let updatedPartControllers = screen.getAllByTestId(testId);
+
+    expect(updatedPartControllers.length).toEqual(partControllers.length + 1);
+
+    fireEvent.keyDown(container, event);
+
+    updatedPartControllers = screen.getAllByTestId(testId);
+
+    expect(updatedPartControllers.length).toEqual(partControllers.length);
+
+    clickPart(updatedPartControllers[0], 'delete');
+    clickPart(updatedPartControllers[1], 'delete');
+
+    updatedPartControllers = screen.getAllByTestId(testId);
+
+    expect(updatedPartControllers.length).toEqual(partControllers.length - 2);
+
+    fireEvent.keyDown(container, event);
+
+    updatedPartControllers = screen.getAllByTestId(testId);
+
+    expect(updatedPartControllers.length).toEqual(partControllers.length - 1);
+
+    fireEvent.keyDown(container, { ...event, shiftKey: true });
+
+    updatedPartControllers = screen.getAllByTestId(testId);
+
+    expect(updatedPartControllers.length).toEqual(partControllers.length - 2);
   });
 });
