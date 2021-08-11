@@ -45,31 +45,21 @@ export function Dashboard({ children, data: initialData }: Props) {
   const [state, send, service] = useMachine<any, any>(dashboardMachine, {
     devTools: process.env.NODE_ENV === 'development',
   });
+
   const { newConstruct, newProject } = state.context;
   const { error, isLoading } = useUser();
-
-  const { data: projectData, error: projectDataError } = sdk.useProject(
-    pid ? `Project/${pid}` : null,
-    { id: pid }
-  );
-
-  let currentProject;
-
-  if (projectData) {
-    ({
-      project: [currentProject],
-    } = projectData);
-  }
 
   const { data, error: err } = sdk.useProjects('Projects', null, {
     initialData,
   });
 
-  if (error || err || projectDataError) {
+  if (error || err) {
     console.error(error || err);
   }
 
   const { project: projects } = data ?? {};
+
+  const currentProject = projects?.find((project) => project.id === pid);
 
   useEffect(() => {
     send('BOOTSTRAP', {
@@ -91,7 +81,12 @@ export function Dashboard({ children, data: initialData }: Props) {
     }
 
     router.push(url);
-  }, [newConstruct, newProject, pid, router]);
+
+    send('BOOTSTRAP', {
+      newProject: null,
+      newConstruct: null,
+    });
+  }, [newConstruct, newProject, pid, router, send]);
 
   return isLoading ? (
     <p>Loading…</p>
