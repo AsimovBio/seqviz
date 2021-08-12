@@ -128,7 +128,7 @@ export function Construct({ data: initialData }: Props) {
   );
 
   return (
-    <Dashboard>
+    <Dashboard key={cid as string}>
       <Header as="header">
         <Label htmlFor="construct-name">
           <Icon label="Circle" />
