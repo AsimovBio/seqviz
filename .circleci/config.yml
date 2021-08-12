@@ -73,7 +73,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: deploy to dev
+          name: deploy
           command: |
             # I'd normally prefer to have this prebaked, but kustomize isn't in any package managers, so I've
             # configured a release version in the context to grab.
@@ -89,10 +89,10 @@ jobs:
             kubectl apply -k .
   push_dev:
     <<: *push
-  push_prod:
-    <<: *push
   deploy_dev:
     <<: *deploy
+  push_prod:
+    <<: *push
   deploy_prod:
     <<: *deploy
 workflows:
@@ -109,6 +109,7 @@ workflows:
             - test
           url_shell: $NEXT_PUBLIC_FEDERATED_URL_SHELL_DEV
           url_common: $NEXT_PUBLIC_FEDERATED_URL_COMMON_DEV
+          tag: dev-$CIRCLE_SHA1
       - deploy_dev:
           context: asimov-dev-cluster
           directory: dev
@@ -127,6 +128,7 @@ workflows:
             - test
           url_shell: $NEXT_PUBLIC_FEDERATED_URL_SHELL
           url_common: $NEXT_PUBLIC_FEDERATED_URL_COMMON
+          tag: $CIRCLE_SHA1
       - deploy_prod:
           context: asimov-prod-cluster
           directory: prod
