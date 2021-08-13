@@ -16,13 +16,17 @@ const client = new GraphQLClient(process.env.GRAPHQL_API_URL);
 
 export default async function request(req, res) {
   const { query, variables } = req.body;
-  const { accessToken } = await getAccessToken(req, res);
+  try {
+    const { accessToken } = await getAccessToken(req, res, { refresh: true });
 
-  if (!accessToken) {
-    throw new Error('invalid session!');
+    if (!accessToken) {
+      throw new Error('invalid session!');
+    }
+
+    client.setHeader('authorization', `Bearer ${accessToken}`);
+  } catch (err) {
+    console.error(err);
   }
-
-  client.setHeader('authorization', `Bearer ${accessToken}`);
 
   return client.request(query, variables);
 }
