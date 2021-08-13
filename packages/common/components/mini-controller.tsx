@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react';
+import { useState } from 'react';
 import { useEffect } from 'react';
-import { useHoverIntent } from 'react-use-hoverintent';
 
 import { styled } from '../stitches.config';
 import Box from './box';
 import Button from './button';
 import Icon from './icon';
 
-type Props = {
+export type Props = {
   children: ReactNode;
   index: number;
   isActive: boolean;
@@ -136,13 +136,17 @@ export default function MiniController({
     part_type: { glyph },
   },
 }: Props) {
-  const [isHovering, ref] = useHoverIntent<HTMLDivElement>({ timeout: 200 });
+  const [isHovering, setHovering] = useState<boolean>(false);
   const handleEvent = ({ currentTarget: { name, value } }) => {
     onNotify({ type: name, value });
   };
 
   useEffect(() => {
     onNotify({ type: 'FOCUS', value: isHovering });
+
+    return () => {
+      onNotify({ type: 'FOCUS', value: false });
+    };
   }, [isHovering, onNotify]);
 
   const part = (
@@ -165,13 +169,19 @@ export default function MiniController({
     <StyledContainer
       className={isFocused || isActive ? 'hovered' : undefined}
       data-testid="construct-part-container"
-      ref={ref}
+      onMouseEnter={() => {
+        setHovering(true);
+      }}
+      onMouseLeave={() => {
+        setHovering(false);
+      }}
     >
       <StyledRow>
         <StyledButton
           active={isActive}
           color="primary"
           name="MOVE"
+          title="Move left"
           onClick={handleEvent}
           type="button"
           value={index - 1}
@@ -184,6 +194,7 @@ export default function MiniController({
           css={{ borderWidth: '1px 0', flex: 1 }}
           data-testid="delete"
           name="DELETE"
+          title="Delete part"
           onClick={handleEvent}
           type="button"
         >
@@ -193,6 +204,7 @@ export default function MiniController({
           active={isActive}
           color="primary"
           name="MOVE"
+          title="Move right"
           onClick={handleEvent}
           type="button"
           value={index + 1}
@@ -208,6 +220,7 @@ export default function MiniController({
           css={{ borderWidth: '0 1px' }}
           data-testid="add-left"
           name="ADD"
+          title="Add part left"
           onClick={handleEvent}
           type="button"
           value={index}
@@ -221,6 +234,7 @@ export default function MiniController({
           css={{ borderWidth: '0 1px' }}
           data-testid="add-right"
           name="ADD"
+          title="Add part right"
           onClick={handleEvent}
           type="button"
           value={index + 1}
@@ -236,6 +250,7 @@ export default function MiniController({
           css={{ flex: 1 }}
           data-testid="toggle-flip"
           name="FLIP"
+          title="Flip orientation"
           onClick={handleEvent}
           type="button"
         >
@@ -247,6 +262,7 @@ export default function MiniController({
           css={{ flex: 1, borderLeft: 'none' }}
           data-testid="toggle-active"
           name="ENGAGE"
+          title="Swap part from library"
           onClick={handleEvent}
           type="button"
         >

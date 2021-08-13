@@ -71,8 +71,8 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-input-autosize: ^3.0.0
-    react-use-hoverintent: ^1.2.4
     supports-color: ^9.0.1
+    ts-jest: ^27.0.4
     ts-node: ^10.0.0
     typescript: ^4.3.2
     webpack: ^5.45.1
@@ -18134,13 +18134,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-use-hoverintent@npm:^1.2.4":
-  version: 1.2.4
-  resolution: "react-use-hoverintent@npm:1.2.4"
-  checksum: 427ebc2ca132577d73f64da55bc59c02c3be1c9d31d4e73a88c6c8ec5350d6c5e1b6fa2bcbb050a90638192bb2e5126136a0f02cdae3d6c4b5e7575941609c42
-  languageName: node
-  linkType: hard
-
 "react@npm:^17.0.2":
   version: 17.0.2
   resolution: "react@npm:17.0.2"
@@ -20668,6 +20661,39 @@ resolve@^2.0.0-next.3:
   bin:
     ts-jest: cli.js
   checksum: 197f6722e3182de40223d6c7a87fbee06dec5e20748365497f081179bf00e4d95ed5e479d1d9b006752701f0353cb0cc1e16b8b54ffdf83335e5010f642d28b5
+  languageName: node
+  linkType: hard
+
+"ts-jest@npm:^27.0.4":
+  version: 27.0.4
+  resolution: "ts-jest@npm:27.0.4"
+  dependencies:
+    bs-logger: 0.x
+    buffer-from: 1.x
+    fast-json-stable-stringify: 2.x
+    jest-util: ^27.0.0
+    json5: 2.x
+    lodash: 4.x
+    make-error: 1.x
+    mkdirp: 1.x
+    semver: 7.x
+    yargs-parser: 20.x
+  peerDependencies:
+    "@babel/core": ">=7.0.0-beta.0 <8"
+    "@types/jest": ^26.0.0
+    babel-jest: ">=27.0.0 <28"
+    jest: ^27.0.0
+    typescript: ">=3.8 <5.0"
+  peerDependenciesMeta:
+    "@babel/core":
+      optional: true
+    "@types/jest":
+      optional: true
+    babel-jest:
+      optional: true
+  bin:
+    ts-jest: cli.js
+  checksum: 0f6013e35bb84bf5e65a1a85ea7ed5febff13ad40745dcf5bd6a40854b6d9cff3ffcd382994028941cb7f4548ec835f6fcfc502f5a3bf69deaec0cd92fa89f9b
   languageName: node
   linkType: hard
 
