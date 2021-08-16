@@ -22,6 +22,10 @@ spec:
         - name: kernel-shell
           image: gcr.io/hosting-infrastructure/kernel-shell
           env:
+            - name: AUTH0_SCOPE
+              value: openid profile email offline_access
+            - name: AUTH0_AUDIENCE
+              value: https://kv2.asimov.io/api/v1/
             - name: AUTH0_BASE_URL
               valueFrom:
                 configMapKeyRef:
