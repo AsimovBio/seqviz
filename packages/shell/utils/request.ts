@@ -1,4 +1,4 @@
-import { getAccessToken } from '@auth0/nextjs-auth0';
+import { getAccessToken, getSession } from '@auth0/nextjs-auth0';
 import { GraphQLClient } from 'graphql-request';
 import { getSdkWithHooks } from 'models/graphql';
 
@@ -25,7 +25,12 @@ export default async function request(req, res) {
 
     client.setHeader('authorization', `Bearer ${accessToken}`);
   } catch (err) {
-    console.error(err);
+    if (err?.error_description === 'Unknown or invalid refresh token.') {
+      const session = getSession(req, res);
+      delete session.refreshToken;
+    } else {
+      return Promise.reject(err.message);
+    }
   }
 
   return client.request(query, variables);
