@@ -129,7 +129,9 @@ export function Dashboard({ children, data: initialData }: Props) {
             }}
           >
             <Header as="header">
-              <Text>Parts library</Text>
+              <Text font="bold" size="0" uppercase>
+                Genetic Parts Library
+              </Text>
             </Header>
             <ScrollContainer>
               <PartsLibrary initialData={initialData} />
