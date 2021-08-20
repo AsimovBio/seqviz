@@ -5,18 +5,18 @@ import { styled } from '../stitches.config';
 
 type Props = { children: ReactNode; content: ReactNode; arrowOffset?: number };
 
-const StyledContent = styled(Content, {
+export const StyledContent = styled(Content, {
   borderRadius: 3,
   padding: '$1',
   backgroundColor: '$background',
   boxShadow: '$primary',
 });
 
-const StyledArrow = styled(Arrow, {
+export const StyledArrow = styled(Arrow, {
   fill: '$overlay',
 });
 
-const StyledTrigger = styled(Trigger, {
+export const StyledTrigger = styled(Trigger, {
   alignItems: 'center',
   backgroundColor: '$overlay',
   border: 'none',

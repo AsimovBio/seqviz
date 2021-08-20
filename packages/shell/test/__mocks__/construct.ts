@@ -1,6 +1,7 @@
 import faker from 'faker';
 
 import { parts } from './parts';
+import { project } from './project';
 
 const constructParts = Array.from({ length: 10 }, (element, index) => ({
   construct_id: faker.datatype.uuid(),
@@ -18,4 +19,7 @@ export const construct = {
   id: faker.datatype.uuid(),
   name: 'Test construct',
   construct_parts: constructParts,
+  construct_projects: [
+    { construct_id: faker.datatype.uuid(), project_id: project.id },
+  ],
 };

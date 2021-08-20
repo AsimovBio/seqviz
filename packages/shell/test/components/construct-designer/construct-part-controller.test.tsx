@@ -28,7 +28,6 @@ describe('ConstructPartController', () => {
 
   afterAll(() => {
     constructPartSvc.stop();
-    jest.clearAllMocks();
   });
 
   it('handles events', async () => {

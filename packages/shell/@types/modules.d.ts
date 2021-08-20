@@ -4,6 +4,7 @@ declare module '*/construct.graphql' {
   export const ConstructFields: DocumentNode;
   export const ConstructPartFields: DocumentNode;
   export const Construct: DocumentNode;
+  export const ConstructTemplates: DocumentNode;
   export const CreateConstruct: DocumentNode;
   export const UpdateConstruct: DocumentNode;
   export const InsertConstructPart: DocumentNode;

@@ -1,9 +1,4 @@
-import {
-  findByTestId,
-  fireEvent,
-  getByTestId,
-  waitFor,
-} from '@testing-library/react';
+import { fireEvent, getByTestId } from '@testing-library/react';
 import ConstructDesigner from 'components/construct-designer';
 import { dashboardMachine } from 'components/dashboard/dashboard-machine';
 import { DashboardContext } from 'pages';

@@ -98,6 +98,7 @@ export type Construct = {
   created_at: Scalars['timestamptz'];
   created_by_id?: Maybe<Scalars['Int']>;
   id: Scalars['uuid'];
+  is_template: Scalars['Boolean'];
   name: Scalars['String'];
   updated_at: Scalars['timestamptz'];
   /** An object relationship */
@@ -185,6 +186,7 @@ export type Construct_Bool_Exp = {
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
   created_by_id?: Maybe<Int_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
+  is_template?: Maybe<Boolean_Comparison_Exp>;
   name?: Maybe<String_Comparison_Exp>;
   updated_at?: Maybe<Timestamptz_Comparison_Exp>;
   user?: Maybe<User_Bool_Exp>;
@@ -208,6 +210,7 @@ export type Construct_Insert_Input = {
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['uuid']>;
+  is_template?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
   user?: Maybe<User_Obj_Rel_Insert_Input>;
@@ -263,6 +266,7 @@ export type Construct_Order_By = {
   created_at?: Maybe<Order_By>;
   created_by_id?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
+  is_template?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
   user?: Maybe<User_Order_By>;
@@ -582,6 +586,8 @@ export enum Construct_Select_Column {
   /** column name */
   Id = 'id',
   /** column name */
+  IsTemplate = 'is_template',
+  /** column name */
   Name = 'name',
   /** column name */
   UpdatedAt = 'updated_at',
@@ -592,6 +598,7 @@ export type Construct_Set_Input = {
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['uuid']>;
+  is_template?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
@@ -628,6 +635,8 @@ export enum Construct_Update_Column {
   CreatedById = 'created_by_id',
   /** column name */
   Id = 'id',
+  /** column name */
+  IsTemplate = 'is_template',
   /** column name */
   Name = 'name',
   /** column name */
@@ -5490,11 +5499,39 @@ export type Part_Aggregate_FieldsCountArgs = {
   distinct?: Maybe<Scalars['Boolean']>;
 };
 
+/** order by aggregate values of table "part" */
+export type Part_Aggregate_Order_By = {
+  avg?: Maybe<Part_Avg_Order_By>;
+  count?: Maybe<Order_By>;
+  max?: Maybe<Part_Max_Order_By>;
+  min?: Maybe<Part_Min_Order_By>;
+  stddev?: Maybe<Part_Stddev_Order_By>;
+  stddev_pop?: Maybe<Part_Stddev_Pop_Order_By>;
+  stddev_samp?: Maybe<Part_Stddev_Samp_Order_By>;
+  sum?: Maybe<Part_Sum_Order_By>;
+  var_pop?: Maybe<Part_Var_Pop_Order_By>;
+  var_samp?: Maybe<Part_Var_Samp_Order_By>;
+  variance?: Maybe<Part_Variance_Order_By>;
+};
+
+/** input type for inserting array relation for remote table "part" */
+export type Part_Arr_Rel_Insert_Input = {
+  data: Array<Part_Insert_Input>;
+  /** on conflict condition */
+  on_conflict?: Maybe<Part_On_Conflict>;
+};
+
 /** aggregate avg on columns */
 export type Part_Avg_Fields = {
   __typename?: 'part_avg_fields';
   created_by_id?: Maybe<Scalars['Float']>;
   part_type_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by avg() on columns of table "part" */
+export type Part_Avg_Order_By = {
+  created_by_id?: Maybe<Order_By>;
+  part_type_id?: Maybe<Order_By>;
 };
 
 /** Boolean expression to filter rows from the table "part". All fields are combined with a logical 'AND'. */
@@ -5559,6 +5596,19 @@ export type Part_Max_Fields = {
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
+/** order by max() on columns of table "part" */
+export type Part_Max_Order_By = {
+  alias?: Maybe<Order_By>;
+  created_at?: Maybe<Order_By>;
+  created_by_id?: Maybe<Order_By>;
+  description?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+  part_type_id?: Maybe<Order_By>;
+  sequence?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
+};
+
 /** aggregate min on columns */
 export type Part_Min_Fields = {
   __typename?: 'part_min_fields';
@@ -5571,6 +5621,19 @@ export type Part_Min_Fields = {
   part_type_id?: Maybe<Scalars['Int']>;
   sequence?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
+};
+
+/** order by min() on columns of table "part" */
+export type Part_Min_Order_By = {
+  alias?: Maybe<Order_By>;
+  created_at?: Maybe<Order_By>;
+  created_by_id?: Maybe<Order_By>;
+  description?: Maybe<Order_By>;
+  id?: Maybe<Order_By>;
+  name?: Maybe<Order_By>;
+  part_type_id?: Maybe<Order_By>;
+  sequence?: Maybe<Order_By>;
+  updated_at?: Maybe<Order_By>;
 };
 
 /** response of any mutation on the table "part" */
@@ -5608,6 +5671,7 @@ export type Part_Order_By = {
   part_type?: Maybe<Part_Type_Order_By>;
   part_type_id?: Maybe<Order_By>;
   sequence?: Maybe<Order_By>;
+  sequence_length?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
   user?: Maybe<User_Order_By>;
 };
@@ -5659,11 +5723,23 @@ export type Part_Stddev_Fields = {
   part_type_id?: Maybe<Scalars['Float']>;
 };
 
+/** order by stddev() on columns of table "part" */
+export type Part_Stddev_Order_By = {
+  created_by_id?: Maybe<Order_By>;
+  part_type_id?: Maybe<Order_By>;
+};
+
 /** aggregate stddev_pop on columns */
 export type Part_Stddev_Pop_Fields = {
   __typename?: 'part_stddev_pop_fields';
   created_by_id?: Maybe<Scalars['Float']>;
   part_type_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by stddev_pop() on columns of table "part" */
+export type Part_Stddev_Pop_Order_By = {
+  created_by_id?: Maybe<Order_By>;
+  part_type_id?: Maybe<Order_By>;
 };
 
 /** aggregate stddev_samp on columns */
@@ -5673,11 +5749,23 @@ export type Part_Stddev_Samp_Fields = {
   part_type_id?: Maybe<Scalars['Float']>;
 };
 
+/** order by stddev_samp() on columns of table "part" */
+export type Part_Stddev_Samp_Order_By = {
+  created_by_id?: Maybe<Order_By>;
+  part_type_id?: Maybe<Order_By>;
+};
+
 /** aggregate sum on columns */
 export type Part_Sum_Fields = {
   __typename?: 'part_sum_fields';
   created_by_id?: Maybe<Scalars['Int']>;
   part_type_id?: Maybe<Scalars['Int']>;
+};
+
+/** order by sum() on columns of table "part" */
+export type Part_Sum_Order_By = {
+  created_by_id?: Maybe<Order_By>;
+  part_type_id?: Maybe<Order_By>;
 };
 
 /** columns and relationships of "part_type" */
@@ -5687,8 +5775,30 @@ export type Part_Type = {
   glyph?: Maybe<Scalars['String']>;
   id: Scalars['Int'];
   name: Scalars['String'];
+  /** An array relationship */
+  parts: Array<Part>;
+  /** An aggregate relationship */
+  parts_aggregate: Part_Aggregate;
   /** A computed field, executes function "slugify_name" */
   slug?: Maybe<Scalars['String']>;
+};
+
+/** columns and relationships of "part_type" */
+export type Part_TypePartsArgs = {
+  distinct_on?: Maybe<Array<Part_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Part_Order_By>>;
+  where?: Maybe<Part_Bool_Exp>;
+};
+
+/** columns and relationships of "part_type" */
+export type Part_TypeParts_AggregateArgs = {
+  distinct_on?: Maybe<Array<Part_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Part_Order_By>>;
+  where?: Maybe<Part_Bool_Exp>;
 };
 
 /** aggregated selection of "part_type" */
@@ -5735,6 +5845,7 @@ export type Part_Type_Bool_Exp = {
   glyph?: Maybe<String_Comparison_Exp>;
   id?: Maybe<Int_Comparison_Exp>;
   name?: Maybe<String_Comparison_Exp>;
+  parts?: Maybe<Part_Bool_Exp>;
   slug?: Maybe<String_Comparison_Exp>;
 };
 
@@ -5757,6 +5868,7 @@ export type Part_Type_Insert_Input = {
   glyph?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['Int']>;
   name?: Maybe<Scalars['String']>;
+  parts?: Maybe<Part_Arr_Rel_Insert_Input>;
 };
 
 /** aggregate max on columns */
@@ -5806,6 +5918,8 @@ export type Part_Type_Order_By = {
   glyph?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
+  parts_aggregate?: Maybe<Part_Aggregate_Order_By>;
+  slug?: Maybe<Order_By>;
 };
 
 /** primary key columns input for table: part_type */
@@ -5916,6 +6030,12 @@ export type Part_Var_Pop_Fields = {
   part_type_id?: Maybe<Scalars['Float']>;
 };
 
+/** order by var_pop() on columns of table "part" */
+export type Part_Var_Pop_Order_By = {
+  created_by_id?: Maybe<Order_By>;
+  part_type_id?: Maybe<Order_By>;
+};
+
 /** aggregate var_samp on columns */
 export type Part_Var_Samp_Fields = {
   __typename?: 'part_var_samp_fields';
@@ -5923,11 +6043,23 @@ export type Part_Var_Samp_Fields = {
   part_type_id?: Maybe<Scalars['Float']>;
 };
 
+/** order by var_samp() on columns of table "part" */
+export type Part_Var_Samp_Order_By = {
+  created_by_id?: Maybe<Order_By>;
+  part_type_id?: Maybe<Order_By>;
+};
+
 /** aggregate variance on columns */
 export type Part_Variance_Fields = {
   __typename?: 'part_variance_fields';
   created_by_id?: Maybe<Scalars['Float']>;
   part_type_id?: Maybe<Scalars['Float']>;
+};
+
+/** order by variance() on columns of table "part" */
+export type Part_Variance_Order_By = {
+  created_by_id?: Maybe<Order_By>;
+  part_type_id?: Maybe<Order_By>;
 };
 
 /** columns and relationships of "parts_catalog_experimentnode" */
@@ -10341,6 +10473,20 @@ export type ConstructQuery = { __typename?: 'query_root' } & {
   >;
 };
 
+export type ConstructTemplatesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type ConstructTemplatesQuery = { __typename?: 'query_root' } & {
+  template: Array<
+    { __typename?: 'construct' } & Pick<Construct, 'id' | 'name'> & {
+        construct_parts: Array<
+          { __typename?: 'construct_part' } & {
+            part: { __typename?: 'part' } & PartFieldsFragment;
+          } & ConstructPartFieldsFragment
+        >;
+      }
+  >;
+};
+
 export type CreateConstructMutationVariables = Exact<{
   input: Construct_Insert_Input;
 }>;
@@ -10519,6 +10665,22 @@ export const ConstructDocument = gql`
   ${ConstructPartFieldsFragmentDoc}
   ${PartFieldsFragmentDoc}
 `;
+export const ConstructTemplatesDocument = gql`
+  query ConstructTemplates {
+    template: construct(where: { is_template: { _eq: true } }) {
+      id
+      name
+      construct_parts(order_by: { index: asc }) {
+        ...ConstructPartFields
+        part {
+          ...PartFields
+        }
+      }
+    }
+  }
+  ${ConstructPartFieldsFragmentDoc}
+  ${PartFieldsFragmentDoc}
+`;
 export const CreateConstructDocument = gql`
   mutation CreateConstruct($input: construct_insert_input!) {
     insert_construct_one(object: $input) {
@@ -10635,6 +10797,20 @@ export function getSdk(
             ...wrappedRequestHeaders,
           }),
         'Construct'
+      );
+    },
+    ConstructTemplates(
+      variables?: ConstructTemplatesQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<ConstructTemplatesQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<ConstructTemplatesQuery>(
+            ConstructTemplatesDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'ConstructTemplates'
       );
     },
     CreateConstruct(
@@ -10778,6 +10954,17 @@ export function getSdkWithHooks(
       return useSWR<ConstructQuery, ClientError>(
         key,
         () => sdk.Construct(variables),
+        config
+      );
+    },
+    useConstructTemplates(
+      key: SWRKeyInterface,
+      variables?: ConstructTemplatesQueryVariables,
+      config?: SWRConfigInterface<ConstructTemplatesQuery, ClientError>
+    ) {
+      return useSWR<ConstructTemplatesQuery, ClientError>(
+        key,
+        () => sdk.ConstructTemplates(variables),
         config
       );
     },

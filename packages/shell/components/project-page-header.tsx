@@ -1,3 +1,4 @@
+import type { Construct, Project } from 'models/graphql';
 import dynamic from 'next/dynamic';
 import { DashboardContext } from 'pages';
 import { useContext } from 'react';
@@ -7,6 +8,13 @@ import { debounce } from 'ts-debounce';
 import { sdk } from 'utils/request';
 
 import PageHeader from './header';
+import TemplatesDropdown from './templates-dropdown';
+
+type Props = {
+  currentProject?: Partial<Project>;
+  setMenuActive: (isActive: boolean) => void;
+  templates: Construct[];
+};
 
 const AutosizeInput = dynamic(
   async () => {
@@ -15,7 +23,6 @@ const AutosizeInput = dynamic(
   },
   { ssr: false }
 );
-const Button: any = dynamic(() => import('common/components/button'));
 const Box: any = dynamic(() => import('common/components/box'));
 const Icon: any = dynamic(() => import('common/components/icon'));
 const Label = dynamic(async () => {
@@ -24,14 +31,26 @@ const Label = dynamic(async () => {
 });
 const Text: any = dynamic(() => import('common/components/text'));
 
-export default function ProjectPageHeader({ currentProject }) {
+export default function ProjectPageHeader({
+  currentProject,
+  setMenuActive,
+  templates,
+}: Props) {
   const { send } = useContext(DashboardContext);
 
-  const handleCreateConstruct = useCallback(() => {
-    if (currentProject) {
-      send({ pid: currentProject.id, type: 'CREATE', value: 'construct' });
-    }
-  }, [currentProject, send]);
+  const handleCreateConstruct = useCallback(
+    (template) => {
+      if (currentProject) {
+        send({
+          pid: currentProject.id,
+          type: 'CREATE',
+          value: 'construct',
+          ...template,
+        });
+      }
+    },
+    [currentProject, send]
+  );
 
   const handleChange = useCallback(
     (name, value) => {
@@ -79,9 +98,9 @@ export default function ProjectPageHeader({ currentProject }) {
             display: 'flex',
           }}
         >
-          {currentProject?.chassis && (
+          {(currentProject as any)?.chassis && (
             <>
-              <Text>{currentProject.chassis}</Text>
+              <Text>{(currentProject as any).chassis}</Text>
               <Icon label="CaretRight" />
             </>
           )}
@@ -111,29 +130,11 @@ export default function ProjectPageHeader({ currentProject }) {
           >
             <Icon label="CaretRight" />
           </Box>
-          <Button
-            aria-label="Create construct"
-            css={{
-              cursor: 'pointer',
-              backgroundColor: '$background',
-              fontWeight: '$body',
-              fontSize: '$0',
-              px: '$2',
-              py: '$1',
-              svg: {
-                width: 'unset',
-                height: 'unset',
-              },
-              '&:hover': {
-                '& svg path': { fill: '$quaternary' },
-              },
-            }}
-            onClick={() => handleCreateConstruct()}
-            value="construct"
-          >
-            <Icon label="Plus" />
-            &nbsp;Construct
-          </Button>
+          <TemplatesDropdown
+            onCreateConstruct={handleCreateConstruct}
+            onMenuOpen={setMenuActive}
+            templates={templates}
+          />
         </Box>
       )}
     </PageHeader>

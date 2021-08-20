@@ -19,9 +19,9 @@ jest.mock('next/router', () => ({
   },
 }));
 
-describe('Construct', () => {
+describe('Construct page', () => {
   it('renders without errors', async () => {
-    render(<Construct user={{}} />);
+    render(<Construct data={{ construct: [construct] }} user={{}} />);
 
     expect(
       await screen.findByDisplayValue('Test construct')
@@ -29,7 +29,7 @@ describe('Construct', () => {
   });
 
   it('calls the API on input change', async () => {
-    render(<Construct user={{}} />);
+    render(<Construct data={{ construct: [construct] }} user={{}} />);
 
     const inputNode = await screen.findByDisplayValue('Test construct');
 

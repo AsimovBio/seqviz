@@ -179,20 +179,27 @@ export default function Sidebar() {
             >
               <ScrollContainer maxHeight="15em">
                 {recentConstructs?.map(
-                  ({ id, name, construct_projects: [{ project_id }] }) => (
-                    <ActiveLink
-                      href={`/project/${project_id}/construct/${id}`}
-                      key={id}
-                      passHref
-                    >
-                      <a>
-                        <Tooltip content={name}>
-                          <Icon label="Box" />
-                        </Tooltip>
-                        <span className="text">{name}</span>
-                      </a>
-                    </ActiveLink>
-                  )
+                  ({ id, name, construct_projects: constructProjects }) => {
+                    if (!constructProjects?.length) {
+                      return null;
+                    }
+                    const [{ project_id }] = constructProjects;
+
+                    return (
+                      <ActiveLink
+                        href={`/project/${project_id}/construct/${id}`}
+                        key={id}
+                        passHref
+                      >
+                        <a>
+                          <Tooltip content={name}>
+                            <Icon label="Box" />
+                          </Tooltip>
+                          <span className="text">{name}</span>
+                        </a>
+                      </ActiveLink>
+                    );
+                  }
                 )}
               </ScrollContainer>
             </Accordion>

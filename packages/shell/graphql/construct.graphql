@@ -29,6 +29,19 @@ query Construct($id: uuid!) {
   }
 }
 
+query ConstructTemplates {
+  template: construct(where: { is_template: { _eq: true } }) {
+    id
+    name
+    construct_parts(order_by: { index: asc }) {
+      ...ConstructPartFields
+      part {
+        ...PartFields
+      }
+    }
+  }
+}
+
 mutation CreateConstruct($input: construct_insert_input!) {
   insert_construct_one(object: $input) {
     ...ConstructFields

@@ -5,7 +5,14 @@ import Layout from 'components/layout';
 import PartsLibrary from 'components/part-library';
 import ProjectPageHeader from 'components/project-page-header';
 import Sidebar from 'components/sidebar';
-import type { PartsQuery, ProjectsQuery } from 'models/graphql';
+import type {
+  Construct,
+  ConstructQuery,
+  ConstructTemplatesQuery,
+  PartsQuery,
+  Project,
+  ProjectsQuery,
+} from 'models/graphql';
 import { PartsDocument } from 'models/graphql';
 import { ProjectsDocument } from 'models/graphql';
 import type { GetServerSidePropsContext, NextApiRequest } from 'next';
@@ -13,6 +20,7 @@ import type { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import type { ReactNode } from 'react';
+import { useState } from 'react';
 import { useEffect } from 'react';
 import { createContext } from 'react';
 import requestUtil, { sdk } from 'utils/request';
@@ -24,8 +32,13 @@ const ScrollContainer: any = dynamic(
 );
 const Text = dynamic(() => import('common/components/text'));
 
-type Props = {
-  data?: PartsQuery & ProjectsQuery;
+type DashboardQuery = PartsQuery &
+  ProjectsQuery &
+  ConstructQuery &
+  ConstructTemplatesQuery;
+
+export type Props = {
+  data?: Partial<DashboardQuery>;
   children?: ReactNode;
 };
 
@@ -39,25 +52,38 @@ export const DashboardContext = createContext<ContextProps | undefined>(
   undefined
 );
 
-export function Dashboard({ children, data: initialData }: Props) {
+export function Dashboard({ children, data: initialData = {} }: Props) {
   const router = useRouter();
   const pid = router.query?.pid;
+  const { part, project, template } = initialData;
+
   const [state, send, service] = useMachine<any, any>(dashboardMachine, {
     devTools: process.env.NODE_ENV === 'development',
   });
 
+  const [isMenuActive, setMenuActive] = useState(false);
   const { newConstruct, newProject } = state.context;
-  const { error, isLoading } = useUser();
+  const { error: userError, isLoading } = useUser();
 
-  const { data, error: err } = sdk.useProjects('Projects', null, {
-    initialData,
-  });
+  const { data: projectsData, error: projectsError } = sdk.useProjects(
+    'Projects',
+    null,
+    {
+      initialData: { project },
+    }
+  );
 
-  if (error || err) {
-    console.error(error || err);
+  const { data: templatesData, error: templatesError } =
+    sdk.useConstructTemplates(pid ? 'Templates' : null, null, {
+      initialData: { template },
+    });
+
+  if (userError || projectsError || templatesError) {
+    console.error(userError || projectsError || templatesError);
   }
 
-  const { project: projects } = data ?? {};
+  const { project: projects } = projectsData ?? {};
+  const { template: templates } = templatesData ?? {};
 
   const currentProject = projects?.find((project) => project.id === pid);
 
@@ -94,7 +120,11 @@ export function Dashboard({ children, data: initialData }: Props) {
     <DashboardContext.Provider value={{ state, send, service }}>
       <Layout>
         <Sidebar />
-        <ProjectPageHeader currentProject={currentProject} />
+        <ProjectPageHeader
+          currentProject={currentProject as Partial<Project>}
+          setMenuActive={setMenuActive}
+          templates={templates as Construct[]}
+        />
         <Box
           as="main"
           css={{
@@ -108,6 +138,7 @@ export function Dashboard({ children, data: initialData }: Props) {
             gridTemplateColumns: 'auto',
             gridTemplateRows: 'max-content 1fr',
             justifyContent: 'stretch',
+            position: 'relative',
           }}
         >
           <Box
@@ -134,9 +165,24 @@ export function Dashboard({ children, data: initialData }: Props) {
               </Text>
             </Header>
             <ScrollContainer>
-              <PartsLibrary initialData={initialData} />
+              <PartsLibrary initialData={{ part }} />
             </ScrollContainer>
           </Box>
+          {isMenuActive && (
+            <Box
+              css={{
+                backgroundColor: '$muted',
+                bottom: 0,
+                left: 0,
+                opacity: 0.6,
+                pointerEvents: false,
+                position: 'absolute',
+                right: 0,
+                top: 0,
+                zIndex: 3,
+              }}
+            />
+          )}
         </Box>
       </Layout>
     </DashboardContext.Provider>
@@ -150,6 +196,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
     let parts;
 
     try {
+      // TODO: create a combined query for the initial payload
       (req as NextApiRequest).body = { query: ProjectsDocument };
       projects = await requestUtil(req, res);
 

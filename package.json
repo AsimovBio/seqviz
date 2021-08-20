@@ -49,7 +49,7 @@
     "graphql-codegen-plugin-typescript-swr": "^0.6.1",
     "graphqurl": "^1.0.1",
     "husky": "^6.0.0",
-    "jest": "^27.0.4",
+    "jest": "^27.0.6",
     "lint-staged": "^11.0.0",
     "prettier": "^2.3.2",
     "rimraf": "^3.0.2",

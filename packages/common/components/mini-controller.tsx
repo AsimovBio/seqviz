@@ -181,8 +181,8 @@ export default function MiniController({
           active={isActive}
           color="primary"
           name="MOVE"
-          title="Move left"
           onClick={handleEvent}
+          title="Move left"
           type="button"
           value={index - 1}
         >
@@ -194,8 +194,8 @@ export default function MiniController({
           css={{ borderWidth: '1px 0', flex: 1 }}
           data-testid="delete"
           name="DELETE"
-          title="Delete part"
           onClick={handleEvent}
+          title="Delete part"
           type="button"
         >
           <Icon label="Minus" />
@@ -204,8 +204,8 @@ export default function MiniController({
           active={isActive}
           color="primary"
           name="MOVE"
-          title="Move right"
           onClick={handleEvent}
+          title="Move right"
           type="button"
           value={index + 1}
         >
@@ -220,8 +220,8 @@ export default function MiniController({
           css={{ borderWidth: '0 1px' }}
           data-testid="add-left"
           name="ADD"
-          title="Add part left"
           onClick={handleEvent}
+          title="Add part left"
           type="button"
           value={index}
         >
@@ -234,8 +234,8 @@ export default function MiniController({
           css={{ borderWidth: '0 1px' }}
           data-testid="add-right"
           name="ADD"
-          title="Add part right"
           onClick={handleEvent}
+          title="Add part right"
           type="button"
           value={index + 1}
         >
@@ -250,8 +250,8 @@ export default function MiniController({
           css={{ flex: 1 }}
           data-testid="toggle-flip"
           name="FLIP"
-          title="Flip orientation"
           onClick={handleEvent}
+          title="Flip orientation"
           type="button"
         >
           <Icon css={{ width: 12, height: 12 }} label="Reload" />
@@ -262,8 +262,8 @@ export default function MiniController({
           css={{ flex: 1, borderLeft: 'none' }}
           data-testid="toggle-active"
           name="ENGAGE"
-          title="Swap part from library"
           onClick={handleEvent}
+          title="Swap part from library"
           type="button"
         >
           <Icon label="ChevronDown" />

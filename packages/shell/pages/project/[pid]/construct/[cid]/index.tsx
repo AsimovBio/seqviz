@@ -1,7 +1,11 @@
 import type { WithPageAuthRequiredProps } from '@auth0/nextjs-auth0';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
 import useLocalStorage from 'hooks/useLocalStorage';
-import type { ConstructQuery } from 'models/graphql';
+import {
+  ConstructTemplatesDocument,
+  PartsDocument,
+  ProjectsDocument,
+} from 'models/graphql';
 import { ConstructDocument } from 'models/graphql';
 import type {
   GetServerSideProps,
@@ -10,6 +14,7 @@ import type {
 } from 'next';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
+import type { Props as DashboardProps } from 'pages';
 import { Dashboard } from 'pages';
 import { useCallback, useEffect } from 'react';
 import { mutate } from 'swr';
@@ -17,9 +22,7 @@ import { debounce } from 'ts-debounce';
 import { getModule } from 'utils/import';
 import requestUtil, { sdk } from 'utils/request';
 
-type Props = {
-  data?: ConstructQuery;
-} & WithPageAuthRequiredProps;
+type Props = DashboardProps & WithPageAuthRequiredProps;
 
 const Header: any = dynamic(getModule('./components/header'), { ssr: false });
 const Icon: any = dynamic(getModule('./components/icon'), { ssr: false });
@@ -50,40 +53,41 @@ const ConstructDesigner = dynamic(
   { ssr: false }
 );
 
-export function Construct({ data: initialData }: Props) {
+export function Construct({ data: initialData = {} }: Props) {
   const router = useRouter();
   const { cid, pid } = router.query;
   const [recentConstructs, setRecentConstructs] = useLocalStorage<unknown[]>(
     'recentConstructs',
     []
   );
-  let construct;
+  const { construct } = initialData;
+  let currentConstruct;
 
   const { data } = sdk.useConstruct(
     cid ? cid : null,
     { id: cid },
     {
-      initialData,
+      initialData: { construct },
     }
   );
 
   if (data) {
     ({
-      construct: [construct],
+      construct: [currentConstruct],
     } = data);
   }
 
   useEffect(() => {
-    if (construct) {
+    if (currentConstruct) {
       const constructs = [...recentConstructs];
       const existingIdx = constructs.findIndex(
-        ({ id }) => id === construct?.id
+        ({ id }) => id === currentConstruct?.id
       );
 
       if (existingIdx !== -1) {
-        constructs.splice(existingIdx, 1, construct);
+        constructs.splice(existingIdx, 1, currentConstruct);
       } else {
-        constructs.push(construct);
+        constructs.push(currentConstruct);
       }
 
       setRecentConstructs(constructs);
@@ -100,7 +104,7 @@ export function Construct({ data: initialData }: Props) {
 
             const { update_construct_by_pk: updatedConstruct } =
               await sdk.UpdateConstruct({
-                id: construct?.id,
+                id: currentConstruct?.id,
                 input: { [name]: value },
               });
 
@@ -124,27 +128,27 @@ export function Construct({ data: initialData }: Props) {
         return data;
       });
     },
-    [construct?.id, pid]
+    [currentConstruct?.id, pid]
   );
 
   return (
-    <Dashboard key={cid as string}>
+    <Dashboard data={initialData} key={cid as string}>
       <Header as="header">
         <Label htmlFor="construct-name">
           <Icon label="Circle" />
         </Label>
         <Input
           css={{ border: 'none', flex: 1, m: 0 }}
-          defaultValue={construct?.name}
+          defaultValue={currentConstruct?.name}
           id="construct-name"
           name="name"
           onChange={debounce(handleChange, 500)}
         />
       </Header>
-      {construct && (
+      {currentConstruct && (
         <ConstructDesigner
-          construct_parts={construct.construct_parts}
-          id={construct.id}
+          construct_parts={currentConstruct.construct_parts}
+          id={currentConstruct.id}
         />
       )}
     </Dashboard>
@@ -155,20 +159,32 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
   returnTo: '/',
   async getServerSideProps({ req, res, query }: GetServerSidePropsContext) {
     const { cid } = query;
-
-    let data = null;
+    let projects;
+    let parts;
+    let construct;
+    let templates;
 
     try {
+      // TODO: create a combined query for the initial payload
+      (req as NextApiRequest).body = { query: ProjectsDocument };
+      projects = await requestUtil(req, res);
+
+      (req as NextApiRequest).body = { query: PartsDocument };
+      parts = await requestUtil(req, res);
+
       (req as NextApiRequest).body = {
         query: ConstructDocument,
         variables: { id: cid },
       };
-      data = await requestUtil(req, res);
+      construct = await requestUtil(req, res);
+
+      (req as NextApiRequest).body = { query: ConstructTemplatesDocument };
+      templates = await requestUtil(req, res);
     } catch (err) {
       console.error(err);
     }
 
-    if (!data) {
+    if (!construct) {
       return {
         notFound: true,
       };
@@ -176,7 +192,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
 
     return {
       props: {
-        data,
+        data: { ...projects, ...parts, ...construct, ...templates },
       },
     };
   },

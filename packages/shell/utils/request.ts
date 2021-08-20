@@ -17,7 +17,7 @@ const client = new GraphQLClient(process.env.GRAPHQL_API_URL);
 export default async function request(req, res) {
   const { query, variables } = req.body;
   try {
-    const { accessToken } = await getAccessToken(req, res, { refresh: true });
+    const { accessToken } = await getAccessToken(req, res);
 
     if (!accessToken) {
       throw new Error('invalid session!');

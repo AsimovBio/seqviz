@@ -13,7 +13,10 @@ export type DashboardContext = {
 
 export type DashboardEvent = { type: string; [key: string]: any };
 
-export async function createNew(_, { pid, value }: DashboardEvent) {
+export async function createNew(
+  _,
+  { construct_parts, pid, value }: DashboardEvent
+) {
   let data: ProjectsQuery;
   let newProject;
   let newConstruct;
@@ -36,20 +39,19 @@ export async function createNew(_, { pid, value }: DashboardEvent) {
       break;
     case 'construct':
       data = await mutate('Projects', async (data) => {
-        const { project: projects } = data;
+        const { project: projects } = data ?? {};
 
         ({ insert_construct_one: newConstruct } = await sdk.CreateConstruct({
           input: {
             name: 'Untitled construct',
+            construct_projects: { data: [{ project_id: pid }] },
             construct_parts: {
-              data: [],
+              data: construct_parts.map(
+                ({ construct_id, part, id, ...rest }) => rest
+              ),
             },
           },
         }));
-
-        await sdk.CreateProjectConstruct({
-          input: { project_id: pid, construct_id: newConstruct.id },
-        });
 
         const activeProject = projects.find(({ id }) => id === pid);
 
@@ -110,7 +112,7 @@ export const dashboardMachine = createMachine<DashboardContext, DashboardEvent>(
               id: 'createNew',
               src: createNew,
               onDone: {
-                actions: assign((context, { data }) => data),
+                actions: assign((_, { data }) => data),
               },
               onError: {},
             },

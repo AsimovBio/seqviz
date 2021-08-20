@@ -17,8 +17,9 @@ jest.mock('next/router', () => ({
   },
 }));
 
-describe('Project', () => {
-  const renderComponent = () => render(<Project />);
+describe('Project page', () => {
+  const renderComponent = () =>
+    render(<Project data={{ project: [project] }} />);
 
   it('renders without errors', async () => {
     renderComponent();

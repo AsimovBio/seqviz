@@ -1,5 +1,6 @@
 import { useActor } from '@xstate/react';
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/router';
 import { DashboardContext } from 'pages';
 import { useMemo } from 'react';
 import { useContext } from 'react';
