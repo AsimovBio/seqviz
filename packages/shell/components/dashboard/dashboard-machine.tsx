@@ -103,6 +103,7 @@ export const dashboardMachine = createMachine<DashboardContext, DashboardEvent>(
           'PARTLIB.ENGAGE': {
             actions: forwardTo('partLibSvc'),
           },
+          'PARTLIB.RESET': { actions: forwardTo('partLibSvc') },
           'PARTLIB.SELECT': { actions: forwardTo('constructSvc') },
         },
         states: {

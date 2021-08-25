@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 import { styled } from '../stitches.config';
 
 const StyledButton = styled('button', {
@@ -44,10 +46,12 @@ const StyledButton = styled('button', {
   },
 });
 
-export default function Button({ children, ...props }) {
+function Button({ children, ...props }) {
   return (
     <StyledButton type="button" {...props}>
       {children}
     </StyledButton>
   );
 }
+
+export default memo(Button);

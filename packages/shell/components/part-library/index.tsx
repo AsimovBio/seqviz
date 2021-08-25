@@ -149,7 +149,7 @@ export default function PartsLibrary({ initialData }) {
         borderSpacing: '0 0.25em',
         li: { pt: '$2' },
         listStyle: 'none',
-        fontSize: '$1',
+        fontSize: '$2',
         m: 0,
         p: 0,
         width: '100%',
@@ -173,7 +173,7 @@ export default function PartsLibrary({ initialData }) {
 
         th: {
           color: '$mutedText',
-          fontSize: '$0',
+          fontSize: '$1',
           fontWeight: '$body',
           textTransform: 'uppercase',
         },

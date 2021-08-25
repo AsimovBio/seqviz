@@ -41,7 +41,7 @@ export const StyledHeader = styled(Header, {
   backgroundColor: '$overlay',
   color: 'inherit',
   display: 'flex',
-  fontSize: '$0',
+  fontSize: '$1',
   fontWeight: '$bold',
   justifyContent: 'space-between',
   margin: 0,

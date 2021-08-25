@@ -35,7 +35,6 @@ export default function ConstructDesigner({
 
   useHotkeys('command+z', (e) => {
     e.preventDefault();
-
     send('UNDO');
   });
 
@@ -93,17 +92,17 @@ export default function ConstructDesigner({
   }
 
   return (
-    <Box css={{ overflow: 'auto' }}>
+    <Box css={{ overflow: 'auto', mx: '$3' }}>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable direction="horizontal" droppableId="droppable">
           {(provided: DroppableProvided) => (
             <div ref={provided.innerRef} {...provided.droppableProps}>
               <Box
                 css={{
-                  alignItems: 'center',
+                  alignItems: 'top',
                   display: 'inline-flex',
                   margin: 'auto',
-                  padding: '2em',
+                  py: '$4',
                 }}
               >
                 {constructParts.map(({ id, ref }, index) => (

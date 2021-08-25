@@ -78,7 +78,6 @@ export default function TemplatesDropdown({
           cursor: 'pointer',
           backgroundColor: '$background',
           fontWeight: '$body',
-          fontSize: '$0',
           px: '$2',
           py: '$1',
           svg: {

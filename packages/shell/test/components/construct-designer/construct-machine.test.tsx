@@ -1,9 +1,18 @@
 import { constructMachine } from 'components/construct-designer/construct-machine';
 import { construct, constructPart } from 'test/__mocks__/construct';
-import * as xstate from 'xstate';
+import { interpret } from 'xstate';
+
+jest.mock('xstate', () => {
+  const originalModule = jest.requireActual('xstate');
+
+  return {
+    ...originalModule,
+    sendParent: jest.fn(),
+  };
+});
 
 describe('constructMachine', () => {
-  const constructSvc = xstate.interpret(constructMachine);
+  const constructSvc = interpret(constructMachine);
 
   beforeEach(() => {
     constructSvc.start();

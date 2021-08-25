@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import type { SyntheticEvent } from 'react';
+import { memo } from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
@@ -8,38 +9,50 @@ import Button from './button';
 import Icon from './icon';
 
 export type Props = {
-  children: ReactNode;
-  index: number;
-  isActive: boolean;
-  isFocused: boolean;
-  orientation: 'forward' | 'reverse';
-  part: { part_type: { glyph: string }; name: string };
+  context: {
+    index: number;
+    isActive: boolean;
+    isFocused: boolean;
+    orientation: 'forward' | 'reverse';
+    part: { part_type: { glyph: string }; name: string };
+  };
   onNotify: ({ type: string, value: unknown }) => void;
 };
 
 const StyledContainer = styled(Box, {
   display: 'flex',
-  flexDirection: 'column',
-  height: '7.5rem',
+  height: '7.75rem',
   justifyContent: 'center',
   position: 'relative',
-  width: '7.5rem',
-  zIndex: 1,
+  width: '7.75rem',
+  button: {
+    position: 'relative',
+    zIndex: 1,
+  },
+  '&::after': {
+    content: '',
+    height: '2px',
+    position: 'absolute',
+    top: '50%',
+    transform: 'translate(0, -50%)',
+    width: '100%',
+    zIndex: 0,
+  },
 });
 
-const StyledRow = styled(Box, {
+const StyledCol = styled(Box, {
   display: 'flex',
   flex: 1,
   justifyContent: 'center',
 });
 
 const StyledButton = styled('button', {
-  $$primary: '#fde5f280',
-  $$secondary: '#ebecff80',
-  $$tertiary: '#ffeee380',
-  $$primaryHover: '#fde5f2',
-  $$secondaryHover: '#ebecff',
-  $$tertiaryHover: '#ffeee3',
+  $$primary: '#F8EFF4',
+  $$secondary: '#EFEAF9',
+  $$tertiary: '#F8F1EC',
+  $$primaryHover: '#FADCED',
+  $$secondaryHover: '#E9DFFD',
+  $$tertiaryHover: '#F4E0D3',
 
   alignItems: 'center',
   backgroundColor: '$highlight',
@@ -51,7 +64,6 @@ const StyledButton = styled('button', {
   visibility: 'hidden',
 
   '& svg path': {
-    stroke: '$text',
     strokeWidth: '0.5',
   },
 
@@ -90,6 +102,7 @@ const StyledButton = styled('button', {
       active: true,
       css: {
         backgroundColor: '$$primary',
+        '&:hover': { color: '$warning' },
       },
     },
     {
@@ -97,6 +110,7 @@ const StyledButton = styled('button', {
       active: true,
       css: {
         backgroundColor: '$$secondary',
+        '&:hover': { color: '$quaternary' },
       },
     },
     {
@@ -104,6 +118,7 @@ const StyledButton = styled('button', {
       active: true,
       css: {
         backgroundColor: '$$tertiary',
+        '&:hover': { color: '$primary' },
       },
     },
   ],
@@ -112,33 +127,44 @@ const StyledButton = styled('button', {
 const StyledPartWrapper = styled(Button, {
   alignItems: 'center',
   display: 'flex',
+  flex: 1,
   justifyContent: 'center',
   transition: '$standard',
+  transformOrigin: 'center center',
+  '&.reverse': {
+    transform: 'rotate(180deg)',
+  },
   svg: {
     fill: 'none',
     stroke: 'currentColor',
-    strokeLinecap: 'square',
+    strokeLinecap: 'butt',
     strokeAlignment: 'inner',
     strokeWidth: '1.5',
     width: '2rem',
-    transform: 'translate(0, -50%)',
+    transform: 'translateY(calc(-50% + 2.5px))',
   },
 });
 
-export default function MiniController({
-  index,
-  isActive,
-  isFocused,
-  onNotify,
-  orientation,
-  part: {
-    name,
-    part_type: { glyph },
+function MiniController({
+  context: {
+    index,
+    isActive,
+    isFocused,
+    orientation,
+    part: {
+      name,
+      part_type: { glyph },
+    },
   },
+  onNotify,
 }: Props) {
   const [isHovering, setHovering] = useState<boolean>(false);
   const handleEvent = ({ currentTarget: { name, value } }) => {
     onNotify({ type: name, value });
+  };
+
+  const handleHover = (e: SyntheticEvent<HTMLDivElement>) => {
+    setHovering(e.type === 'mouseenter');
   };
 
   useEffect(() => {
@@ -149,49 +175,41 @@ export default function MiniController({
     };
   }, [isHovering, onNotify]);
 
-  const part = (
-    <StyledPartWrapper
-      color="transparent"
-      css={{
-        flex: 1,
-        transform: orientation === 'reverse' ? 'rotate(180deg)' : undefined,
-      }}
-      name="TOGGLE_ACTIVE"
-      onClick={handleEvent}
-    >
-      <Icon label={name}>
-        <span dangerouslySetInnerHTML={{ __html: glyph }} />
-      </Icon>
-    </StyledPartWrapper>
-  );
-
   return (
     <StyledContainer
       className={isFocused || isActive ? 'hovered' : undefined}
+      css={{
+        '&::after': {
+          backgroundColor: isActive ? '$quaternary' : '$text',
+        },
+      }}
       data-testid="construct-part-container"
-      onMouseEnter={() => {
-        setHovering(true);
-      }}
-      onMouseLeave={() => {
-        setHovering(false);
-      }}
+      onMouseEnter={handleHover}
+      onMouseLeave={handleHover}
     >
-      <StyledRow>
+      <StyledButton
+        active={isActive}
+        color="secondary"
+        css={{
+          borderTopLeftRadius: '$1',
+          borderBottomLeftRadius: '$1',
+          flex: '0 1.25em',
+        }}
+        data-testid="add-left"
+        name="ADD"
+        onClick={handleEvent}
+        title="Add part left"
+        type="button"
+        value={index}
+      >
+        <Icon label="Plus" />
+      </StyledButton>
+
+      <StyledCol css={{ flex: 5, flexDirection: 'column' }}>
         <StyledButton
           active={isActive}
           color="primary"
-          name="MOVE"
-          onClick={handleEvent}
-          title="Move left"
-          type="button"
-          value={index - 1}
-        >
-          <Icon label="ArrowLeft" />
-        </StyledButton>
-        <StyledButton
-          active={isActive}
-          color="primary"
-          css={{ borderWidth: '1px 0', flex: 1 }}
+          css={{ borderLeft: 'none', borderRight: 'none', flex: '0 1.25em' }}
           data-testid="delete"
           name="DELETE"
           onClick={handleEvent}
@@ -200,54 +218,26 @@ export default function MiniController({
         >
           <Icon label="Minus" />
         </StyledButton>
-        <StyledButton
-          active={isActive}
-          color="primary"
-          name="MOVE"
-          onClick={handleEvent}
-          title="Move right"
-          type="button"
-          value={index + 1}
-        >
-          <Icon label="ArrowRight" />
-        </StyledButton>
-      </StyledRow>
 
-      <StyledRow css={{ flex: 5 }}>
-        <StyledButton
-          active={isActive}
-          color="secondary"
-          css={{ borderWidth: '0 1px' }}
-          data-testid="add-left"
-          name="ADD"
+        <StyledPartWrapper
+          className={orientation}
+          color="transparent"
+          css={{
+            color: isActive ? '$quaternary' : 'inherit',
+          }}
+          data-testid="activate"
+          name="TOGGLE_ACTIVE"
           onClick={handleEvent}
-          title="Add part left"
-          type="button"
-          value={index}
         >
-          <Icon label="Plus" />
-        </StyledButton>
-        {part}
-        <StyledButton
-          active={isActive}
-          color="secondary"
-          css={{ borderWidth: '0 1px' }}
-          data-testid="add-right"
-          name="ADD"
-          onClick={handleEvent}
-          title="Add part right"
-          type="button"
-          value={index + 1}
-        >
-          <Icon label="Plus" />
-        </StyledButton>
-      </StyledRow>
+          <Icon label={name}>
+            <span dangerouslySetInnerHTML={{ __html: glyph }} />
+          </Icon>
+        </StyledPartWrapper>
 
-      <StyledRow>
         <StyledButton
           active={isActive}
           color="tertiary"
-          css={{ flex: 1 }}
+          css={{ borderLeft: 'none', borderRight: 'none', flex: '0 1.25em' }}
           data-testid="toggle-flip"
           name="FLIP"
           onClick={handleEvent}
@@ -256,19 +246,27 @@ export default function MiniController({
         >
           <Icon css={{ width: 12, height: 12 }} label="Reload" />
         </StyledButton>
-        <StyledButton
-          active={isActive}
-          color="tertiary"
-          css={{ flex: 1, borderLeft: 'none' }}
-          data-testid="toggle-active"
-          name="ENGAGE"
-          onClick={handleEvent}
-          title="Swap part from library"
-          type="button"
-        >
-          <Icon label="ChevronDown" />
-        </StyledButton>
-      </StyledRow>
+      </StyledCol>
+
+      <StyledButton
+        active={isActive}
+        color="secondary"
+        css={{
+          borderTopRightRadius: '$1',
+          borderBottomRightRadius: '$1',
+          flex: '0 1.25em',
+        }}
+        data-testid="add-right"
+        name="ADD"
+        onClick={handleEvent}
+        title="Add part right"
+        type="button"
+        value={index + 1}
+      >
+        <Icon label="Plus" />
+      </StyledButton>
     </StyledContainer>
   );
 }
+
+export default memo(MiniController);

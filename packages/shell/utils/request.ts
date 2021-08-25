@@ -25,12 +25,7 @@ export default async function request(req, res) {
 
     client.setHeader('authorization', `Bearer ${accessToken}`);
   } catch (err) {
-    if (err?.error_description === 'Unknown or invalid refresh token.') {
-      const session = getSession(req, res);
-      delete session.refreshToken;
-    } else {
-      return Promise.reject(err.message);
-    }
+    return Promise.reject(err.message);
   }
 
   return client.request(query, variables);

@@ -85,18 +85,17 @@ export const constructMachine = createMachine<
       },
       'CONSTRUCTPART.DELETE': {
         actions: ['updatePrev', 'delete', 'sort', 'persist'],
+        cond: 'isNotOnly',
       },
       'CONSTRUCTPART.MOVE': {
         actions: ['updatePrev', 'move', 'sort', 'persist'],
         cond: 'indexIsWithinBounds',
       },
       'PARTLIB.ENGAGE': {
-        actions: [
-          'activate',
-          sendParent(() => ({
-            type: 'PARTLIB.ENGAGE',
-          })),
-        ],
+        actions: ['activate', 'engage'],
+      },
+      'PARTLIB.RESET': {
+        actions: 'reset',
       },
       'PARTLIB.SELECT': {
         actions: ['updatePrev', 'swap', 'commit', 'persist'],
@@ -143,19 +142,21 @@ export const constructMachine = createMachine<
         },
       }),
       activate: ({ constructParts }, { id: constructPartId, isActive }) => {
-        constructParts.forEach(({ ref }) =>
-          ref.send('CHANGE', { isActive: false })
-        );
-
-        const activeConstructPart = constructParts.find(
-          ({ id }) => id === constructPartId
-        );
-
-        activeConstructPart?.ref.send('CHANGE', {
-          isActive: !isActive,
-          isNew: false,
+        constructParts.forEach(({ id, ref }) => {
+          if (id === constructPartId) {
+            ref.send('CHANGE', {
+              isActive: !isActive,
+              isNew: false,
+            });
+          } else {
+            ref.send('CHANGE', { isActive: false });
+            ref.send('RESET');
+          }
         });
       },
+      engage: sendParent(() => ({
+        type: 'PARTLIB.ENGAGE',
+      })),
       commit: assign({
         constructParts: ({ constructParts }, { type, ...value }) => {
           const activeConstructPart = constructParts.find(
@@ -249,13 +250,16 @@ export const constructMachine = createMachine<
       },
       hydrate: assign({
         constructParts: ({ constructParts }, {}) =>
-          constructParts?.map(({ ref, ...constructPart }) => ({
+          constructParts?.map((constructPart) => ({
             ...constructPart,
             ref: spawn(createPartMachine(constructPart), {
               name: `constructPart-${constructPart.id}`,
             }),
           })),
       }),
+      reset: sendParent(() => ({
+        type: 'PARTLIB.RESET',
+      })),
       sort: assign({
         constructParts: ({ constructParts }) =>
           constructParts.map((constructPart, i) => {
@@ -301,6 +305,7 @@ export const constructMachine = createMachine<
       }),
     },
     guards: {
+      isNotOnly: ({ constructParts }) => constructParts.length > 1,
       indexIsWithinBounds: ({ constructParts }, { index }) =>
         index >= 0 && index < constructParts.length,
     },

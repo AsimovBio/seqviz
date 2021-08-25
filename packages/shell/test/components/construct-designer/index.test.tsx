@@ -62,17 +62,17 @@ describe('ConstructDesigner', () => {
     });
   });
 
-  it('handles activation of part when swap mode is clicked', () => {
+  it('activates one part at a time', () => {
     renderComponent();
 
     const partControllers = screen.getAllByTestId('construct-part-container');
     const [firstPartController, secondPartController] = partControllers;
 
-    clickPart(firstPartController, 'toggle-active');
+    clickPart(firstPartController, 'activate');
 
     expect(firstPartController.classList.contains('hovered')).toBe(true);
 
-    clickPart(secondPartController, 'toggle-active');
+    clickPart(secondPartController, 'activate');
 
     expect(firstPartController.classList.contains('hovered')).toBe(false);
     expect(secondPartController.classList.contains('hovered')).toBe(true);

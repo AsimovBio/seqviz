@@ -26,9 +26,11 @@ export default styled('p', {
     font: {
       body: {
         fontFamily: '$body',
+        fontWeight: '$body',
       },
       heading: {
         fontFamily: '$heading',
+        fontWeight: '$heading',
       },
       bold: {
         fontWeight: '$bold',
@@ -40,23 +42,6 @@ export default styled('p', {
       },
     },
   },
-  compoundVariants: [
-    {
-      font: 'heading',
-      uppercase: true,
-      css: {
-        fontWeight: '$heading',
-        fontSize: '$4',
-      },
-    },
-    {
-      font: 'body',
-      css: {
-        fontWeight: '$heading',
-        fontSize: '$2',
-      },
-    },
-  ],
   defaultVariants: {
     font: 'body',
   },

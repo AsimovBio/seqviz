@@ -26,6 +26,7 @@ export const { css, getCssString, global, keyframes, styled, theme } =
       fontSizes: Object.fromEntries(
         new Map(
           Object.entries([
+            '0.625rem',
             '0.75rem',
             '0.875rem',
             '1rem',
@@ -60,9 +61,13 @@ export const { css, getCssString, global, keyframes, styled, theme } =
         primary: '#ff7017',
         secondary: '#b017c6',
         tertiary: '#6d08f6',
+        warning: '#E86957',
         quaternary: '#6061FF',
         text: '#383838',
       },
+      radii: Object.fromEntries(
+        new Map(Object.entries([0, '2px', '3px', '4px']))
+      ),
       shadows: {
         primary: '0 0 12px $colors$shadow',
         small: '0 0 8px $colors$shadow',

@@ -13,7 +13,7 @@ export const StyledTrigger = styled(Trigger, {
   borderRadius: 0,
   cursor: 'pointer',
   display: 'flex',
-  fontSize: '$0',
+  fontSize: '$1',
   fontWeight: '$body',
   px: '$2',
   py: '$1',

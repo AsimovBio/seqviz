@@ -40,18 +40,10 @@ export const createPartMachine = (constructPart) => {
           target: 'reading',
           actions: 'add',
         },
-        CANCEL: {
-          target: 'reading',
-          actions: ['reset', 'commit'],
-        },
         CHANGE: {
           actions: ['change'],
         },
         DELETE: 'deleted',
-        ENGAGE: {
-          actions: 'engage',
-          target: 'editing',
-        },
         FLIP: {
           actions: ['setOrientation', 'commit'],
         },
@@ -65,11 +57,15 @@ export const createPartMachine = (constructPart) => {
       states: {
         reading: {
           entry: actions.choose([
-            { actions: 'activate', cond: 'isNew', target: 'editing' } as any,
+            {
+              actions: ['activate', 'engage'],
+              cond: 'isNew',
+              target: 'editing',
+            } as any,
           ]),
           on: {
             TOGGLE_ACTIVE: {
-              actions: 'activate',
+              actions: ['activate', 'engage'],
               target: 'editing',
             },
           },
@@ -83,11 +79,16 @@ export const createPartMachine = (constructPart) => {
                 actions: 'commit',
               },
             ],
+            RESET: [
+              {
+                target: 'reading',
+              },
+            ],
             SWAP: {
               actions: 'swap',
             },
             TOGGLE_ACTIVE: {
-              actions: 'activate',
+              actions: ['activate', 'disengage'],
               target: 'reading',
             },
           },
@@ -129,7 +130,10 @@ export const createPartMachine = (constructPart) => {
           id,
           index,
         })),
-        reset: assign(({ prevPart }) => prevPart),
+        disengage: sendParent(({ id }) => ({
+          type: 'PARTLIB.RESET',
+          id,
+        })),
         setFocused: assign({
           isFocused: (_, { value }) => value,
         }),

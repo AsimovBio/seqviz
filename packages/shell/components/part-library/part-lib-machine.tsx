@@ -32,7 +32,10 @@ export const partLibMachine = createMachine<
       },
       selecting: {
         on: {
-          SELECT: { actions: 'select', target: 'ready' },
+          'PARTLIB.RESET': {
+            target: 'ready',
+          },
+          SELECT: { actions: 'select' },
         },
       },
     },

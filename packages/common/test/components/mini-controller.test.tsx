@@ -1,6 +1,6 @@
-import { screen, fireEvent } from '@testing-library/react';
-import MiniController from 'components/mini-controller';
+import { fireEvent, screen } from '@testing-library/react';
 import type { Props } from 'components/mini-controller';
+import MiniController from 'components/mini-controller';
 import { render } from 'test/utils';
 
 describe('MiniController', () => {
@@ -8,16 +8,16 @@ describe('MiniController', () => {
   const renderComponent = (props?: Props) =>
     render(
       <MiniController
-        index={0}
-        isActive={true}
-        isFocused={true}
+        context={{
+          index: 0,
+          isActive: true,
+          isFocused: true,
+          orientation: 'forward',
+          part: { part_type: { glyph: '' }, name: '' },
+        }}
         onNotify={onNotifySpy}
-        orientation="forward"
-        part={{ part_type: { glyph: '' }, name: '' }}
         {...props}
-      >
-        tests
-      </MiniController>
+      />
     );
 
   beforeEach(() => {
@@ -40,7 +40,7 @@ describe('MiniController', () => {
     fireEvent.click(await screen.findByTitle('Delete part'));
     expect(onNotifySpy).toHaveBeenLastCalledWith({ type: 'DELETE', value: '' });
 
-    fireEvent.click(await screen.findByTitle('Move left'));
-    expect(onNotifySpy).toHaveBeenLastCalledWith({ type: 'MOVE', value: '-1' });
+    fireEvent.click(await screen.findByTitle('Add part left'));
+    expect(onNotifySpy).toHaveBeenLastCalledWith({ type: 'ADD', value: '0' });
   });
 });

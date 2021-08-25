@@ -62,19 +62,19 @@ describe('ConstructPartController', () => {
     renderComponent();
 
     await waitFor(() => {
-      const trigger = screen.getByTestId('toggle-active');
+      const trigger = screen.getByTestId('activate');
       expect(trigger).toBeInTheDocument();
       fireEvent.click(trigger);
     });
 
     expect(sendSpy).toHaveBeenLastCalledWith({
-      type: 'ENGAGE',
+      type: 'TOGGLE_ACTIVE',
       value: '',
     });
 
     expect(onTransitionSpy).toHaveBeenCalledWith(
       expect.objectContaining({ value: 'editing' }),
-      { type: 'ENGAGE', value: '' }
+      { type: 'TOGGLE_ACTIVE', value: '' }
     );
   });
 });

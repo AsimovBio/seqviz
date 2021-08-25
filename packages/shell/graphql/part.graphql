@@ -8,6 +8,7 @@ fragment PartFields on part {
   part_type {
     glyph
     name
+    slug
   }
 }
 

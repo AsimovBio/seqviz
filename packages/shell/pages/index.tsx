@@ -160,7 +160,7 @@ export function Dashboard({ children, data: initialData = {} }: Props) {
             }}
           >
             <Header as="header">
-              <Text font="bold" size="0" uppercase>
+              <Text font="bold" size={1} uppercase>
                 Genetic Parts Library
               </Text>
             </Header>
