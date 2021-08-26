@@ -8,12 +8,12 @@ type Props = {
   user: UserProfile;
 };
 
-const Popover = dynamic(() => import('common/components/popover'), {
+const Popover: any = dynamic(() => import('common/components/popover'), {
   ssr: false,
 });
-const Box = dynamic(() => import('common/components/box'));
-const Text = dynamic(() => import('common/components/text'));
-const Button = dynamic(() => import('common/components/button'));
+const Box: any = dynamic(() => import('common/components/box'));
+const Text: any = dynamic(() => import('common/components/text'));
+const Button: any = dynamic(() => import('common/components/button'));
 
 export default function AccountPopover({ user }: Props) {
   const userIconText = user.nickname?.charAt(0).toUpperCase() || 'A';

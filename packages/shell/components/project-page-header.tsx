@@ -110,6 +110,7 @@ export default function ProjectPageHeader({
               label="Circle"
             />
             <AutosizeInput
+              autoComplete="off"
               css={{
                 input: {
                   border: 'none',

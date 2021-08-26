@@ -147,24 +147,21 @@ export default function Sidebar() {
             flexDirection: 'column',
           }}
         >
-          {isNavOpen && !!recentConstructs?.length && (
+          {isNavOpen && (
             <Accordion
               collapsible
-              defaultValue="Workspaces"
+              defaultValue="Workspace"
               headerContent={
                 <HiddenWrapper>
                   <Button
                     aria-label="Clear workspaces"
+                    color="tertiary"
                     css={{
-                      backgroundColor: '$background',
-                      cursor: 'pointer',
-                      fontWeight: '$body',
-                      px: '$2',
-                      py: '$1',
                       '&:hover': {
                         '& svg path': { fill: '$primary' },
                       },
                     }}
+                    disabled={recentConstructs.length === 0}
                     onClick={() => handleClearRecentConstructs()}
                     value="project"
                   >
@@ -174,34 +171,47 @@ export default function Sidebar() {
                 </HiddenWrapper>
               }
               isChevronShown={isNavOpen}
-              title="Workspaces"
+              title="Workspace"
               type="single"
             >
-              <ScrollContainer maxHeight="15em">
-                {recentConstructs?.map(
-                  ({ id, name, construct_projects: constructProjects }) => {
-                    if (!constructProjects?.length) {
-                      return null;
-                    }
-                    const [{ project_id }] = constructProjects;
+              {recentConstructs.length > 0 ? (
+                <ScrollContainer maxHeight="15em">
+                  {recentConstructs?.map(
+                    ({ id, name, construct_projects: constructProjects }) => {
+                      if (!constructProjects?.length) {
+                        return null;
+                      }
+                      const [{ project_id }] = constructProjects;
 
-                    return (
-                      <ActiveLink
-                        href={`/project/${project_id}/construct/${id}`}
-                        key={id}
-                        passHref
-                      >
-                        <a>
-                          <Tooltip content={name}>
-                            <Icon label="Box" />
-                          </Tooltip>
-                          <span className="text">{name}</span>
-                        </a>
-                      </ActiveLink>
-                    );
-                  }
-                )}
-              </ScrollContainer>
+                      return (
+                        <ActiveLink
+                          href={`/project/${project_id}/construct/${id}`}
+                          key={id}
+                          passHref
+                        >
+                          <a>
+                            <Tooltip content={name}>
+                              <Icon label="Box" />
+                            </Tooltip>
+                            <span className="text">{name}</span>
+                          </a>
+                        </ActiveLink>
+                      );
+                    }
+                  )}
+                </ScrollContainer>
+              ) : (
+                <Text
+                  css={{
+                    px: '$1',
+                    py: '$2',
+                    textAlign: 'center',
+                    color: '$mutedText',
+                  }}
+                >
+                  Select a Construct below
+                </Text>
+              )}
             </Accordion>
           )}
         </Box>
@@ -219,16 +229,7 @@ export default function Sidebar() {
               <HiddenWrapper>
                 <Button
                   aria-label="Create project"
-                  css={{
-                    backgroundColor: '$background',
-                    cursor: 'pointer',
-                    fontWeight: '$body',
-                    px: '$2',
-                    py: '$1',
-                    '&:hover': {
-                      '& svg path': { fill: '$quaternary' },
-                    },
-                  }}
+                  color="tertiary"
                   onClick={() => handleCreateProject()}
                   value="project"
                 >

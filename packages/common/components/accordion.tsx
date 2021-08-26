@@ -69,7 +69,7 @@ export const StyledHeader = styled(Header, {
 });
 
 export const StyledTrigger = styled(Trigger, {
-  backgroundColor: '$overlay',
+  backgroundColor: 'inherit',
   border: 'none',
   cursor: 'pointer',
   display: 'flex',

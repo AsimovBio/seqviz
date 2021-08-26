@@ -1,30 +1,20 @@
 import type { DropdownMenuOwnProps } from '@radix-ui/react-dropdown-menu';
 import { Content, Item, Root, Trigger } from '@radix-ui/react-dropdown-menu';
 import type { ReactNode } from 'react';
+import React from 'react';
 
 import { styled } from '../stitches.config';
+import Button from './button';
 
 type Props = { children: ReactNode; content: ReactNode } & DropdownMenuOwnProps;
 
-export const StyledTrigger = styled(Trigger, {
-  alignItems: 'center',
-  backgroundColor: '$background',
-  border: 'none',
-  borderRadius: 0,
-  cursor: 'pointer',
-  display: 'flex',
-  fontSize: '$1',
-  fontWeight: '$body',
-  px: '$2',
-  py: '$1',
-  svg: {
-    width: 'unset',
-    height: 'unset',
-  },
-  '&:hover': {
-    '& svg path': { fill: '$quaternary' },
-  },
-});
+export function StyledTrigger({ children, ...props }) {
+  return (
+    <Trigger {...props} as={Button} color="tertiary">
+      {children}
+    </Trigger>
+  );
+}
 
 const StyledContent = styled(Content, {
   backgroundColor: '$overlay',

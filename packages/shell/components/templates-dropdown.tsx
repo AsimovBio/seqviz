@@ -74,24 +74,6 @@ export default function TemplatesDropdown({
     >
       <StyledTrigger
         aria-label="Create construct"
-        css={{
-          cursor: 'pointer',
-          backgroundColor: '$background',
-          fontWeight: '$body',
-          px: '$2',
-          py: '$1',
-          svg: {
-            width: 'unset',
-            height: 'unset',
-          },
-          '&:hover': {
-            '& svg path': { fill: '$quaternary' },
-          },
-          '&[aria-expanded="true"]': {
-            backgroundColor: '$quaternary',
-            color: '$active',
-          },
-        }}
         data-testid="create-construct-trigger"
         value="construct"
       >

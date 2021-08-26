@@ -6,11 +6,14 @@ const StyledButton = styled('button', {
   alignItems: 'center',
   backgroundColor: '$overlay',
   border: 'none',
-  color: 'inherit',
+  color: '$lightText',
+  cursor: 'pointer',
   display: 'flex',
-  fontWeight: '$bold',
+  fontSize: '$1',
+  fontWeight: '$body',
   justifyContent: 'space-between',
-  p: '$2',
+  px: '$2',
+  py: '$1',
   '&:hover, &:focus': {
     backgroundColor: '$highlight',
   },
@@ -30,6 +33,15 @@ const StyledButton = styled('button', {
       secondary: {
         backgroundColor: '$secondary',
       },
+      tertiary: {
+        backgroundColor: '$quinary',
+
+        '&:hover': {
+          backgroundColor: '$senary',
+          color: '$text',
+          '& svg path': { fill: '$quaternary' },
+        },
+      },
       transparent: {
         '&, &:hover, &:focus, &.active, &:active': {
           backgroundColor: 'transparent',
@@ -46,12 +58,4 @@ const StyledButton = styled('button', {
   },
 });
 
-function Button({ children, ...props }) {
-  return (
-    <StyledButton type="button" {...props}>
-      {children}
-    </StyledButton>
-  );
-}
-
-export default memo(Button);
+export default memo(StyledButton);
