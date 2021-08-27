@@ -20,6 +20,8 @@ describe('ProjectPageHeader', () => {
       <DashboardContext.Provider value={{ state, send, service: dashboardSvc }}>
         <ProjectPageHeader
           currentProject={project}
+          isNewProject={false}
+          resetUrl={() => {}}
           setMenuActive={setMenuActiveSpy}
           templates={[template]}
         />

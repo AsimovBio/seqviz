@@ -55,6 +55,7 @@ export const DashboardContext = createContext<ContextProps | undefined>(
 export function Dashboard({ children, data: initialData = {} }: Props) {
   const router = useRouter();
   const pid = router.query?.pid;
+  const isNew = router.query ? router.query['is-new'] === 'true' : false;
   const { part, project, template } = initialData;
 
   const [state, send, service] = useMachine<any, any>(dashboardMachine, {
@@ -101,7 +102,7 @@ export function Dashboard({ children, data: initialData = {} }: Props) {
     }
 
     if (newProject) {
-      url = `/project/${newProject.id}`;
+      url = `/project/${newProject.id}?is-new=true`;
     } else if (newConstruct) {
       url = `/project/${pid}/construct/${newConstruct.id}`;
     }
@@ -114,6 +115,11 @@ export function Dashboard({ children, data: initialData = {} }: Props) {
     });
   }, [newConstruct, newProject, pid, router, send]);
 
+  const handleResetUrl = () => {
+    const [path] = router.asPath.split('?');
+    router.push(path, undefined, { shallow: true });
+  };
+
   return isLoading ? (
     <p>Loading…</p>
   ) : (
@@ -122,6 +128,8 @@ export function Dashboard({ children, data: initialData = {} }: Props) {
         <Sidebar />
         <ProjectPageHeader
           currentProject={currentProject as Partial<Project>}
+          isNewProject={!!isNew}
+          resetUrl={handleResetUrl}
           setMenuActive={setMenuActive}
           templates={templates as Construct[]}
         />

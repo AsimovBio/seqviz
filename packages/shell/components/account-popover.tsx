@@ -1,6 +1,7 @@
 import type { UserProfile } from '@auth0/nextjs-auth0';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useState } from 'react';
 
 import UserIcon from './user-icon';
 
@@ -16,6 +17,7 @@ const Text: any = dynamic(() => import('common/components/text'));
 const Button: any = dynamic(() => import('common/components/button'));
 
 export default function AccountPopover({ user }: Props) {
+  const [isOpen, setIsOpen] = useState(false);
   const userIconText = user.nickname?.charAt(0).toUpperCase() || 'A';
   return (
     <Popover
@@ -23,9 +25,9 @@ export default function AccountPopover({ user }: Props) {
       content={
         <Box
           css={{
+            backgroundColor: '$background',
             display: 'flex',
             flexDirection: 'column',
-            backgroundColor: '$background',
           }}
         >
           <Box
@@ -39,6 +41,7 @@ export default function AccountPopover({ user }: Props) {
             <Box
               css={{
                 alignItems: 'center',
+                backgroundColor: '$overlay',
                 display: 'flex',
               }}
             >
@@ -82,8 +85,9 @@ export default function AccountPopover({ user }: Props) {
           </Box>
         </Box>
       }
+      handleOpenChange={setIsOpen}
     >
-      <UserIcon text={userIconText} />
+      <UserIcon className={isOpen ? 'full' : ''} text={userIconText} />
     </Popover>
   );
 }

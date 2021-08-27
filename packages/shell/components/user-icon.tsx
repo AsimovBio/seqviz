@@ -19,6 +19,7 @@ export default function UserIcon({ text, className }: Props) {
           r: '23px',
           cx: '50%',
           cy: '50%',
+          transition: 'r 0.3s ease-in-out',
         },
         '& circle.border': {
           fill: 'none',

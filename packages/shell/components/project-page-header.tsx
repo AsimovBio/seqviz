@@ -12,6 +12,8 @@ import TemplatesDropdown from './templates-dropdown';
 
 type Props = {
   currentProject?: Partial<Project>;
+  resetUrl: () => void;
+  isNewProject: boolean;
   setMenuActive: (isActive: boolean) => void;
   templates: Construct[];
 };
@@ -33,6 +35,8 @@ const Text: any = dynamic(() => import('common/components/text'));
 
 export default function ProjectPageHeader({
   currentProject,
+  resetUrl,
+  isNewProject,
   setMenuActive,
   templates,
 }: Props) {
@@ -89,6 +93,12 @@ export default function ProjectPageHeader({
     [currentProject?.id]
   );
 
+  const handleBlur = () => {
+    if (isNewProject) {
+      resetUrl();
+    }
+  };
+
   return (
     <PageHeader>
       {currentProject && (
@@ -111,26 +121,23 @@ export default function ProjectPageHeader({
             />
             <AutosizeInput
               autoComplete="off"
+              autoFocus={isNewProject}
               css={{
                 input: {
                   border: 'none',
                   flex: 1,
                   m: 0,
+                  mr: '$4',
+                  pr: '$3',
                 },
               }}
               id="project-name"
               name="name"
+              onBlur={handleBlur}
               onChange={debounce(handleChange, 500)}
               value={currentProject?.name}
             />
           </Label>
-          <Box
-            css={{
-              svg: { width: '1.5em', height: '1.5em' },
-            }}
-          >
-            <Icon label="CaretRight" />
-          </Box>
           <TemplatesDropdown
             onCreateConstruct={handleCreateConstruct}
             onMenuOpen={setMenuActive}

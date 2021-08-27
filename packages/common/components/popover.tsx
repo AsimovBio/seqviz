@@ -3,7 +3,12 @@ import type { ReactNode } from 'react';
 
 import { styled } from '../stitches.config';
 
-type Props = { children: ReactNode; content: ReactNode; arrowOffset?: number };
+type Props = {
+  children: ReactNode;
+  content: ReactNode;
+  handleOpenChange?: (open: boolean) => void;
+  arrowOffset?: number;
+};
 
 export const StyledContent = styled(Content, {
   borderRadius: 3,
@@ -21,19 +26,19 @@ export const StyledTrigger = styled(Trigger, {
   backgroundColor: '$overlay',
   border: 'none',
   borderRadius: 0,
+  cursor: 'pointer',
   display: 'flex',
   p: '$1',
-  '&:hover, &:focus': {
-    backgroundColor: '$highlight',
-  },
-  '&.active, &:active': {
-    backgroundColor: '$active',
-  },
 });
 
-export default function Popover({ children, content, arrowOffset = 0 }: Props) {
+export default function Popover({
+  children,
+  content,
+  handleOpenChange,
+  arrowOffset = 0,
+}: Props) {
   return (
-    <Root>
+    <Root onOpenChange={handleOpenChange}>
       <StyledTrigger>{children}</StyledTrigger>
       <StyledContent>
         <StyledArrow offset={arrowOffset} />
