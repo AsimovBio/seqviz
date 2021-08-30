@@ -27,6 +27,7 @@ module.exports = {
         './components/accordion': './components/accordion',
         './components/box': './components/box',
         './components/button': './components/button',
+        './components/copy-to-clipboard': './components/copy-to-clipboard',
         './components/dropdown-menu': './components/dropdown-menu',
         './components/form': './components/form',
         './components/header': './components/header',

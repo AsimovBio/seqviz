@@ -22,7 +22,7 @@ const StyledArrow = styled(Arrow, {
 });
 
 const StyledTrigger = styled(Trigger, {
-  aligntItems: 'center',
+  alignItems: 'center',
   background: 'transparent',
   border: 'none',
   display: 'flex',

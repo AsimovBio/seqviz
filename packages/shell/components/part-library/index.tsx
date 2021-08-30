@@ -1,6 +1,5 @@
 import { useActor } from '@xstate/react';
 import dynamic from 'next/dynamic';
-import { useRouter } from 'next/router';
 import { DashboardContext } from 'pages';
 import { useMemo } from 'react';
 import { useContext } from 'react';
@@ -10,7 +9,11 @@ import { sdk } from 'utils/request';
 
 const Box: any = dynamic(() => import('common/components/box'));
 const Button = dynamic(() => import('common/components/button'));
+const CopyToClipboard = dynamic(
+  () => import('common/components/copy-to-clipboard')
+);
 const Icon = dynamic(() => import('common/components/icon'));
+const Text = dynamic(() => import('common/components/text'));
 
 export default function PartsLibrary({ initialData }) {
   const {
@@ -117,20 +120,47 @@ export default function PartsLibrary({ initialData }) {
         disableSortBy: true,
         Cell({ value }) {
           return (
-            <Box
-              css={{
-                maxWidth: '20rem',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                textTransform: 'uppercase',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {value}
-            </Box>
+            <CopyToClipboard text={value?.toUpperCase()}>
+              <Box
+                color="transparent"
+                css={{
+                  maxWidth: '20rem',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  textTransform: 'uppercase',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {value}
+              </Box>
+            </CopyToClipboard>
           );
         },
-        Header: 'DNA Sequence',
+        Header() {
+          return (
+            <Text
+              css={{
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              DNA Sequence&nbsp;
+              <Box
+                as="span"
+                css={{
+                  svg: {
+                    height: '$0',
+                    width: '$0',
+                    path: { fill: '$mutedText' },
+                  },
+                }}
+                title="Click sequence to copy"
+              >
+                <Icon label="Copy" />
+              </Box>
+            </Text>
+          );
+        },
       },
     ],
     [send]

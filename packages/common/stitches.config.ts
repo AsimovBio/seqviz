@@ -75,6 +75,11 @@ export const { css, getCssString, global, keyframes, styled, theme } =
         primary: '0 0 12px $colors$shadow',
         small: '0 0 8px $colors$shadow',
       },
+      sizes: Object.fromEntries(
+        new Map(
+          Object.entries(['0.75rem', '1rem', '2rem', '4rem', '8rem', '16rem'])
+        )
+      ),
       transitions: { standard: '0.1s ease-in-out' },
     },
     media: {},
