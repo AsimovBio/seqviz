@@ -71,6 +71,7 @@ export function Dashboard({ children, data: initialData = {} }: Props) {
     null,
     {
       initialData: { project },
+      revalidateOnMount: true,
     }
   );
 
