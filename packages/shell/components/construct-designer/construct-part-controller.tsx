@@ -21,6 +21,19 @@ const Label: any = dynamic(
 
 type Props = { constructPartRef: ActorRef<any, any> };
 
+const BACKGROUND_COLORS_MAP = {
+  '5-utr': '$senary',
+  'polyadenylation-signal': '$octonary',
+  '3-utr': '$senary',
+  cds: '$denary',
+  'pol-ii-promoter': '$nonary',
+  'fluorescent-protein': '$senary',
+  'selection-system': '$denary',
+  'heavy-chain': '$denary',
+  'light-chain': '$denary',
+  'nuclear-trafficking-tag': '$senary',
+};
+
 function ConstructPartController(
   { constructPartRef }: Props,
   ref: Ref<HTMLDivElement>
@@ -28,9 +41,11 @@ function ConstructPartController(
   const [state, send] = useActor(constructPartRef);
 
   const {
+    isActive,
+    isFocused,
     part: {
       name,
-      part_type: { name: type },
+      part_type: { name: type, slug },
     },
   } = state.context;
 
@@ -58,7 +73,21 @@ function ConstructPartController(
           }}
           title={`${name}\n${type}`}
         >
-          <Text as="span" css={{ display: 'block', width: '100%' }} size={0}>
+          <Text
+            as="span"
+            css={{
+              backgroundColor: isActive
+                ? '$senary'
+                : isFocused
+                ? BACKGROUND_COLORS_MAP[slug]
+                : 'none',
+              color: isActive ? '$quaternary' : 'inherit',
+              display: 'block',
+              mb: '$1',
+              width: '100%',
+            }}
+            size={0}
+          >
             {name}
           </Text>
           <Text
@@ -66,7 +95,6 @@ function ConstructPartController(
             css={{
               color: '$mutedText',
               display: 'block',
-              mt: '$1',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               width: '100%',

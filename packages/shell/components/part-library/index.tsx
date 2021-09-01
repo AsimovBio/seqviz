@@ -173,9 +173,6 @@ export default function PartsLibrary({ initialData }) {
     <Box
       as="table"
       css={{
-        border: `1px solid ${
-          state?.value === 'selecting' ? '$primary' : 'transparent'
-        }`,
         borderSpacing: '0 0.25em',
         li: { pt: '$2' },
         listStyle: 'none',

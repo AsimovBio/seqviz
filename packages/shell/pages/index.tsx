@@ -156,6 +156,7 @@ export function Dashboard({ children, data: initialData = {} }: Props) {
               flexDirection: 'column',
               gridArea: 'construct',
               justifyContent: 'space-between',
+              minHeight: '18.25em',
               overflow: 'hidden',
             }}
           >
