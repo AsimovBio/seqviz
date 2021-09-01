@@ -191,7 +191,7 @@ export default function Sidebar() {
                         >
                           <a>
                             <Tooltip content={name}>
-                              <Icon label="Box" />
+                              <Icon label="Circle" />
                             </Tooltip>
                             <span className="text">{name}</span>
                           </a>
@@ -251,7 +251,17 @@ export default function Sidebar() {
                       <ActiveLink href={`/project/${projectId}`} passHref>
                         <a>
                           <Tooltip content={name} side="right">
-                            <Icon label="Circle" />
+                            <Box
+                              css={{
+                                flex: '0 2.75em',
+                                transition: 'transform $standard',
+                                '.active &': {
+                                  transform: 'rotate(90deg)',
+                                },
+                              }}
+                            >
+                              <Icon label="ChevronRight" />
+                            </Box>
                           </Tooltip>
                           <span className="text">{name}</span>
                         </a>
@@ -274,7 +284,7 @@ export default function Sidebar() {
                                 css={{ pl: isNavOpen ? '1.75em' : 0 }}
                               >
                                 <Tooltip content={name} side="right">
-                                  <Icon label="Box" />
+                                  <Icon label="Circle" />
                                 </Tooltip>
                                 <span className="text">{name}</span>
                               </Box>

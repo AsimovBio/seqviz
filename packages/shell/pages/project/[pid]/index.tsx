@@ -29,7 +29,7 @@ export function Project({ data: initialData }: Props) {
       <Text
         css={{ px: '$3', py: '$6', textAlign: 'center', color: '$mutedText' }}
       >
-        Click the “+ Construct” button to instantiate a new genetic design
+        Create a new Construct or select an existing Construct from the sidebar
       </Text>
     </Dashboard>
   );
