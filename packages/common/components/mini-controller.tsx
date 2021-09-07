@@ -50,7 +50,6 @@ const StyledButton = styled('button', {
   $$primary: '#F8EFF4',
   $$secondary: '#EFEAF9',
   $$tertiary: '#F8F1EC',
-  $$primaryHover: '#FADCED',
   $$secondaryHover: '#E9DFFD',
   $$tertiaryHover: '#F4E0D3',
 
@@ -79,7 +78,7 @@ const StyledButton = styled('button', {
       primary: {
         backgroundColor: '$highlight',
         '&:hover': {
-          backgroundColor: '$$primaryHover',
+          backgroundColor: '$warningLight',
         },
       },
       secondary: {

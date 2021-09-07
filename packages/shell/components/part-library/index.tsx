@@ -22,7 +22,7 @@ export default function PartsLibrary({ initialData }) {
     },
   } = useContext(DashboardContext);
 
-  const [state, send] = useActor<any, any>(partLibSvc);
+  const [_, send] = useActor<any, any>(partLibSvc);
 
   const { data, error } = sdk.useParts('Parts', null, {
     initialData,
@@ -76,22 +76,24 @@ export default function PartsLibrary({ initialData }) {
           value,
         }) {
           return (
-            <Button
-              color="transparent"
-              css={{
-                cursor: 'pointer',
-                display: 'block',
-                fontWeight: '$body',
-                p: 0,
-                textAlign: 'left',
-                width: '100%',
-              }}
-              onClick={() => {
-                send({ type: 'SELECT', value: part });
-              }}
-            >
-              <Box as="span">{value}</Box>
-            </Button>
+            <Box>
+              <Button
+                color="transparent"
+                css={{
+                  cursor: 'pointer',
+                  display: 'block',
+                  fontWeight: '$body',
+                  p: 0,
+                  textAlign: 'left',
+                  width: '100%',
+                }}
+                onClick={() => {
+                  send({ type: 'SELECT', value: part });
+                }}
+              >
+                <Box as="span">{value}</Box>
+              </Button>
+            </Box>
           );
         },
         Header: 'Name',
@@ -102,16 +104,26 @@ export default function PartsLibrary({ initialData }) {
       },
       {
         accessor: 'sequence_length',
-        Cell({ value }) {
-          return value ? `${value} bp` : '';
-        },
-        Header: 'Length',
+        Header: 'Length (bp)',
       },
       {
         accessor: 'description',
         disableSortBy: true,
         Cell({ value }) {
-          return <Box css={{ maxWidth: '32rem' }}>{value}</Box>;
+          return (
+            <Box
+              css={{
+                display: '-webkit-box',
+                '-webkit-line-clamp': 1,
+                '-webkit-box-orient': 'vertical',
+                overflow: 'hidden',
+                whiteSpace: 'normal',
+              }}
+              title={value}
+            >
+              {value}
+            </Box>
+          );
         },
         Header: 'Description',
       },
@@ -120,20 +132,21 @@ export default function PartsLibrary({ initialData }) {
         disableSortBy: true,
         Cell({ value }) {
           return (
-            <CopyToClipboard text={value?.toUpperCase()}>
-              <Box
-                color="transparent"
-                css={{
-                  maxWidth: '20rem',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                  textTransform: 'uppercase',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {value}
-              </Box>
-            </CopyToClipboard>
+            <Box>
+              <CopyToClipboard text={value?.toUpperCase()}>
+                <Box
+                  color="transparent"
+                  css={{
+                    maxWidth: '20rem',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  {value}
+                </Box>
+              </CopyToClipboard>
+            </Box>
           );
         },
         Header() {
@@ -187,15 +200,8 @@ export default function PartsLibrary({ initialData }) {
 
         'td, th': {
           border: 'none',
-          padding: '$2',
+          padding: '$1 $3',
           textAlign: 'left',
-
-          '&:first-of-type': {
-            pl: '$3',
-          },
-          '&:last-of-type': {
-            pr: '$3',
-          },
         },
 
         th: {
@@ -219,6 +225,7 @@ export default function PartsLibrary({ initialData }) {
                   as="th"
                   css={{
                     verticalAlign: 'middle',
+                    whiteSpace: 'nowrap',
                   }}
                   key={key}
                   {...props}
@@ -247,9 +254,14 @@ export default function PartsLibrary({ initialData }) {
           return (
             <tr key={key} {...props}>
               {row.cells.map((cell, index) => (
-                <td key={index} {...cell.getCellProps()}>
+                <Box
+                  as="td"
+                  css={{ whiteSpace: 'nowrap' }}
+                  key={index}
+                  {...cell.getCellProps()}
+                >
                   {cell.render('Cell')}
-                </td>
+                </Box>
               ))}
             </tr>
           );

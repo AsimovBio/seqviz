@@ -74,6 +74,14 @@ export default function TemplatesDropdown({
     >
       <StyledTrigger
         aria-label="Create construct"
+        css={{
+          fontSize: '$1',
+          '&[data-state=open]': {
+            backgroundColor: '$quaternary',
+            color: '$background',
+          },
+          '&:focus-visible': { outline: 'none' },
+        }}
         data-testid="create-construct-trigger"
         value="construct"
       >

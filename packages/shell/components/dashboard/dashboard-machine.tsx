@@ -26,7 +26,7 @@ export async function createNew(
       data = await mutate('Projects', async (data) => {
         try {
           ({ insert_project_one: newProject } = await sdk.CreateProject({
-            input: { name: 'Untitled project', description: '' },
+            input: { name: 'Untitled folder', description: '' },
           }));
 
           data.project.push(newProject);

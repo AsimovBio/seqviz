@@ -150,15 +150,17 @@ export default function Sidebar() {
           {isNavOpen && (
             <Accordion
               collapsible
-              defaultValue="Workspace"
+              defaultValue="Recently opened"
               headerContent={
                 <HiddenWrapper>
                   <Button
                     aria-label="Clear workspaces"
                     color="tertiary"
                     css={{
+                      backgroundColor: '$background',
                       '&:hover': {
-                        '& svg path': { fill: '$primary' },
+                        backgroundColor: '$warningLight',
+                        '& svg path': { fill: '$warning' },
                       },
                     }}
                     disabled={recentConstructs.length === 0}
@@ -171,7 +173,7 @@ export default function Sidebar() {
                 </HiddenWrapper>
               }
               isChevronShown={isNavOpen}
-              title="Workspace"
+              title="Recently opened"
               type="single"
             >
               {recentConstructs.length > 0 ? (
@@ -224,7 +226,7 @@ export default function Sidebar() {
         >
           <Accordion
             collapsible
-            defaultValue="Projects"
+            defaultValue="Files"
             headerContent={
               <HiddenWrapper>
                 <Button
@@ -234,12 +236,12 @@ export default function Sidebar() {
                   value="project"
                 >
                   <Icon label="Plus" />
-                  &nbsp;Project
+                  &nbsp;Folder
                 </Button>
               </HiddenWrapper>
             }
             isChevronShown={isNavOpen}
-            title="Projects"
+            title="Files"
             type="single"
           >
             <ScrollContainer>
