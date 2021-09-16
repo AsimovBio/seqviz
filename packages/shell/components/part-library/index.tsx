@@ -1,6 +1,6 @@
 import { useActor } from '@xstate/react';
+import { DashboardContext } from 'components/layout/dashboard-layout';
 import dynamic from 'next/dynamic';
-import { DashboardContext } from 'pages';
 import { useMemo } from 'react';
 import { useContext } from 'react';
 import type { Column } from 'react-table';
@@ -15,7 +15,7 @@ const CopyToClipboard = dynamic(
 const Icon = dynamic(() => import('common/components/icon'));
 const Text = dynamic(() => import('common/components/text'));
 
-export default function PartsLibrary({ initialData }) {
+export default function PartsLibrary() {
   const {
     state: {
       children: { partLibSvc },
@@ -24,9 +24,7 @@ export default function PartsLibrary({ initialData }) {
 
   const [_, send] = useActor<any, any>(partLibSvc);
 
-  const { data, error } = sdk.useParts('Parts', null, {
-    initialData,
-  });
+  const { data, error } = sdk.useParts('Parts', null);
 
   if (error) {
     console.error(error);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactInputAutosize from 'react-input-autosize';
 
 import { styled } from '../stitches.config';
@@ -16,6 +16,10 @@ export function AutosizeInput({ value, onChange, ...props }) {
     setInputValue(value);
     onChange(name, value);
   };
+
+  useEffect(() => {
+    setInputValue(value);
+  }, [value]);
 
   return (
     <StyledAutosizeInput

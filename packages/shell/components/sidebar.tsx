@@ -1,14 +1,14 @@
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import ActiveLink from 'components/active-link';
-import useLocalStorage from 'hooks/useLocalStorage';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { DashboardContext } from 'pages';
 import { useContext } from 'react';
 import { useCallback } from 'react';
 import { Fragment, useState } from 'react';
+
+import { DashboardContext } from './layout/dashboard-layout';
 
 const Accordion = dynamic(() => import('common/components/accordion'), {
   ssr: false,
@@ -34,7 +34,7 @@ export default function Sidebar() {
   const {
     send,
     state: {
-      context: { projects },
+      context: { projects, recentConstructs },
     },
   } = useContext(DashboardContext);
 
@@ -42,20 +42,13 @@ export default function Sidebar() {
     send({ pid, type: 'CREATE', value: 'project' });
   }, [pid, send]);
 
-  const persistedConstructs =
-    typeof window !== 'undefined' && localStorage.getItem('recentConstructs');
-
-  const [recentConstructs, setRecentConstructs] = useLocalStorage<unknown[]>(
-    'recentConstructs',
-    persistedConstructs ? JSON.parse(persistedConstructs) : []
-  );
-
   const { query } = useRouter();
   const HiddenWrapper = isNavOpen ? Fragment : VisuallyHidden;
 
   const handleClearRecentConstructs = () => {
-    setRecentConstructs([]);
-    router.push(`/project/${pid}`);
+    typeof window !== 'undefined' &&
+      localStorage.setItem('recentConstructs', JSON.stringify([]));
+    send({ type: 'CLEAR_RECENT_CONSTRUCTS', value: [] });
   };
 
   return (
@@ -77,6 +70,7 @@ export default function Sidebar() {
           width: '22em',
           '.text': {
             display: 'unset',
+            flex: 1,
           },
         },
         nav: {
@@ -191,12 +185,12 @@ export default function Sidebar() {
                           key={id}
                           passHref
                         >
-                          <a>
+                          <Box as="a">
                             <Tooltip content={name}>
                               <Icon label="Circle" />
                             </Tooltip>
-                            <span className="text">{name}</span>
-                          </a>
+                            <Text className="text">{name}</Text>
+                          </Box>
                         </ActiveLink>
                       );
                     }

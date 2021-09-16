@@ -98,10 +98,10 @@ export const StyledContent = styled(Content, {
     mt: '$1',
     py: '$1',
     textDecoration: 'none',
-    '&:hover, &:focus': {
+    '&:hover, &:focus, &:active': {
       backgroundColor: '$highlight',
     },
-    '&.active, &:active': {
+    '&.active': {
       backgroundColor: '$active',
       'svg path': { fill: '$primary' },
     },

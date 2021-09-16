@@ -4,7 +4,6 @@ import type { ReactNode } from 'react';
 import React from 'react';
 
 const Box: any = dynamic(() => import('common/components/box'));
-
 type Props = { children: ReactNode };
 
 export default function Layout({ children }: Props) {

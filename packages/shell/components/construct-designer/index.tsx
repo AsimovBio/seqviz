@@ -1,7 +1,7 @@
 import { useActor } from '@xstate/react';
+import { DashboardContext } from 'components/layout/dashboard-layout';
 import type { Construct } from 'models/graphql';
 import dynamic from 'next/dynamic';
-import { DashboardContext } from 'pages';
 import { useContext, useEffect, useState } from 'react';
 import type {
   DraggableProvided,

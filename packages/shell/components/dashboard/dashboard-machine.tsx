@@ -9,6 +9,7 @@ export type DashboardContext = {
   newConstruct?: Construct;
   newProject?: Project;
   projects: Project[];
+  recentConstructs: Construct[];
 };
 
 export type DashboardEvent = { type: string; [key: string]: any };
@@ -78,6 +79,7 @@ export const dashboardMachine = createMachine<DashboardContext, DashboardEvent>(
       newConstruct: null,
       newProject: null,
       projects: [],
+      recentConstructs: [],
     },
     initial: 'ready',
     states: {
@@ -100,6 +102,37 @@ export const dashboardMachine = createMachine<DashboardContext, DashboardEvent>(
             ),
           },
           CREATE: { target: 'ready.creating' },
+          OPEN_CONSTRUCT: {
+            actions: assign((context, { value: currentConstruct }) => {
+              const constructs = [...context.recentConstructs];
+              const existingIdx = constructs.findIndex(
+                ({ id }) => id === currentConstruct?.id
+              );
+              if (existingIdx !== -1) {
+                constructs.splice(existingIdx, 1);
+              }
+              constructs.unshift(currentConstruct);
+
+              typeof window !== 'undefined' &&
+                localStorage.setItem(
+                  'recentConstructs',
+                  JSON.stringify(constructs)
+                );
+
+              return {
+                ...context,
+                recentConstructs: constructs,
+              };
+            }),
+          },
+          CLEAR_RECENT_CONSTRUCTS: {
+            actions: assign((context) => {
+              return {
+                ...context,
+                recentConstructs: [],
+              };
+            }),
+          },
           'PARTLIB.ENGAGE': {
             actions: forwardTo('partLibSvc'),
           },

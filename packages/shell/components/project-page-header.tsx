@@ -1,6 +1,6 @@
+import { DashboardContext } from 'components/layout/dashboard-layout';
 import type { Construct, Project } from 'models/graphql';
 import dynamic from 'next/dynamic';
-import { DashboardContext } from 'pages';
 import { useContext } from 'react';
 import { useCallback } from 'react';
 import { mutate } from 'swr';

@@ -57,18 +57,7 @@ export const constructMachine = createMachine<
     },
     initial: 'idle',
     states: {
-      idle: {
-        on: {
-          BOOTSTRAP: {
-            target: 'loading',
-            actions: [
-              assign(
-                (_, initialData) => initialData as Partial<ConstructContext>
-              ),
-            ],
-          },
-        },
-      },
+      idle: {},
       loading: {
         entry: 'hydrate',
         always: 'ready',
@@ -76,6 +65,12 @@ export const constructMachine = createMachine<
       ready: {},
     },
     on: {
+      BOOTSTRAP: {
+        target: 'loading',
+        actions: [
+          assign((_, initialData) => initialData as Partial<ConstructContext>),
+        ],
+      },
       'CONSTRUCTPART.ACTIVATE': { actions: 'activate' },
       'CONSTRUCTPART.ADD': {
         actions: ['updatePrev', 'add', 'sort', 'persist'],

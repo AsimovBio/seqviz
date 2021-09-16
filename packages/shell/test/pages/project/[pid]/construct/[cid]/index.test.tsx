@@ -1,5 +1,6 @@
 import { fireEvent, waitFor } from '@testing-library/react';
 import { dashboardMachine } from 'components/dashboard/dashboard-machine';
+import { DashboardContext } from 'components/layout/dashboard-layout';
 import { graphql } from 'msw';
 import { Construct } from 'pages/project/[pid]/construct/[cid]';
 import { construct } from 'test/__mocks__/construct';
@@ -20,8 +21,29 @@ jest.mock('next/router', () => ({
 }));
 
 describe('Construct page', () => {
+  const dashboardSvc = interpret(dashboardMachine);
+  let state;
+  let send;
+
+  const renderComponent = () => {
+    return render(
+      <DashboardContext.Provider value={{ state, send, service: dashboardSvc }}>
+        <Construct data={{ construct: [construct] }} user={{}} />
+      </DashboardContext.Provider>
+    );
+  };
+
+  beforeAll(() => {
+    dashboardSvc.start();
+    ({ send, state } = dashboardSvc);
+  });
+
+  afterAll(() => {
+    dashboardSvc.stop();
+  });
+
   it('renders without errors', async () => {
-    render(<Construct data={{ construct: [construct] }} user={{}} />);
+    renderComponent();
 
     expect(
       await screen.findByDisplayValue('Test construct')
@@ -29,7 +51,7 @@ describe('Construct page', () => {
   });
 
   it('calls the API on input change', async () => {
-    render(<Construct data={{ construct: [construct] }} user={{}} />);
+    renderComponent();
 
     const inputNode = await screen.findByDisplayValue('Test construct');
 
@@ -53,7 +75,7 @@ describe('Construct page', () => {
     fireEvent.change(inputNode, { target: { value: 'New construct' } });
 
     await waitFor(() => {
-      expect(screen.getByText('New construct')).toBeInTheDocument();
+      expect(inputNode).toHaveValue('New construct');
     });
   });
 });

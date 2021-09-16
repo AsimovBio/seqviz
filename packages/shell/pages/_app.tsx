@@ -1,7 +1,9 @@
 import { UserProvider } from '@auth0/nextjs-auth0';
 import { IdProvider } from '@radix-ui/react-id';
+import type { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import dynamic from 'next/dynamic';
+import type { ReactElement, ReactNode } from 'react';
 import React, { StrictMode } from 'react';
 import { SWRConfig } from 'swr';
 
@@ -10,8 +12,20 @@ const GlobalStyles = dynamic(async () => {
   return GlobalStyles;
 });
 
-export default function App({ Component, pageProps }: AppProps) {
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode;
+};
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+export default function App({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page) => page);
+
   const { user } = pageProps;
+
+  const pageContent = getLayout(<Component {...pageProps} />);
 
   return (
     <StrictMode>
@@ -23,9 +37,7 @@ export default function App({ Component, pageProps }: AppProps) {
             focusThrottleInterval: 15000,
           }}
         >
-          <IdProvider>
-            <Component {...pageProps} />
-          </IdProvider>
+          <IdProvider>{pageContent}</IdProvider>
         </SWRConfig>
       </UserProvider>
     </StrictMode>

@@ -1,7 +1,7 @@
-import { fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent } from '@testing-library/react';
 import { dashboardMachine } from 'components/dashboard/dashboard-machine';
+import { DashboardContext } from 'components/layout/dashboard-layout';
 import ProjectPageHeader from 'components/project-page-header';
-import { DashboardContext } from 'pages';
 import { construct } from 'test/__mocks__/construct';
 import { project } from 'test/__mocks__/project';
 import { render, screen } from 'test/utils';
@@ -42,7 +42,9 @@ describe('ProjectPageHeader', () => {
   it('renders without errors', async () => {
     renderComponent();
 
-    expect(await screen.findByText(project.name)).toBeInTheDocument();
+    expect(
+      await screen.findByDisplayValue(project.name, {}, { timeout: 5000 })
+    ).toBeInTheDocument();
   });
 
   it('handles the construct create event', async () => {

@@ -1,6 +1,9 @@
 import type { WithPageAuthRequiredProps } from '@auth0/nextjs-auth0';
 import { withPageAuthRequired } from '@auth0/nextjs-auth0';
-import useLocalStorage from 'hooks/useLocalStorage';
+import {
+  DashboardContext,
+  DashboardLayout,
+} from 'components/layout/dashboard-layout';
 import {
   ConstructTemplatesDocument,
   PartsDocument,
@@ -15,8 +18,9 @@ import type {
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import type { Props as DashboardProps } from 'pages';
-import { Dashboard } from 'pages';
-import { useCallback, useEffect } from 'react';
+import type { ReactElement } from 'react';
+import { useContext } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { mutate } from 'swr';
 import { debounce } from 'ts-debounce';
 import { getModule } from 'utils/import';
@@ -56,10 +60,8 @@ const ConstructDesigner = dynamic(
 export function Construct({ data: initialData = {} }: Props) {
   const router = useRouter();
   const { cid, pid } = router.query;
-  const [recentConstructs, setRecentConstructs] = useLocalStorage<unknown[]>(
-    'recentConstructs',
-    []
-  );
+  const { send } = useContext(DashboardContext);
+
   const { construct } = initialData;
   let currentConstruct;
 
@@ -79,70 +81,84 @@ export function Construct({ data: initialData = {} }: Props) {
 
   useEffect(() => {
     if (currentConstruct) {
-      const constructs = [...recentConstructs];
-      const existingIdx = constructs.findIndex(
-        ({ id }) => id === currentConstruct?.id
-      );
-
-      if (existingIdx !== -1) {
-        constructs.splice(existingIdx, 1, currentConstruct);
-      } else {
-        constructs.push(currentConstruct);
-      }
-
-      setRecentConstructs(constructs);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleChange = useCallback(
-    ({ target: { name, value } }) => {
-      mutate('Projects', async (data) => {
-        if (data) {
-          try {
-            const { project: projects } = data;
-
-            const { update_construct_by_pk: updatedConstruct } =
-              await sdk.UpdateConstruct({
-                id: currentConstruct?.id,
-                input: { [name]: value },
-              });
-
-            const activeProject = projects.find(({ id }) => id === pid);
-
-            if (activeProject) {
-              const filteredConstructs =
-                activeProject.project_constructs.filter(
-                  ({ id }) => id !== updatedConstruct.id
-                );
-              activeProject.project_constructs = [
-                updatedConstruct,
-                ...filteredConstructs,
-              ];
-            }
-          } catch (err) {
-            console.error(err);
-          }
-        }
-
-        return data;
+      send({
+        type: 'OPEN_CONSTRUCT',
+        value: currentConstruct,
       });
-    },
-    [currentConstruct?.id, pid]
+    }
+  }, [currentConstruct, send]);
+
+  const updateProjects = useMemo(
+    () =>
+      debounce(async (name, value) => {
+        const { update_construct_by_pk: updatedConstruct } =
+          await sdk.UpdateConstruct({
+            id: currentConstruct?.id,
+            input: { [name]: value },
+          });
+
+        mutate('Projects', async (data) => {
+          if (data) {
+            try {
+              const { project: projects } = data;
+
+              const activeProject = projects.find(({ id }) => id === pid);
+
+              if (activeProject) {
+                const filteredConstructs =
+                  activeProject.project_constructs.filter(
+                    ({ id }) => id !== updatedConstruct.id
+                  );
+                activeProject.project_constructs = [
+                  updatedConstruct,
+                  ...filteredConstructs,
+                ];
+              }
+            } catch (err) {
+              console.error(err);
+            }
+          }
+
+          return data;
+        });
+
+        // Update SWR cache for this Construct (triggers useEffect above to update recentConstructs)
+        mutate(
+          cid,
+          () => ({
+            construct: [{ ...currentConstruct, ...updatedConstruct }],
+          }),
+          false
+        );
+      }, 500),
+    [cid, currentConstruct, pid]
   );
 
+  const handleChange = ({ target: { name, value } }) => {
+    setInputValue(value);
+    updateProjects(name, value);
+  };
+
+  const [inputValue, setInputValue] = useState(currentConstruct?.name);
+
+  useEffect(() => {
+    if (!!currentConstruct?.name) {
+      setInputValue(currentConstruct.name);
+    }
+  }, [currentConstruct]);
+
   return (
-    <Dashboard data={initialData} key={cid as string}>
+    <>
       <Header as="header">
         <Label htmlFor="construct-name">
           <Icon label="Circle" />
         </Label>
         <Input
           css={{ border: 'none', flex: 1, m: 0 }}
-          defaultValue={currentConstruct?.name}
           id="construct-name"
           name="name"
-          onChange={debounce(handleChange, 500)}
+          onChange={handleChange}
+          value={inputValue}
         />
       </Header>
       {currentConstruct && (
@@ -151,7 +167,7 @@ export function Construct({ data: initialData = {} }: Props) {
           id={currentConstruct.id}
         />
       )}
-    </Dashboard>
+    </>
   );
 }
 
@@ -198,4 +214,10 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
   },
 });
 
-export default withPageAuthRequired(Construct);
+const ConstructPage = withPageAuthRequired(Construct);
+
+ConstructPage.getLayout = function getLayout(page: ReactElement) {
+  return <DashboardLayout>{page}</DashboardLayout>;
+};
+
+export default ConstructPage;
