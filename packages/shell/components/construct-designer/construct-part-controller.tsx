@@ -45,7 +45,7 @@ function ConstructPartController(
     isFocused,
     part: {
       name,
-      part_type: { name: type, slug },
+      type: { name: type, slug },
     },
   } = state.context;
 

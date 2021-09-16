@@ -5,7 +5,7 @@ fragment PartFields on part {
   name
   sequence
   sequence_length
-  part_type {
+  type {
     glyph
     name
     slug
@@ -15,7 +15,7 @@ fragment PartFields on part {
 query Parts {
   part(
     order_by: { part_type_id: desc }
-    where: { part_type: { name: { _neq: "CDS" } } }
+    where: { type: { name: { _neq: "CDS" } } }
   ) {
     ...PartFields
   }

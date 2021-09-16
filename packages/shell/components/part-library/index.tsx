@@ -35,7 +35,7 @@ export default function PartsLibrary() {
   const columns = useMemo<Column[]>(
     () => [
       {
-        accessor: 'part_type',
+        accessor: 'type',
         disableSortBy: true,
         Cell({ value }) {
           const { name, glyph } = value;
@@ -97,7 +97,7 @@ export default function PartsLibrary() {
         Header: 'Name',
       },
       {
-        accessor: 'part_type.name',
+        accessor: 'type.name',
         Header: 'Type',
       },
       {

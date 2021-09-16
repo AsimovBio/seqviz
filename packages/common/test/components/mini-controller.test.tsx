@@ -13,7 +13,7 @@ describe('MiniController', () => {
           isActive: true,
           isFocused: true,
           orientation: 'forward',
-          part: { part_type: { glyph: '' }, name: '' },
+          part: { type: { glyph: '' }, name: '' },
         }}
         onNotify={onNotifySpy}
         {...props}

@@ -27,7 +27,7 @@ export interface ConstructStateSchema {
 export type ConstructEvent = { type: string; [key: string]: any };
 
 export const DEFAULT_PART = {
-  part_type: {
+  type: {
     glyph:
       '<svg id="empty" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="20"/></svg>',
   },

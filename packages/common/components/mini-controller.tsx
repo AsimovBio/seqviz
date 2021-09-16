@@ -14,7 +14,7 @@ export type Props = {
     isActive: boolean;
     isFocused: boolean;
     orientation: 'forward' | 'reverse';
-    part: { part_type: { glyph: string }; name: string };
+    part: { type: { glyph: string }; name: string };
   };
   onNotify: ({ type: string, value: unknown }) => void;
 };
@@ -152,7 +152,7 @@ function MiniController({
     orientation,
     part: {
       name,
-      part_type: { glyph },
+      type: { glyph },
     },
   },
   onNotify,

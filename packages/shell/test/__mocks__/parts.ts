@@ -4,7 +4,7 @@ export const parts = Array.from({ length: 10 }, (element, index) => ({
   id: faker.datatype.uuid(),
   name: `Test part ${index + 1}`,
   sequence: 'GACT',
-  part_type: {
+  type: {
     name: 'Test part type',
     glyph: '<svg><path/></svg>',
   },
