@@ -2,7 +2,7 @@ import { fireEvent } from '@testing-library/react';
 import { DashboardLayout } from 'components/layout/dashboard-layout';
 import { graphql } from 'msw';
 import { cache } from 'swr';
-import { project } from 'test/__mocks__/project';
+import { folder } from 'test/__mocks__/folder';
 import { server } from 'test/msw/server';
 import { render, screen } from 'test/utils';
 
@@ -11,8 +11,8 @@ jest.mock('utils/import');
 jest.mock('next/router', () => ({
   useRouter() {
     return {
-      query: { pid: project.id },
-      asPath: `/project/${project.id}`,
+      query: { fid: folder.id },
+      asPath: `/folder/${folder.id}`,
     };
   },
 }));
@@ -24,21 +24,21 @@ describe('Dashboard Layout', () => {
     renderComponent();
 
     expect(
-      await screen.findByDisplayValue('Test project', {}, { timeout: 5000 })
+      await screen.findByDisplayValue('Test folder', {}, { timeout: 5000 })
     ).toBeInTheDocument();
   });
 
   it('calls the API on input change', async () => {
     renderComponent();
 
-    const inputNode = await screen.findByDisplayValue('Test project');
+    const inputNode = await screen.findByDisplayValue('Test folder');
 
-    expect(await screen.findByDisplayValue('Test project')).toBeInTheDocument();
+    expect(await screen.findByDisplayValue('Test folder')).toBeInTheDocument();
     server.use(
-      graphql.query('Projects', (req, res, ctx) => {
+      graphql.query('Folders', (req, res, ctx) => {
         return res(
           ctx.data({
-            project: [{ ...project, name: 'New project' }],
+            folder: [{ ...folder, name: 'New folder' }],
           })
         );
       })
@@ -46,8 +46,8 @@ describe('Dashboard Layout', () => {
 
     cache.clear();
 
-    fireEvent.change(inputNode, { target: { value: 'New project' } });
+    fireEvent.change(inputNode, { target: { value: 'New folder' } });
 
-    expect(await screen.findByText('New project')).toBeInTheDocument();
+    expect(await screen.findByText('New folder')).toBeInTheDocument();
   });
 });

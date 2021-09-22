@@ -1,5 +1,5 @@
-import { Project } from 'pages/project/[pid]';
-import { project } from 'test/__mocks__/project';
+import { Folder } from 'pages/folder/[fid]';
+import { folder } from 'test/__mocks__/folder';
 import { render, screen } from 'test/utils';
 
 jest.mock('utils/import');
@@ -7,14 +7,14 @@ jest.mock('utils/import');
 jest.mock('next/router', () => ({
   useRouter() {
     return {
-      query: { pid: project.id },
-      asPath: `/project/${project.id}`,
+      query: { fid: folder.id },
+      asPath: `/folder/${folder.id}`,
     };
   },
 }));
 
-describe('Project page', () => {
-  const renderComponent = () => render(<Project />);
+describe('Folder page', () => {
+  const renderComponent = () => render(<Folder />);
 
   it('renders without errors', async () => {
     renderComponent();

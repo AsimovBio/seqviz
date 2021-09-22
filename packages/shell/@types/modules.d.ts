@@ -24,12 +24,11 @@ declare module '*/part.graphql' {
 declare module '*/project.graphql' {
   import { DocumentNode } from 'graphql';
   const defaultDocument: DocumentNode;
-  export const ProjectFields: DocumentNode;
-  export const Projects: DocumentNode;
-  export const Project: DocumentNode;
-  export const CreateProject: DocumentNode;
-  export const UpdateProject: DocumentNode;
-  export const CreateProjectConstruct: DocumentNode;
+  export const FolderFields: DocumentNode;
+  export const Folders: DocumentNode;
+  export const Folder: DocumentNode;
+  export const CreateFolder: DocumentNode;
+  export const UpdateFolder: DocumentNode;
 
   export default defaultDocument;
 }

@@ -1,36 +1,33 @@
 import { constructMachine } from 'components/construct-designer/construct-machine';
 import { partLibMachine } from 'components/part-library/part-lib-machine';
-import type { Construct, Project, ProjectsQuery } from 'models/graphql';
+import type { Construct, Folder, FoldersQuery } from 'models/graphql';
 import { mutate } from 'swr';
 import { sdk } from 'utils/request';
 import { assign, createMachine, forwardTo } from 'xstate';
 
 export type DashboardContext = {
   newConstruct?: Construct;
-  newProject?: Project;
-  projects: Project[];
+  newFolder?: Folder;
+  folders: Folder[];
   recentConstructs: Construct[];
 };
 
 export type DashboardEvent = { type: string; [key: string]: any };
 
-export async function createNew(
-  _,
-  { construct_parts, pid, value }: DashboardEvent
-) {
-  let data: ProjectsQuery;
-  let newProject;
+export async function createNew(_, { parts, fid, value }: DashboardEvent) {
+  let data: FoldersQuery;
+  let newFolder;
   let newConstruct;
 
   switch (value) {
-    case 'project':
-      data = await mutate('Projects', async (data) => {
+    case 'folder':
+      data = await mutate('Folders', async (data) => {
         try {
-          ({ insert_project_one: newProject } = await sdk.CreateProject({
+          ({ insert_folder_one: newFolder } = await sdk.CreateFolder({
             input: { name: 'Untitled folder', description: '' },
           }));
 
-          data.project.push(newProject);
+          data.folder.push(newFolder);
         } catch (err) {
           console.error(err);
         }
@@ -39,25 +36,23 @@ export async function createNew(
 
       break;
     case 'construct':
-      data = await mutate('Projects', async (data) => {
-        const { project: projects } = data ?? {};
+      data = await mutate('Folders', async (data) => {
+        const { folder: folders } = data ?? {};
 
         ({ insert_construct_one: newConstruct } = await sdk.CreateConstruct({
           input: {
             name: 'Untitled construct',
-            construct_projects: { data: [{ project_id: pid }] },
-            construct_parts: {
-              data: construct_parts.map(
-                ({ construct_id, part, id, ...rest }) => rest
-              ),
+            folder_id: fid,
+            parts: {
+              data: parts.map(({ construct_id, part, id, ...rest }) => rest),
             },
           },
         }));
 
-        const activeProject = projects.find(({ id }) => id === pid);
+        const activeFolder = folders.find(({ id }) => id === fid);
 
-        if (activeProject) {
-          activeProject.project_constructs.push({
+        if (activeFolder) {
+          activeFolder.constructs.push({
             construct: newConstruct,
           });
         }
@@ -69,7 +64,7 @@ export async function createNew(
       break;
   }
 
-  return { newConstruct, newProject, projects: data.project };
+  return { newConstruct, newFolder, folders: data.folder };
 }
 
 export const dashboardMachine = createMachine<DashboardContext, DashboardEvent>(
@@ -77,8 +72,8 @@ export const dashboardMachine = createMachine<DashboardContext, DashboardEvent>(
     id: 'dashboard',
     context: {
       newConstruct: null,
-      newProject: null,
-      projects: [],
+      newFolder: null,
+      folders: [],
       recentConstructs: [],
     },
     initial: 'ready',

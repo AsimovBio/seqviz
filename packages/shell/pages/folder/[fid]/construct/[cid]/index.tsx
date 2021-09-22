@@ -6,8 +6,8 @@ import {
 } from 'components/layout/dashboard-layout';
 import {
   ConstructTemplatesDocument,
+  FoldersDocument,
   PartsDocument,
-  ProjectsDocument,
 } from 'models/graphql';
 import { ConstructDocument } from 'models/graphql';
 import type {
@@ -18,6 +18,7 @@ import type {
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import type { Props as DashboardProps } from 'pages';
+import type { NextPageWithLayout } from 'pages/_app';
 import type { ReactElement } from 'react';
 import { useContext } from 'react';
 import { useEffect, useMemo, useState } from 'react';
@@ -59,7 +60,7 @@ const ConstructDesigner = dynamic(
 
 export function Construct({ data: initialData = {} }: Props) {
   const router = useRouter();
-  const { cid, pid } = router.query;
+  const { cid, fid } = router.query;
   const { send } = useContext(DashboardContext);
 
   const { construct } = initialData;
@@ -88,7 +89,7 @@ export function Construct({ data: initialData = {} }: Props) {
     }
   }, [currentConstruct, send]);
 
-  const updateProjects = useMemo(
+  const updateFolders = useMemo(
     () =>
       debounce(async (name, value) => {
         const { update_construct_by_pk: updatedConstruct } =
@@ -97,19 +98,18 @@ export function Construct({ data: initialData = {} }: Props) {
             input: { [name]: value },
           });
 
-        mutate('Projects', async (data) => {
+        mutate('Folders', async (data) => {
           if (data) {
             try {
-              const { project: projects } = data;
+              const { folder: folders } = data;
 
-              const activeProject = projects.find(({ id }) => id === pid);
+              const activeFolder = folders.find(({ id }) => id === fid);
 
-              if (activeProject) {
-                const filteredConstructs =
-                  activeProject.project_constructs.filter(
-                    ({ id }) => id !== updatedConstruct.id
-                  );
-                activeProject.project_constructs = [
+              if (activeFolder) {
+                const filteredConstructs = activeFolder.constructs.filter(
+                  ({ id }) => id !== updatedConstruct.id
+                );
+                activeFolder.constructs = [
                   updatedConstruct,
                   ...filteredConstructs,
                 ];
@@ -131,12 +131,12 @@ export function Construct({ data: initialData = {} }: Props) {
           false
         );
       }, 500),
-    [cid, currentConstruct, pid]
+    [cid, currentConstruct, fid]
   );
 
   const handleChange = ({ target: { name, value } }) => {
     setInputValue(value);
-    updateProjects(name, value);
+    updateFolders(name, value);
   };
 
   const [inputValue, setInputValue] = useState(currentConstruct?.name);
@@ -163,8 +163,8 @@ export function Construct({ data: initialData = {} }: Props) {
       </Header>
       {currentConstruct && (
         <ConstructDesigner
-          construct_parts={currentConstruct.construct_parts}
           id={currentConstruct.id}
+          parts={currentConstruct.parts}
         />
       )}
     </>
@@ -175,15 +175,15 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
   returnTo: '/',
   async getServerSideProps({ req, res, query }: GetServerSidePropsContext) {
     const { cid } = query;
-    let projects;
+    let folders;
     let parts;
     let construct;
     let templates;
 
     try {
       // TODO: create a combined query for the initial payload
-      (req as NextApiRequest).body = { query: ProjectsDocument };
-      projects = await requestUtil(req, res);
+      (req as NextApiRequest).body = { query: FoldersDocument };
+      folders = await requestUtil(req, res);
 
       (req as NextApiRequest).body = { query: PartsDocument };
       parts = await requestUtil(req, res);
@@ -208,13 +208,13 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
 
     return {
       props: {
-        data: { ...projects, ...parts, ...construct, ...templates },
+        data: { ...folders, ...parts, ...construct, ...templates },
       },
     };
   },
 });
 
-const ConstructPage = withPageAuthRequired(Construct);
+const ConstructPage: NextPageWithLayout = withPageAuthRequired(Construct);
 
 ConstructPage.getLayout = function getLayout(page: ReactElement) {
   return <DashboardLayout>{page}</DashboardLayout>;

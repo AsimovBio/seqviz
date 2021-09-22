@@ -1,4 +1,4 @@
-import { project } from 'test/__mocks__/project';
+import { folder } from 'test/__mocks__/folder';
 
 import { render, screen } from '../utils';
 
@@ -8,7 +8,7 @@ jest.mock('next/router', () => ({
   useRouter() {
     return {
       asPath: '/',
-      query: { pid: project.id },
+      query: { fid: folder.id },
     };
   },
 }));

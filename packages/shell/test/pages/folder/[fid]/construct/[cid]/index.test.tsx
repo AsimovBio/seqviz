@@ -2,9 +2,9 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import { dashboardMachine } from 'components/dashboard/dashboard-machine';
 import { DashboardContext } from 'components/layout/dashboard-layout';
 import { graphql } from 'msw';
-import { Construct } from 'pages/project/[pid]/construct/[cid]';
+import { Construct } from 'pages/folder/[fid]/construct/[cid]';
 import { construct } from 'test/__mocks__/construct';
-import { project } from 'test/__mocks__/project';
+import { folder } from 'test/__mocks__/folder';
 import { server } from 'test/msw/server';
 import { render, screen } from 'test/utils';
 import { interpret } from 'xstate';
@@ -14,8 +14,8 @@ jest.mock('utils/import');
 jest.mock('next/router', () => ({
   useRouter() {
     return {
-      query: { cid: construct.id, pid: project.id },
-      asPath: `/project/${project.id}/construct/${construct.id}`,
+      query: { cid: construct.id, fid: folder.id },
+      asPath: `/folder/${folder.id}/construct/${construct.id}`,
     };
   },
 }));
@@ -56,13 +56,13 @@ describe('Construct page', () => {
     const inputNode = await screen.findByDisplayValue('Test construct');
 
     server.use(
-      graphql.query('Projects', (req, res, ctx) => {
+      graphql.query('Folders', (req, res, ctx) => {
         return res(
           ctx.data({
-            project: [
+            folder: [
               {
-                ...project,
-                project_constructs: [
+                ...folder,
+                constructs: [
                   { construct: { ...construct, name: 'New construct' } },
                 ],
               },

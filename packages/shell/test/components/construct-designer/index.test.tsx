@@ -53,11 +53,11 @@ describe('ConstructDesigner', () => {
 
     expect(
       await screen.findAllByTestId('construct-part-container')
-    ).toHaveLength(construct.construct_parts.length);
+    ).toHaveLength(construct.parts.length);
 
     expect(sendSpy).toHaveBeenCalledWith({
       type: 'BOOTSTRAP',
-      constructParts: construct.construct_parts,
+      constructParts: construct.parts,
       constructId: construct.id,
     });
   });

@@ -14,10 +14,10 @@ fragment ConstructPartFields on construct_part {
 query Construct($id: uuid!) {
   construct(where: { id: { _eq: $id } }) {
     ...ConstructFields
-    construct_projects {
-      project_id
+    folder {
+      id
     }
-    construct_parts(order_by: { index: asc }) {
+    parts(order_by: { index: asc }) {
       ...ConstructPartFields
       construct {
         ...ConstructFields
@@ -33,7 +33,7 @@ query ConstructTemplates {
   template: construct(where: { is_template: { _eq: true } }) {
     id
     name
-    construct_parts(order_by: { index: asc }) {
+    parts(order_by: { index: asc }) {
       ...ConstructPartFields
       part {
         ...PartFields
@@ -71,6 +71,9 @@ mutation InsertConstructPart(
   ) {
     returning {
       ...ConstructPartFields
+      part {
+        ...PartFields
+      }
     }
   }
 }

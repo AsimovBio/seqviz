@@ -1,17 +1,17 @@
 import { useUser } from '@auth0/nextjs-auth0';
 import { useMachine } from '@xstate/react';
 import { dashboardMachine } from 'components/dashboard/dashboard-machine';
+import FolderPageHeader from 'components/folder-page-header';
 import Layout from 'components/layout/base-layout';
 import PartsLibrary from 'components/part-library';
-import ProjectPageHeader from 'components/project-page-header';
 import Sidebar from 'components/sidebar';
 import type {
   Construct,
   ConstructQuery,
   ConstructTemplatesQuery,
+  Folder,
+  FoldersQuery,
   PartsQuery,
-  Project,
-  ProjectsQuery,
 } from 'models/graphql';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
@@ -29,7 +29,7 @@ const ScrollContainer: any = dynamic(
 const Text = dynamic(() => import('common/components/text'));
 
 type DashboardQuery = PartsQuery &
-  ProjectsQuery &
+  FoldersQuery &
   ConstructQuery &
   ConstructTemplatesQuery;
 
@@ -50,9 +50,9 @@ export const DashboardContext = createContext<ContextProps | undefined>(
 
 export function DashboardLayout({ children, data: initialData = {} }: Props) {
   const router = useRouter();
-  const pid = router.query?.pid;
+  const fid = router.query?.fid;
   const isNew = router.query ? router.query['is-new'] === 'true' : false;
-  const { project, template } = initialData;
+  const { folder, template } = initialData;
   const persistedConstructs =
     typeof window !== 'undefined' && localStorage.getItem('recentConstructs');
 
@@ -66,31 +66,31 @@ export function DashboardLayout({ children, data: initialData = {} }: Props) {
   });
 
   const [isMenuActive, setMenuActive] = useState(false);
-  const { newConstruct, newProject } = state.context;
+  const { newConstruct, newFolder } = state.context;
   const { error: userError, isLoading } = useUser();
 
-  const { data: projectsData, error: projectsError } = sdk.useProjects(
-    'Projects',
+  const { data: foldersData, error: foldersError } = sdk.useFolders(
+    'Folders',
     null,
     {
-      initialData: { project },
+      initialData: { folder },
       revalidateOnMount: true,
     }
   );
 
   const { data: templatesData, error: templatesError } =
-    sdk.useConstructTemplates(pid ? 'Templates' : null, null, {
+    sdk.useConstructTemplates(fid ? 'Templates' : null, null, {
       initialData: { template },
     });
 
-  if (userError || projectsError || templatesError) {
-    console.error(userError || projectsError || templatesError);
+  if (userError || foldersError || templatesError) {
+    console.error(userError || foldersError || templatesError);
   }
 
-  const { project: projects } = projectsData ?? {};
+  const { folder: folders } = foldersData ?? {};
   const { template: templates } = templatesData ?? {};
 
-  const currentProject = projects?.find((project) => project.id === pid);
+  const currentFolder = folders?.find((folder) => folder.id === fid);
 
   useEffect(() => {
     const recentConstructs = persistedConstructs
@@ -98,31 +98,31 @@ export function DashboardLayout({ children, data: initialData = {} }: Props) {
       : [];
 
     send('BOOTSTRAP', {
-      projects,
+      folders,
       recentConstructs,
     });
-  }, [projects, persistedConstructs, send]);
+  }, [folders, persistedConstructs, send]);
 
   useEffect(() => {
     let url;
 
-    if (!newProject && !newConstruct) {
+    if (!newFolder && !newConstruct) {
       return;
     }
 
-    if (newProject) {
-      url = `/project/${newProject.id}?is-new=true`;
+    if (newFolder) {
+      url = `/folder/${newFolder.id}?is-new=true`;
     } else if (newConstruct) {
-      url = `/project/${pid}/construct/${newConstruct.id}`;
+      url = `/folder/${fid}/construct/${newConstruct.id}`;
     }
 
     router.push(url);
 
     send('BOOTSTRAP', {
-      newProject: null,
+      newFolder: null,
       newConstruct: null,
     });
-  }, [newConstruct, newProject, pid, router, send]);
+  }, [newConstruct, newFolder, fid, router, send]);
 
   const handleResetUrl = () => {
     const [path] = router.asPath.split('?');
@@ -135,9 +135,9 @@ export function DashboardLayout({ children, data: initialData = {} }: Props) {
     <DashboardContext.Provider value={{ state, send, service }}>
       <Layout>
         <Sidebar />
-        <ProjectPageHeader
-          currentProject={currentProject as Partial<Project>}
-          isNewProject={!!isNew}
+        <FolderPageHeader
+          currentFolder={currentFolder as Partial<Folder>}
+          isNewFolder={!!isNew}
           resetUrl={handleResetUrl}
           setMenuActive={setMenuActive}
           templates={templates as Construct[]}

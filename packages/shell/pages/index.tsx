@@ -3,11 +3,11 @@ import { DashboardLayout } from 'components/layout/dashboard-layout';
 import type {
   ConstructQuery,
   ConstructTemplatesQuery,
+  FoldersQuery,
   PartsQuery,
-  ProjectsQuery,
 } from 'models/graphql';
 import { PartsDocument } from 'models/graphql';
-import { ProjectsDocument } from 'models/graphql';
+import { FoldersDocument } from 'models/graphql';
 import type { GetServerSidePropsContext, NextApiRequest } from 'next';
 import type { GetServerSideProps } from 'next';
 import dynamic from 'next/dynamic';
@@ -15,8 +15,10 @@ import type { ReactElement, ReactNode } from 'react';
 import { getModule } from 'utils/import';
 import requestUtil from 'utils/request';
 
+import type { NextPageWithLayout } from './_app';
+
 type DashboardQuery = PartsQuery &
-  ProjectsQuery &
+  FoldersQuery &
   ConstructQuery &
   ConstructTemplatesQuery;
 
@@ -40,13 +42,13 @@ const Dashboard = () => {
 export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
   returnTo: '/',
   async getServerSideProps({ req, res }: GetServerSidePropsContext) {
-    let projects;
+    let folders;
     let parts;
 
     try {
       // TODO: create a combined query for the initial payload
-      (req as NextApiRequest).body = { query: ProjectsDocument };
-      projects = await requestUtil(req, res);
+      (req as NextApiRequest).body = { query: FoldersDocument };
+      folders = await requestUtil(req, res);
 
       (req as NextApiRequest).body = { query: PartsDocument };
       parts = await requestUtil(req, res);
@@ -54,7 +56,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
       console.error(err);
     }
 
-    if (!parts && !projects) {
+    if (!parts && !folders) {
       return {
         notFound: true,
       };
@@ -62,13 +64,13 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
 
     return {
       props: {
-        data: { ...projects, ...parts },
+        data: { ...folders, ...parts },
       },
     };
   },
 });
 
-const DashboardPage = withPageAuthRequired(Dashboard);
+const DashboardPage: NextPageWithLayout = withPageAuthRequired(Dashboard);
 
 DashboardPage.getLayout = function getLayout(page: ReactElement) {
   return <DashboardLayout>{page}</DashboardLayout>;

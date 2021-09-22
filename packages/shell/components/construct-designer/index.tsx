@@ -21,7 +21,7 @@ const Box: any = dynamic(getModule('./components/box'), { ssr: false });
 type Props = Partial<Construct>;
 
 export default function ConstructDesigner({
-  construct_parts: initialConstructParts,
+  parts: initialConstructParts,
   id: constructId,
 }: Props) {
   const context = useContext(DashboardContext);

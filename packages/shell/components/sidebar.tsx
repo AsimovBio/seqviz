@@ -24,7 +24,7 @@ const Tooltip = dynamic(() => import('common/components/tooltip'));
 
 export default function Sidebar() {
   const router = useRouter();
-  const pid = router.query?.pid;
+  const fid = router.query?.fid;
   const [isNavOpen, setNavOpen] = useState(true);
 
   const handleToggleNav = () => {
@@ -34,13 +34,13 @@ export default function Sidebar() {
   const {
     send,
     state: {
-      context: { projects, recentConstructs },
+      context: { folders, recentConstructs },
     },
   } = useContext(DashboardContext);
 
-  const handleCreateProject = useCallback(() => {
-    send({ pid, type: 'CREATE', value: 'project' });
-  }, [pid, send]);
+  const handleCreateFolder = useCallback(() => {
+    send({ fid, type: 'CREATE', value: 'folder' });
+  }, [fid, send]);
 
   const { query } = useRouter();
   const HiddenWrapper = isNavOpen ? Fragment : VisuallyHidden;
@@ -82,7 +82,7 @@ export default function Sidebar() {
         as="nav"
         css={{
           display: 'grid',
-          gridTemplateAreas: '"header" "workspaces" "projects"',
+          gridTemplateAreas: '"header" "workspaces" "folders"',
           gridTemplateColumns: 'auto',
           gridTemplateRows: 'auto min-content 1fr',
           flex: 1,
@@ -159,7 +159,7 @@ export default function Sidebar() {
                     }}
                     disabled={recentConstructs.length === 0}
                     onClick={() => handleClearRecentConstructs()}
-                    value="project"
+                    value="folder"
                   >
                     <Icon label="Cross2" />
                     &nbsp;Clear
@@ -173,15 +173,15 @@ export default function Sidebar() {
               {recentConstructs.length > 0 ? (
                 <ScrollContainer maxHeight="15em">
                   {recentConstructs?.map(
-                    ({ id, name, construct_projects: constructProjects }) => {
-                      if (!constructProjects?.length) {
+                    ({ id, name, folders: constructFolders }) => {
+                      if (!constructFolders?.length) {
                         return null;
                       }
-                      const [{ project_id }] = constructProjects;
+                      const [{ folder_id }] = constructFolders;
 
                       return (
                         <ActiveLink
-                          href={`/project/${project_id}/construct/${id}`}
+                          href={`/folder/${folder_id}/construct/${id}`}
                           key={id}
                           passHref
                         >
@@ -213,7 +213,7 @@ export default function Sidebar() {
         </Box>
         <Box
           css={{
-            gridArea: 'projects',
+            gridArea: 'folders',
             display: 'flex',
             flexDirection: 'column',
           }}
@@ -224,10 +224,10 @@ export default function Sidebar() {
             headerContent={
               <HiddenWrapper>
                 <Button
-                  aria-label="Create project"
+                  aria-label="Create folder"
                   color="tertiary"
-                  onClick={() => handleCreateProject()}
-                  value="project"
+                  onClick={() => handleCreateFolder()}
+                  value="folder"
                 >
                   <Icon label="Plus" />
                   &nbsp;Folder
@@ -239,12 +239,12 @@ export default function Sidebar() {
             type="single"
           >
             <ScrollContainer>
-              {projects?.map(
-                ({ name, project_constructs: constructs, id: projectId }) => {
-                  const isActiveProject = query?.pid === projectId;
+              {folders?.map(
+                ({ name, constructs: constructs, id: projectId }) => {
+                  const isActiveFolder = query?.fid === projectId;
                   return (
                     <Fragment key={projectId}>
-                      <ActiveLink href={`/project/${projectId}`} passHref>
+                      <ActiveLink href={`/folder/${projectId}`} passHref>
                         <a>
                           <Tooltip content={name} side="right">
                             <Box
@@ -262,7 +262,7 @@ export default function Sidebar() {
                           <span className="text">{name}</span>
                         </a>
                       </ActiveLink>
-                      {isActiveProject &&
+                      {isActiveFolder &&
                         constructs?.map(({ construct }) => {
                           if (!construct) {
                             return null;
@@ -271,7 +271,7 @@ export default function Sidebar() {
                           const { id: constructId, name } = construct;
                           return (
                             <ActiveLink
-                              href={`/project/${projectId}/construct/${constructId}`}
+                              href={`/folder/${projectId}/construct/${constructId}`}
                               key={constructId}
                               passHref
                             >

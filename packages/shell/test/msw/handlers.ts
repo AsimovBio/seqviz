@@ -2,13 +2,13 @@ import { graphql } from 'msw';
 import { part } from 'test/__mocks__/parts';
 
 import { construct } from '../__mocks__/construct';
-import { project } from '../__mocks__/project';
+import { folder } from '../__mocks__/folder';
 
 export const handlers = [
-  graphql.query(/Projects?/, (req, res, ctx) => {
+  graphql.query(/Folders?/, (req, res, ctx) => {
     return res(
       ctx.data({
-        project: [project],
+        folder: [folder],
       })
     );
   }),
@@ -27,9 +27,9 @@ export const handlers = [
     );
   }),
 
-  graphql.mutation('UpdateProject', (req, res, ctx) => {
+  graphql.mutation('UpdateFolder', (req, res, ctx) => {
     return res(
-      ctx.data({ update_project_by_pk: { ...project, name: 'New project' } })
+      ctx.data({ update_folder_by_pk: { ...folder, name: 'New folder' } })
     );
   }),
   graphql.mutation('UpdateConstruct', (req, res, ctx) => {

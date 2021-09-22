@@ -1,13 +1,13 @@
 import { fireEvent } from '@testing-library/react';
 import { dashboardMachine } from 'components/dashboard/dashboard-machine';
 import { DashboardContext } from 'components/layout/dashboard-layout';
-import ProjectPageHeader from 'components/project-page-header';
+import FolderPageHeader from 'components/folder-page-header';
 import { construct } from 'test/__mocks__/construct';
-import { project } from 'test/__mocks__/project';
+import { folder } from 'test/__mocks__/folder';
 import { render, screen } from 'test/utils';
 import { interpret } from 'xstate';
 
-describe('ProjectPageHeader', () => {
+describe('FolderPageHeader', () => {
   const setMenuActiveSpy = jest.fn();
   const dashboardSvc = interpret(dashboardMachine);
   const template = { ...construct, name: 'Test template', is_template: true };
@@ -18,9 +18,9 @@ describe('ProjectPageHeader', () => {
   const renderComponent = () => {
     return render(
       <DashboardContext.Provider value={{ state, send, service: dashboardSvc }}>
-        <ProjectPageHeader
-          currentProject={project}
-          isNewProject={false}
+        <FolderPageHeader
+          currentFolder={folder}
+          isNewFolder={false}
           resetUrl={() => {}}
           setMenuActive={setMenuActiveSpy}
           templates={[template]}
@@ -43,7 +43,7 @@ describe('ProjectPageHeader', () => {
     renderComponent();
 
     expect(
-      await screen.findByDisplayValue(project.name, {}, { timeout: 5000 })
+      await screen.findByDisplayValue(folder.name, {}, { timeout: 5000 })
     ).toBeInTheDocument();
   });
 
@@ -66,7 +66,7 @@ describe('ProjectPageHeader', () => {
     fireEvent.keyDown(item, event);
 
     expect(sendSpy).toHaveBeenCalledWith({
-      pid: project.id,
+      fid: folder.id,
       type: 'CREATE',
       value: 'construct',
       ...template,

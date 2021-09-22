@@ -1,5 +1,5 @@
 import { DashboardContext } from 'components/layout/dashboard-layout';
-import type { Construct, Project } from 'models/graphql';
+import type { Construct, Folder } from 'models/graphql';
 import dynamic from 'next/dynamic';
 import { useContext } from 'react';
 import { useCallback } from 'react';
@@ -11,9 +11,9 @@ import PageHeader from './header';
 import TemplatesDropdown from './templates-dropdown';
 
 type Props = {
-  currentProject?: Partial<Project>;
+  currentFolder?: Partial<Folder>;
   resetUrl: () => void;
-  isNewProject: boolean;
+  isNewFolder: boolean;
   setMenuActive: (isActive: boolean) => void;
   templates: Construct[];
 };
@@ -33,10 +33,10 @@ const Label = dynamic(async () => {
 });
 const Text: any = dynamic(() => import('common/components/text'));
 
-export default function ProjectPageHeader({
-  currentProject,
+export default function FolderPageHeader({
+  currentFolder,
   resetUrl,
-  isNewProject,
+  isNewFolder,
   setMenuActive,
   templates,
 }: Props) {
@@ -44,41 +44,41 @@ export default function ProjectPageHeader({
 
   const handleCreateConstruct = useCallback(
     (template) => {
-      if (currentProject) {
+      if (currentFolder) {
         send({
-          pid: currentProject.id,
+          fid: currentFolder.id,
           type: 'CREATE',
           value: 'construct',
           ...template,
         });
       }
     },
-    [currentProject, send]
+    [currentFolder, send]
   );
 
   const handleChange = useCallback(
     (name, value) => {
       mutate(
-        'Projects',
+        'Folders',
         async (data) => {
           if (data) {
             try {
-              const { project: projects } = data;
+              const { folder: folders } = data;
 
-              const { update_project_by_pk: updatedProject } =
-                await sdk.UpdateProject({
-                  id: currentProject.id,
+              const { update_folder_by_pk: updatedFolder } =
+                await sdk.UpdateFolder({
+                  id: currentFolder.id,
                   input: { [name]: value },
                 });
 
-              const idx = projects.findIndex(
-                ({ id }) => id === currentProject?.id
+              const idx = folders.findIndex(
+                ({ id }) => id === currentFolder?.id
               );
 
               if (idx !== -1) {
-                projects.splice(idx, 1, updatedProject);
+                folders.splice(idx, 1, updatedFolder);
 
-                return { project: projects };
+                return { folder: folders };
               }
             } catch (err) {
               console.error(err);
@@ -90,38 +90,38 @@ export default function ProjectPageHeader({
         true
       );
     },
-    [currentProject?.id]
+    [currentFolder?.id]
   );
 
   const handleBlur = () => {
-    if (isNewProject) {
+    if (isNewFolder) {
       resetUrl();
     }
   };
 
   return (
     <PageHeader>
-      {currentProject && (
+      {currentFolder && (
         <Box
           css={{
             alignItems: 'center',
             display: 'flex',
           }}
         >
-          {(currentProject as any)?.chassis && (
+          {(currentFolder as any)?.chassis && (
             <>
-              <Text>{(currentProject as any).chassis}</Text>
+              <Text>{(currentFolder as any).chassis}</Text>
               <Icon label="CaretRight" />
             </>
           )}
-          <Label htmlFor="project-name">
+          <Label htmlFor="folder-name">
             <Icon
               css={{ mr: '$2', path: { fill: '$primary' } }}
               label="Circle"
             />
             <AutosizeInput
               autoComplete="off"
-              autoFocus={isNewProject}
+              autoFocus={isNewFolder}
               css={{
                 input: {
                   border: 'none',
@@ -131,11 +131,11 @@ export default function ProjectPageHeader({
                   pr: '$3',
                 },
               }}
-              id="project-name"
+              id="folder-name"
               name="name"
               onBlur={handleBlur}
               onChange={debounce(handleChange, 500)}
-              value={currentProject?.name}
+              value={currentFolder?.name}
             />
           </Label>
           <TemplatesDropdown

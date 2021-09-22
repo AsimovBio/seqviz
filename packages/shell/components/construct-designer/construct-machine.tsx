@@ -230,7 +230,7 @@ export const constructMachine = createMachine<
                 construct: [
                   {
                     ...cachedConstruct,
-                    construct_parts: updatedConstructParts,
+                    parts: updatedConstructParts,
                   },
                 ],
               };
