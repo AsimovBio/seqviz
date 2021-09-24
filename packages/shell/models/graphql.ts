@@ -90,6 +90,7 @@ export type Annotation = {
   color?: Maybe<Scalars['String']>;
   created_at: Scalars['timestamptz'];
   created_by_id?: Maybe<Scalars['Int']>;
+  direction?: Maybe<Scalars['String']>;
   end?: Maybe<Scalars['Int']>;
   id: Scalars['uuid'];
   label?: Maybe<Scalars['String']>;
@@ -176,6 +177,7 @@ export type Annotation_Bool_Exp = {
   color?: Maybe<String_Comparison_Exp>;
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
   created_by_id?: Maybe<Int_Comparison_Exp>;
+  direction?: Maybe<String_Comparison_Exp>;
   end?: Maybe<Int_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   label?: Maybe<String_Comparison_Exp>;
@@ -204,6 +206,7 @@ export type Annotation_Insert_Input = {
   color?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
+  direction?: Maybe<Scalars['String']>;
   end?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['uuid']>;
   label?: Maybe<Scalars['String']>;
@@ -220,6 +223,7 @@ export type Annotation_Max_Fields = {
   color?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
+  direction?: Maybe<Scalars['String']>;
   end?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['uuid']>;
   label?: Maybe<Scalars['String']>;
@@ -233,6 +237,7 @@ export type Annotation_Max_Order_By = {
   color?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   created_by_id?: Maybe<Order_By>;
+  direction?: Maybe<Order_By>;
   end?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   label?: Maybe<Order_By>;
@@ -247,6 +252,7 @@ export type Annotation_Min_Fields = {
   color?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
+  direction?: Maybe<Scalars['String']>;
   end?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['uuid']>;
   label?: Maybe<Scalars['String']>;
@@ -260,6 +266,7 @@ export type Annotation_Min_Order_By = {
   color?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   created_by_id?: Maybe<Order_By>;
+  direction?: Maybe<Order_By>;
   end?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   label?: Maybe<Order_By>;
@@ -289,6 +296,7 @@ export type Annotation_Order_By = {
   color?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   created_by_id?: Maybe<Order_By>;
+  direction?: Maybe<Order_By>;
   end?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   label?: Maybe<Order_By>;
@@ -313,6 +321,8 @@ export enum Annotation_Select_Column {
   /** column name */
   CreatedById = 'created_by_id',
   /** column name */
+  Direction = 'direction',
+  /** column name */
   End = 'end',
   /** column name */
   Id = 'id',
@@ -331,6 +341,7 @@ export type Annotation_Set_Input = {
   color?: Maybe<Scalars['String']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
+  direction?: Maybe<Scalars['String']>;
   end?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['uuid']>;
   label?: Maybe<Scalars['String']>;
@@ -407,6 +418,8 @@ export enum Annotation_Update_Column {
   CreatedAt = 'created_at',
   /** column name */
   CreatedById = 'created_by_id',
+  /** column name */
+  Direction = 'direction',
   /** column name */
   End = 'end',
   /** column name */
@@ -1244,8 +1257,8 @@ export type Construct_Part = {
   index: Scalars['Int'];
   orientation: Scalars['String'];
   /** An object relationship */
-  part: Part;
-  part_id: Scalars['uuid'];
+  part?: Maybe<Part>;
+  part_id?: Maybe<Scalars['uuid']>;
 };
 
 /** aggregated selection of "construct_part" */
@@ -4767,7 +4780,7 @@ export type ConstructQuery = { __typename?: 'query_root' } & {
       parts: Array<
         { __typename?: 'construct_part' } & {
           construct: { __typename?: 'construct' } & ConstructFieldsFragment;
-          part: { __typename?: 'part' } & PartFieldsFragment;
+          part?: Maybe<{ __typename?: 'part' } & PartFieldsFragment>;
         } & ConstructPartFieldsFragment
       >;
     } & ConstructFieldsFragment
@@ -4781,7 +4794,7 @@ export type ConstructTemplatesQuery = { __typename?: 'query_root' } & {
     { __typename?: 'construct' } & Pick<Construct, 'id' | 'name'> & {
         parts: Array<
           { __typename?: 'construct_part' } & {
-            part: { __typename?: 'part' } & PartFieldsFragment;
+            part?: Maybe<{ __typename?: 'part' } & PartFieldsFragment>;
           } & ConstructPartFieldsFragment
         >;
       }
@@ -4825,26 +4838,11 @@ export type InsertConstructPartMutation = { __typename?: 'mutation_root' } & {
     { __typename?: 'construct_part_mutation_response' } & {
       returning: Array<
         { __typename?: 'construct_part' } & {
-          part: { __typename?: 'part' } & PartFieldsFragment;
+          part?: Maybe<{ __typename?: 'part' } & PartFieldsFragment>;
         } & ConstructPartFieldsFragment
       >;
     }
   >;
-};
-
-export type PartFieldsFragment = { __typename?: 'part' } & Pick<
-  Part,
-  'alias' | 'description' | 'id' | 'name' | 'sequence' | 'sequence_length'
-> & {
-    type?: Maybe<
-      { __typename?: 'part_type' } & Pick<Part_Type, 'glyph' | 'name' | 'slug'>
-    >;
-  };
-
-export type PartsQueryVariables = Exact<{ [key: string]: never }>;
-
-export type PartsQuery = { __typename?: 'query_root' } & {
-  part: Array<{ __typename?: 'part' } & PartFieldsFragment>;
 };
 
 export type FolderFieldsFragment = { __typename?: 'folder' } & Pick<
@@ -4889,6 +4887,21 @@ export type UpdateFolderMutation = { __typename?: 'mutation_root' } & {
   update_folder_by_pk?: Maybe<{ __typename?: 'folder' } & FolderFieldsFragment>;
 };
 
+export type PartFieldsFragment = { __typename?: 'part' } & Pick<
+  Part,
+  'alias' | 'description' | 'id' | 'name' | 'sequence' | 'sequence_length'
+> & {
+    type?: Maybe<
+      { __typename?: 'part_type' } & Pick<Part_Type, 'glyph' | 'name' | 'slug'>
+    >;
+  };
+
+export type PartsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type PartsQuery = { __typename?: 'query_root' } & {
+  part: Array<{ __typename?: 'part' } & PartFieldsFragment>;
+};
+
 export const ConstructFieldsFragmentDoc = gql`
   fragment ConstructFields on construct {
     id
@@ -4904,6 +4917,13 @@ export const ConstructPartFieldsFragmentDoc = gql`
     part_id
   }
 `;
+export const FolderFieldsFragmentDoc = gql`
+  fragment FolderFields on folder {
+    id
+    name
+    description
+  }
+`;
 export const PartFieldsFragmentDoc = gql`
   fragment PartFields on part {
     alias
@@ -4917,13 +4937,6 @@ export const PartFieldsFragmentDoc = gql`
       name
       slug
     }
-  }
-`;
-export const FolderFieldsFragmentDoc = gql`
-  fragment FolderFields on folder {
-    id
-    name
-    description
   }
 `;
 export const ConstructDocument = gql`
@@ -5006,17 +5019,6 @@ export const InsertConstructPartDocument = gql`
   ${ConstructPartFieldsFragmentDoc}
   ${PartFieldsFragmentDoc}
 `;
-export const PartsDocument = gql`
-  query Parts {
-    part(
-      order_by: { part_type_id: desc }
-      where: { type: { name: { _neq: "CDS" } } }
-    ) {
-      ...PartFields
-    }
-  }
-  ${PartFieldsFragmentDoc}
-`;
 export const FoldersDocument = gql`
   query Folders {
     folder(order_by: { created_at: desc }) {
@@ -5052,6 +5054,17 @@ export const UpdateFolderDocument = gql`
     }
   }
   ${FolderFieldsFragmentDoc}
+`;
+export const PartsDocument = gql`
+  query Parts {
+    part(
+      order_by: { part_type_id: desc }
+      where: { type: { name: { _neq: "CDS" } } }
+    ) {
+      ...PartFields
+    }
+  }
+  ${PartFieldsFragmentDoc}
 `;
 
 export type SdkFunctionWrapper = <T>(
@@ -5135,19 +5148,6 @@ export function getSdk(
         'InsertConstructPart'
       );
     },
-    Parts(
-      variables?: PartsQueryVariables,
-      requestHeaders?: Dom.RequestInit['headers']
-    ): Promise<PartsQuery> {
-      return withWrapper(
-        (wrappedRequestHeaders) =>
-          client.request<PartsQuery>(PartsDocument, variables, {
-            ...requestHeaders,
-            ...wrappedRequestHeaders,
-          }),
-        'Parts'
-      );
-    },
     Folders(
       variables?: FoldersQueryVariables,
       requestHeaders?: Dom.RequestInit['headers']
@@ -5202,6 +5202,19 @@ export function getSdk(
         'UpdateFolder'
       );
     },
+    Parts(
+      variables?: PartsQueryVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<PartsQuery> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<PartsQuery>(PartsDocument, variables, {
+            ...requestHeaders,
+            ...wrappedRequestHeaders,
+          }),
+        'Parts'
+      );
+    },
   };
 }
 export type Sdk = ReturnType<typeof getSdk>;
@@ -5234,17 +5247,6 @@ export function getSdkWithHooks(
         config
       );
     },
-    useParts(
-      key: SWRKeyInterface,
-      variables?: PartsQueryVariables,
-      config?: SWRConfigInterface<PartsQuery, ClientError>
-    ) {
-      return useSWR<PartsQuery, ClientError>(
-        key,
-        () => sdk.Parts(variables),
-        config
-      );
-    },
     useFolders(
       key: SWRKeyInterface,
       variables?: FoldersQueryVariables,
@@ -5264,6 +5266,17 @@ export function getSdkWithHooks(
       return useSWR<FolderQuery, ClientError>(
         key,
         () => sdk.Folder(variables),
+        config
+      );
+    },
+    useParts(
+      key: SWRKeyInterface,
+      variables?: PartsQueryVariables,
+      config?: SWRConfigInterface<PartsQuery, ClientError>
+    ) {
+      return useSWR<PartsQuery, ClientError>(
+        key,
+        () => sdk.Parts(variables),
         config
       );
     },

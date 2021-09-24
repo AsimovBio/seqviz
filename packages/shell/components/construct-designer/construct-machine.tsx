@@ -20,6 +20,7 @@ export interface ConstructStateSchema {
   states: {
     loading: {};
     ready: {};
+    persisting: {};
   };
   value: any;
 }
@@ -33,6 +34,53 @@ export const DEFAULT_PART = {
   },
   name: 'Untitled part',
 };
+
+const persist = ({ constructId, constructParts }) =>
+  mutate(
+    constructId,
+    async (data: ConstructQuery | undefined) => {
+      try {
+        let cachedConstruct = {};
+
+        if (data) {
+          ({
+            construct: [cachedConstruct],
+          } = data);
+        }
+
+        const input = constructParts.map(
+          ({ construct_id, id, index, orientation, part_id }) => ({
+            construct_id,
+            id,
+            index,
+            orientation,
+            part_id,
+          })
+        );
+
+        const {
+          insert_construct_part: { returning: updatedConstructParts },
+        } = await sdk.InsertConstructPart({
+          construct_id: constructId,
+          input,
+        });
+
+        return {
+          construct: [
+            {
+              ...cachedConstruct,
+              parts: updatedConstructParts,
+            },
+          ],
+        };
+      } catch (err) {
+        console.error(err);
+      }
+
+      return data;
+    },
+    false
+  );
 
 export const createConstructPart = (props?: Partial<Construct_Part>) => ({
   ...props,
@@ -63,28 +111,49 @@ export const constructMachine = createMachine<
         always: 'ready',
       },
       ready: {},
+      error: {},
+      persisting: {
+        invoke: {
+          id: 'persist',
+          src: persist,
+          onDone: {
+            target: 'ready',
+          },
+          onError: {
+            target: 'error',
+            actions: () => {
+              console.error('Save error!');
+            },
+          },
+        },
+      },
     },
     on: {
       BOOTSTRAP: {
         target: 'loading',
-        actions: [
-          assign((_, initialData) => initialData as Partial<ConstructContext>),
-        ],
+        actions: assign(
+          (_, initialData) => initialData as Partial<ConstructContext>
+        ),
+        cond: 'isDiffConstruct',
       },
       'CONSTRUCTPART.ACTIVATE': { actions: 'activate' },
       'CONSTRUCTPART.ADD': {
-        actions: ['updatePrev', 'add', 'sort', 'persist'],
+        actions: ['updatePrev', 'add', 'sort'],
+        target: 'persisting',
       },
       'CONSTRUCTPART.COMMIT': {
-        actions: ['updatePrev', 'commit', 'persist'],
+        actions: ['updatePrev', 'commit'],
+        target: 'persisting',
       },
       'CONSTRUCTPART.DELETE': {
-        actions: ['updatePrev', 'delete', 'sort', 'persist'],
+        actions: ['updatePrev', 'delete', 'sort'],
         cond: 'isNotOnly',
+        target: 'persisting',
       },
       'CONSTRUCTPART.MOVE': {
-        actions: ['updatePrev', 'move', 'sort', 'persist'],
+        actions: ['updatePrev', 'move', 'sort'],
         cond: 'indexIsWithinBounds',
+        target: 'persisting',
       },
       'PARTLIB.ENGAGE': {
         actions: ['activate', 'engage'],
@@ -93,7 +162,8 @@ export const constructMachine = createMachine<
         actions: 'reset',
       },
       'PARTLIB.SELECT': {
-        actions: ['updatePrev', 'swap', 'commit', 'persist'],
+        actions: ['updatePrev', 'swap', 'commit'],
+        target: 'persisting',
       },
       UNDO: {
         actions: ['undo', 'hydrate', 'sort'],
@@ -198,59 +268,20 @@ export const constructMachine = createMachine<
           return constructParts;
         },
       }),
-      persist: ({ constructId, constructParts }) => {
-        mutate(
-          constructId,
-          async (data: ConstructQuery | undefined) => {
-            try {
-              let cachedConstruct = {};
-
-              if (data) {
-                ({
-                  construct: [cachedConstruct],
-                } = data);
-              }
-
-              const {
-                insert_construct_part: { returning: updatedConstructParts },
-              } = await sdk.InsertConstructPart({
-                construct_id: constructId,
-                input: constructParts
-                  .filter(({ part_id }) => !!part_id)
-                  .map(({ construct_id, id, index, orientation, part_id }) => ({
-                    construct_id,
-                    id,
-                    index,
-                    orientation,
-                    part_id,
-                  })),
-              });
-
-              return {
-                construct: [
-                  {
-                    ...cachedConstruct,
-                    parts: updatedConstructParts,
-                  },
-                ],
-              };
-            } catch (err) {
-              console.error(err);
+      hydrate: assign({
+        constructParts: ({ constructParts }) =>
+          constructParts?.map((constructPart) => {
+            if (!constructPart.part) {
+              constructPart.part = DEFAULT_PART as Part;
             }
 
-            return data;
-          },
-          true
-        );
-      },
-      hydrate: assign({
-        constructParts: ({ constructParts }, {}) =>
-          constructParts?.map((constructPart) => ({
-            ...constructPart,
-            ref: spawn(createPartMachine(constructPart), {
-              name: `constructPart-${constructPart.id}`,
-            }),
-          })),
+            return {
+              ...constructPart,
+              ref: spawn(createPartMachine(constructPart), {
+                name: `constructPart-${constructPart.id}`,
+              }),
+            };
+          }),
       }),
       reset: sendParent(() => ({
         type: 'PARTLIB.RESET',
@@ -303,6 +334,8 @@ export const constructMachine = createMachine<
       isNotOnly: ({ constructParts }) => constructParts.length > 1,
       indexIsWithinBounds: ({ constructParts }, { index }) =>
         index >= 0 && index < constructParts.length,
+      isDiffConstruct: (context, event) =>
+        context.constructId !== event.constructId,
     },
   }
 );

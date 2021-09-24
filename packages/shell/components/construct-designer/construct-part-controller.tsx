@@ -45,7 +45,7 @@ function ConstructPartController(
     isFocused,
     part: {
       name,
-      type: { name: type, slug },
+      type: { name: typeName, slug },
     },
   } = state.context;
 
@@ -71,7 +71,7 @@ function ConstructPartController(
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
           }}
-          title={`${name}\n${type}`}
+          title={`${name}\n${typeName}`}
         >
           <Text
             as="span"
@@ -101,7 +101,7 @@ function ConstructPartController(
             }}
             size={0}
           >
-            {type}
+            {typeName}
           </Text>
         </Label>
       </Box>

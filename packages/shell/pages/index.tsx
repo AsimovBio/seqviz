@@ -73,7 +73,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
 const DashboardPage: NextPageWithLayout = withPageAuthRequired(Dashboard);
 
 DashboardPage.getLayout = function getLayout(page: ReactElement) {
-  return <DashboardLayout>{page}</DashboardLayout>;
+  return <DashboardLayout {...page.props}>{page}</DashboardLayout>;
 };
 
 export default DashboardPage;

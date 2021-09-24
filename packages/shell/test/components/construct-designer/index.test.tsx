@@ -24,7 +24,7 @@ describe('ConstructDesigner', () => {
       );
     };
 
-    return render(<ConstructDesigner {...(construct as any)} />, {
+    return render(<ConstructDesigner construct={construct} />, {
       wrapper: DashboardWrapper,
     });
   };

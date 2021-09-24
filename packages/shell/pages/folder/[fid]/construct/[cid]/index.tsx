@@ -22,6 +22,7 @@ import type { NextPageWithLayout } from 'pages/_app';
 import type { ReactElement } from 'react';
 import { useContext } from 'react';
 import { useEffect, useMemo, useState } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 import { mutate } from 'swr';
 import { debounce } from 'ts-debounce';
 import { getModule } from 'utils/import';
@@ -31,6 +32,9 @@ type Props = DashboardProps & WithPageAuthRequiredProps;
 
 const Header: any = dynamic(getModule('./components/header'), { ssr: false });
 const Icon: any = dynamic(getModule('./components/icon'), { ssr: false });
+const ErrorFallback: any = dynamic(getModule('./components/error-fallback'), {
+  ssr: false,
+});
 
 const Input: any = dynamic(
   async () => {
@@ -62,8 +66,8 @@ export function Construct({ data: initialData = {} }: Props) {
   const router = useRouter();
   const { cid, fid } = router.query;
   const { send } = useContext(DashboardContext);
-
   const { construct } = initialData;
+
   let currentConstruct;
 
   const { data } = sdk.useConstruct(
@@ -162,10 +166,9 @@ export function Construct({ data: initialData = {} }: Props) {
         />
       </Header>
       {currentConstruct && (
-        <ConstructDesigner
-          id={currentConstruct.id}
-          parts={currentConstruct.parts}
-        />
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <ConstructDesigner construct={currentConstruct} />
+        </ErrorBoundary>
       )}
     </>
   );
@@ -217,7 +220,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
 const ConstructPage: NextPageWithLayout = withPageAuthRequired(Construct);
 
 ConstructPage.getLayout = function getLayout(page: ReactElement) {
-  return <DashboardLayout>{page}</DashboardLayout>;
+  return <DashboardLayout {...page.props}>{page}</DashboardLayout>;
 };
 
 export default ConstructPage;

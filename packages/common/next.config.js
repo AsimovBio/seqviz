@@ -29,6 +29,7 @@ module.exports = {
         './components/button': './components/button',
         './components/copy-to-clipboard': './components/copy-to-clipboard',
         './components/dropdown-menu': './components/dropdown-menu',
+        './components/error-fallback': './components/error-fallback',
         './components/form': './components/form',
         './components/header': './components/header',
         './components/icon': './components/icon',

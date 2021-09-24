@@ -172,29 +172,28 @@ export default function Sidebar() {
             >
               {recentConstructs.length > 0 ? (
                 <ScrollContainer maxHeight="15em">
-                  {recentConstructs?.map(
-                    ({ id, name, folders: constructFolders }) => {
-                      if (!constructFolders?.length) {
-                        return null;
-                      }
-                      const [{ folder_id }] = constructFolders;
+                  {recentConstructs?.map((c) => {
+                    const { id, name, folder } = c;
 
-                      return (
-                        <ActiveLink
-                          href={`/folder/${folder_id}/construct/${id}`}
-                          key={id}
-                          passHref
-                        >
-                          <Box as="a">
-                            <Tooltip content={name}>
-                              <Icon label="Circle" />
-                            </Tooltip>
-                            <Text className="text">{name}</Text>
-                          </Box>
-                        </ActiveLink>
-                      );
+                    if (!folder) {
+                      return null;
                     }
-                  )}
+
+                    return (
+                      <ActiveLink
+                        href={`/folder/${folder.id}/construct/${id}`}
+                        key={id}
+                        passHref
+                      >
+                        <Box as="a">
+                          <Tooltip content={name}>
+                            <Icon label="Circle" />
+                          </Tooltip>
+                          <Text className="text">{name}</Text>
+                        </Box>
+                      </ActiveLink>
+                    );
+                  })}
                 </ScrollContainer>
               ) : (
                 <Text
@@ -239,58 +238,53 @@ export default function Sidebar() {
             type="single"
           >
             <ScrollContainer>
-              {folders?.map(
-                ({ name, constructs: constructs, id: projectId }) => {
-                  const isActiveFolder = query?.fid === projectId;
-                  return (
-                    <Fragment key={projectId}>
-                      <ActiveLink href={`/folder/${projectId}`} passHref>
-                        <a>
-                          <Tooltip content={name} side="right">
-                            <Box
-                              css={{
-                                flex: '0 2.75em',
-                                transition: 'transform $standard',
-                                '.active &': {
-                                  transform: 'rotate(90deg)',
-                                },
-                              }}
-                            >
-                              <Icon label="ChevronRight" />
-                            </Box>
-                          </Tooltip>
-                          <span className="text">{name}</span>
-                        </a>
-                      </ActiveLink>
-                      {isActiveFolder &&
-                        constructs?.map(({ construct }) => {
-                          if (!construct) {
-                            return null;
-                          }
+              {folders?.map(({ name, constructs, id: folderId }) => {
+                const isActiveFolder = query?.fid === folderId;
+                return (
+                  <Fragment key={folderId}>
+                    <ActiveLink href={`/folder/${folderId}`} passHref>
+                      <a>
+                        <Tooltip content={name} side="right">
+                          <Box
+                            css={{
+                              flex: '0 2.75em',
+                              transition: 'transform $standard',
+                              '.active &': {
+                                transform: 'rotate(90deg)',
+                              },
+                            }}
+                          >
+                            <Icon label="ChevronRight" />
+                          </Box>
+                        </Tooltip>
+                        <span className="text">{name}</span>
+                      </a>
+                    </ActiveLink>
+                    {isActiveFolder &&
+                      constructs?.map((construct) => {
+                        if (!construct) {
+                          return null;
+                        }
 
-                          const { id: constructId, name } = construct;
-                          return (
-                            <ActiveLink
-                              href={`/folder/${projectId}/construct/${constructId}`}
-                              key={constructId}
-                              passHref
-                            >
-                              <Box
-                                as="a"
-                                css={{ pl: isNavOpen ? '1.75em' : 0 }}
-                              >
-                                <Tooltip content={name} side="right">
-                                  <Icon label="Circle" />
-                                </Tooltip>
-                                <span className="text">{name}</span>
-                              </Box>
-                            </ActiveLink>
-                          );
-                        })}
-                    </Fragment>
-                  );
-                }
-              )}
+                        const { id: constructId, name } = construct;
+                        return (
+                          <ActiveLink
+                            href={`/folder/${folderId}/construct/${constructId}`}
+                            key={constructId}
+                            passHref
+                          >
+                            <Box as="a" css={{ pl: isNavOpen ? '1.75em' : 0 }}>
+                              <Tooltip content={name} side="right">
+                                <Icon label="Circle" />
+                              </Tooltip>
+                              <span className="text">{name}</span>
+                            </Box>
+                          </ActiveLink>
+                        );
+                      })}
+                  </Fragment>
+                );
+              })}
             </ScrollContainer>
           </Accordion>
         </Box>

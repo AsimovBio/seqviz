@@ -1,5 +1,5 @@
 import type { Construct_Part } from 'models/graphql';
-import { actions, assign, createMachine, sendParent } from 'xstate';
+import { actions, assign, createMachine, sendParent, send } from 'xstate';
 
 export type ConstructPartContext = {
   prevPart: Construct_Part;
@@ -20,8 +20,8 @@ interface ConstructPartStateSchema {
 
 export type ConstructPartEvent = { type: string; [key: string]: any };
 
-export const createPartMachine = (constructPart) => {
-  return createMachine<
+export const createPartMachine = (constructPart) =>
+  createMachine<
     ConstructPartContext,
     ConstructPartEvent,
     ConstructPartStateSchema
@@ -58,10 +58,9 @@ export const createPartMachine = (constructPart) => {
         reading: {
           entry: actions.choose([
             {
-              actions: ['activate', 'engage'],
+              actions: send({ type: 'TOGGLE_ACTIVE' }),
               cond: 'isNew',
-              target: 'editing',
-            } as any,
+            },
           ]),
           on: {
             TOGGLE_ACTIVE: {
@@ -147,8 +146,9 @@ export const createPartMachine = (constructPart) => {
         }),
       },
       guards: {
-        isNew: ({ isNew }) => isNew,
+        isNew: ({ isNew }) => {
+          return isNew;
+        },
       },
     }
   );
-};

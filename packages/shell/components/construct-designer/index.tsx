@@ -18,12 +18,9 @@ import ConstructPartController from './construct-part-controller';
 
 const Box: any = dynamic(getModule('./components/box'), { ssr: false });
 
-type Props = Partial<Construct>;
+type Props = { construct: Partial<Construct> };
 
-export default function ConstructDesigner({
-  parts: initialConstructParts,
-  id: constructId,
-}: Props) {
+export default function ConstructDesigner({ construct }: Props) {
   const context = useContext(DashboardContext);
   const {
     state: {
@@ -32,6 +29,7 @@ export default function ConstructDesigner({
   } = context;
 
   const [state, send] = useActor<any, any>(constructSvc);
+  const { constructParts } = state?.context;
 
   useHotkeys('command+z', (e) => {
     e.preventDefault();
@@ -43,7 +41,18 @@ export default function ConstructDesigner({
     send('REDO');
   });
 
-  const { constructParts } = state?.context;
+  useEffect(() => {
+    const { parts: initialConstructParts, id: constructId } = construct;
+    const constructParts = initialConstructParts?.length
+      ? initialConstructParts
+      : [createConstructPart({ construct_id: constructId, index: 0 })];
+
+    send({
+      type: 'BOOTSTRAP',
+      constructParts,
+      constructId,
+    });
+  }, [construct, send]);
 
   /**
    * Using useState instead of useRef in order to use setNewPartRef as a callback ref.
@@ -60,18 +69,6 @@ export default function ConstructDesigner({
       });
     }
   }, [newPartRef]);
-
-  useEffect(() => {
-    const constructParts = initialConstructParts?.length
-      ? initialConstructParts
-      : [createConstructPart({ construct_id: constructId, index: 0 })];
-
-    send({
-      type: 'BOOTSTRAP',
-      constructParts,
-      constructId,
-    });
-  }, [constructId, initialConstructParts, send]);
 
   const onDragEnd: OnDragEndResponder = ({
     destination,

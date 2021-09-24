@@ -7,8 +7,8 @@ fragment FolderFields on folder {
 query Folders {
   folder(order_by: { created_at: desc }) {
     ...FolderFields
-    constructs(order_by: {  created_at: desc } ) {
-        ...ConstructFields
+    constructs(order_by: { created_at: desc }) {
+      ...ConstructFields
     }
   }
 }
@@ -31,5 +31,3 @@ mutation UpdateFolder($id: uuid!, $input: folder_set_input!) {
     ...FolderFields
   }
 }
-
-

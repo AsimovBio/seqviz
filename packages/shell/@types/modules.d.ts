@@ -12,16 +12,7 @@ declare module '*/construct.graphql' {
   export default defaultDocument;
 }
 
-declare module '*/part.graphql' {
-  import { DocumentNode } from 'graphql';
-  const defaultDocument: DocumentNode;
-  export const PartFields: DocumentNode;
-  export const Parts: DocumentNode;
-
-  export default defaultDocument;
-}
-
-declare module '*/project.graphql' {
+declare module '*/folder.graphql' {
   import { DocumentNode } from 'graphql';
   const defaultDocument: DocumentNode;
   export const FolderFields: DocumentNode;
@@ -29,6 +20,15 @@ declare module '*/project.graphql' {
   export const Folder: DocumentNode;
   export const CreateFolder: DocumentNode;
   export const UpdateFolder: DocumentNode;
+
+  export default defaultDocument;
+}
+
+declare module '*/part.graphql' {
+  import { DocumentNode } from 'graphql';
+  const defaultDocument: DocumentNode;
+  export const PartFields: DocumentNode;
+  export const Parts: DocumentNode;
 
   export default defaultDocument;
 }

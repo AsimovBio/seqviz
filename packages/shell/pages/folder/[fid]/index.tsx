@@ -63,7 +63,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
 const FolderPage: NextPageWithLayout = withPageAuthRequired(Folder);
 
 FolderPage.getLayout = function getLayout(page: ReactElement) {
-  return <DashboardLayout>{page}</DashboardLayout>;
+  return <DashboardLayout {...page.props}>{page}</DashboardLayout>;
 };
 
 export default FolderPage;
