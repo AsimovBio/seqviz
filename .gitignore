@@ -78,4 +78,6 @@ typings/
 # TypeScript incremental compilation cache
 *.tsbuildinfo
 
+# misc
 *secret*
+**.DS_Store

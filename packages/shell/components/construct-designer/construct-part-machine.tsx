@@ -1,5 +1,5 @@
 import type { Construct_Part } from 'models/graphql';
-import { actions, assign, createMachine, sendParent, send } from 'xstate';
+import { actions, assign, createMachine, send, sendParent } from 'xstate';
 
 export type ConstructPartContext = {
   prevPart: Construct_Part;

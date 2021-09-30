@@ -172,9 +172,7 @@ export default function Sidebar() {
             >
               {recentConstructs.length > 0 ? (
                 <ScrollContainer maxHeight="15em">
-                  {recentConstructs?.map((c) => {
-                    const { id, name, folder } = c;
-
+                  {recentConstructs?.map(({ id, name, folder }) => {
                     if (!folder) {
                       return null;
                     }

@@ -1,7 +1,7 @@
 import faker from 'faker';
 
-import { parts } from './parts';
 import { folder } from './folder';
+import { parts } from './parts';
 
 const constructParts = Array.from({ length: 10 }, (element, index) => ({
   construct_id: faker.datatype.uuid(),
@@ -20,4 +20,5 @@ export const construct = {
   name: 'Test construct',
   parts: constructParts,
   folders: [{ construct_id: faker.datatype.uuid(), folder_id: folder.id }],
+  sequence: 'GATTACA',
 };

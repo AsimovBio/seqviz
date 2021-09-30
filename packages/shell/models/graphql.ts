@@ -10,10 +10,12 @@ export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
 };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
-  { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
-  { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -1041,6 +1043,9 @@ export type Construct = {
   parts: Array<Construct_Part>;
   /** An aggregate relationship */
   parts_aggregate: Construct_Part_Aggregate;
+  sequence?: Maybe<Scalars['String']>;
+  /** A computed field, executes function "construct_sequence_length" */
+  sequence_length?: Maybe<Scalars['Int']>;
   updated_at: Scalars['timestamptz'];
   /** An object relationship */
   user?: Maybe<User>;
@@ -1139,6 +1144,8 @@ export type Construct_Bool_Exp = {
   is_template?: Maybe<Boolean_Comparison_Exp>;
   name?: Maybe<String_Comparison_Exp>;
   parts?: Maybe<Construct_Part_Bool_Exp>;
+  sequence?: Maybe<String_Comparison_Exp>;
+  sequence_length?: Maybe<Int_Comparison_Exp>;
   updated_at?: Maybe<Timestamptz_Comparison_Exp>;
   user?: Maybe<User_Bool_Exp>;
 };
@@ -1164,6 +1171,7 @@ export type Construct_Insert_Input = {
   is_template?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
   parts?: Maybe<Construct_Part_Arr_Rel_Insert_Input>;
+  sequence?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
   user?: Maybe<User_Obj_Rel_Insert_Input>;
 };
@@ -1176,6 +1184,7 @@ export type Construct_Max_Fields = {
   folder_id?: Maybe<Scalars['uuid']>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
+  sequence?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -1186,6 +1195,7 @@ export type Construct_Max_Order_By = {
   folder_id?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
+  sequence?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
 };
 
@@ -1197,6 +1207,7 @@ export type Construct_Min_Fields = {
   folder_id?: Maybe<Scalars['uuid']>;
   id?: Maybe<Scalars['uuid']>;
   name?: Maybe<Scalars['String']>;
+  sequence?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -1207,6 +1218,7 @@ export type Construct_Min_Order_By = {
   folder_id?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
+  sequence?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
 };
 
@@ -1243,6 +1255,8 @@ export type Construct_Order_By = {
   is_template?: Maybe<Order_By>;
   name?: Maybe<Order_By>;
   parts_aggregate?: Maybe<Construct_Part_Aggregate_Order_By>;
+  sequence?: Maybe<Order_By>;
+  sequence_length?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
   user?: Maybe<User_Order_By>;
 };
@@ -1567,6 +1581,8 @@ export enum Construct_Select_Column {
   /** column name */
   Name = 'name',
   /** column name */
+  Sequence = 'sequence',
+  /** column name */
   UpdatedAt = 'updated_at',
 }
 
@@ -1578,6 +1594,7 @@ export type Construct_Set_Input = {
   id?: Maybe<Scalars['uuid']>;
   is_template?: Maybe<Scalars['Boolean']>;
   name?: Maybe<Scalars['String']>;
+  sequence?: Maybe<Scalars['String']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
 };
 
@@ -1639,6 +1656,8 @@ export enum Construct_Update_Column {
   IsTemplate = 'is_template',
   /** column name */
   Name = 'name',
+  /** column name */
+  Sequence = 'sequence',
   /** column name */
   UpdatedAt = 'updated_at',
 }
@@ -4759,7 +4778,7 @@ export type Uuid_Comparison_Exp = {
 
 export type ConstructFieldsFragment = { __typename?: 'construct' } & Pick<
   Construct,
-  'id' | 'name'
+  'id' | 'name' | 'sequence' | 'sequence_length'
 >;
 
 export type ConstructPartFieldsFragment = {
@@ -4906,6 +4925,8 @@ export const ConstructFieldsFragmentDoc = gql`
   fragment ConstructFields on construct {
     id
     name
+    sequence
+    sequence_length
   }
 `;
 export const ConstructPartFieldsFragmentDoc = gql`

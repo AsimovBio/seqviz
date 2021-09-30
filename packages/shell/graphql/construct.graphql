@@ -1,6 +1,8 @@
 fragment ConstructFields on construct {
   id
   name
+  sequence
+  sequence_length
 }
 
 fragment ConstructPartFields on construct_part {

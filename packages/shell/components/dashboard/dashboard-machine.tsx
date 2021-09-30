@@ -41,11 +41,14 @@ export async function createNew(_, { parts, fid, value }: DashboardEvent) {
 
         ({ insert_construct_one: newConstruct } = await sdk.CreateConstruct({
           input: {
-            name: 'Untitled construct',
             folder_id: fid,
+            name: 'Untitled construct',
             parts: {
               data: parts.map(({ construct_id, part, id, ...rest }) => rest),
             },
+            sequence: parts
+              .map(({ part: { sequence = '' } }) => sequence)
+              .join(''),
           },
         }));
 

@@ -12,7 +12,7 @@ module.exports = {
     cpus: 1,
   },
   webpack: (config, options) => {
-    const { defaultLoaders, isServer } = options;
+    const { defaultLoaders } = options;
 
     const mfConf = {
       mergeRuntime: true,
@@ -41,6 +41,7 @@ module.exports = {
         './components/text': './components/text',
         './components/tooltip': './components/tooltip',
         './stitches.config': './stitches.config',
+        './components/sequence-viewer': './components/sequence-viewer',
       },
       shared: [],
     };

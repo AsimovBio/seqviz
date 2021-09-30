@@ -5,6 +5,7 @@
   "scripts": {
     "clean": "rimraf packages/**/.next",
     "dev": "yarn workspaces foreach -vip run dev",
+    "storybook": "yarn workspace @asimov/kernel-storybook run storybook",
     "debug": "yarn workspaces foreach -vip run --inspect dev",
     "build": "yarn workspaces foreach -vip run build",
     "start": "yarn workspaces foreach -vip run start",

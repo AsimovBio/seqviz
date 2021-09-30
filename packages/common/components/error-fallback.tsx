@@ -4,7 +4,6 @@ import Text from './box';
 export default function ErrorFallback({ error }) {
   return (
     <Box
-      role="alert"
       css={{
         alignItems: 'center',
         backgroundColor: '$warning',
@@ -14,6 +13,7 @@ export default function ErrorFallback({ error }) {
         justifyContent: 'center',
         p: '$2',
       }}
+      role="alert"
     >
       <Text css={{ mb: '$2' }}>Whoops, something went wrong!</Text>
       <pre>{error.message}</pre>

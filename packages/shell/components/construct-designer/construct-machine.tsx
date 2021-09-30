@@ -48,6 +48,15 @@ const persist = ({ constructId, constructParts }) =>
           } = data);
         }
 
+        const sequence = constructParts
+          .map(({ part: { sequence = '' } }) => sequence)
+          .join('');
+
+        await sdk.UpdateConstruct({
+          id: constructId,
+          input: { sequence },
+        });
+
         const input = constructParts.map(
           ({ construct_id, id, index, orientation, part_id }) => ({
             construct_id,
@@ -70,6 +79,7 @@ const persist = ({ constructId, constructParts }) =>
             {
               ...cachedConstruct,
               parts: updatedConstructParts,
+              sequence,
             },
           ],
         };

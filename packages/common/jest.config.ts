@@ -8,6 +8,7 @@ const config: Config.InitialOptions = {
   roots: ['<rootDir>/test'],
   modulePaths: ['<rootDir>'],
   setupFiles: ['<rootDir>/jest.bootstrap.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testEnvironment: 'jsdom',
   collectCoverageFrom: [
     '**/*.{js,jsx,ts,tsx}',
