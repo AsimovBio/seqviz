@@ -2,9 +2,10 @@ import { fireEvent } from '@testing-library/react';
 import { DashboardLayout } from 'components/layout/dashboard-layout';
 import { graphql } from 'msw';
 import { cache } from 'swr';
+import { construct } from 'test/__mocks__/construct';
 import { folder } from 'test/__mocks__/folder';
 import { server } from 'test/msw/server';
-import { render, screen } from 'test/utils';
+import { render, screen } from 'test/testUtils';
 
 jest.mock('utils/import');
 
@@ -18,7 +19,8 @@ jest.mock('next/router', () => ({
 }));
 
 describe('Dashboard Layout', () => {
-  const renderComponent = () => render(<DashboardLayout />);
+  const renderComponent = (initialData?) =>
+    render(<DashboardLayout data={initialData} />);
 
   it('renders without errors', async () => {
     renderComponent();
@@ -49,5 +51,17 @@ describe('Dashboard Layout', () => {
     fireEvent.change(inputNode, { target: { value: 'New folder' } });
 
     expect(await screen.findByText('New folder')).toBeInTheDocument();
+  });
+
+  it('should render Sequence tab when a construct is provided', async () => {
+    renderComponent({ construct: [construct] });
+    const activeTab = await screen.findByRole('tab', { selected: true });
+    expect(activeTab).toHaveTextContent('Sequence');
+  });
+
+  it('should render Genetic Parts Library tab when a construct is not provided', async () => {
+    renderComponent();
+    const activeTab = await screen.findByRole('tab', { selected: true });
+    expect(activeTab).toHaveTextContent('Genetic Parts Library');
   });
 });

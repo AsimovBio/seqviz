@@ -1,10 +1,10 @@
 import { fireEvent } from '@testing-library/react';
 import { dashboardMachine } from 'components/dashboard/dashboard-machine';
-import { DashboardContext } from 'components/layout/dashboard-layout';
 import FolderPageHeader from 'components/folder-page-header';
+import { DashboardContext } from 'components/layout/dashboard-layout';
 import { construct } from 'test/__mocks__/construct';
 import { folder } from 'test/__mocks__/folder';
-import { render, screen } from 'test/utils';
+import { render, screen } from 'test/testUtils';
 import { interpret } from 'xstate';
 
 describe('FolderPageHeader', () => {

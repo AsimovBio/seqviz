@@ -1,6 +1,6 @@
 import { folder } from 'test/__mocks__/folder';
 
-import { render, screen } from '../utils';
+import { render, screen } from '../testUtils';
 
 jest.mock('utils/import');
 

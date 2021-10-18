@@ -10,12 +10,10 @@ export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
 };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]?: Maybe<T[SubKey]>;
-};
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
-  [SubKey in K]: Maybe<T[SubKey]>;
-};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
+  { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
+  { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -90,6 +88,7 @@ export type String_Comparison_Exp = {
 export type Annotation = {
   __typename?: 'annotation';
   color?: Maybe<Scalars['String']>;
+  construct_id?: Maybe<Scalars['uuid']>;
   created_at: Scalars['timestamptz'];
   created_by_id?: Maybe<Scalars['Int']>;
   direction?: Maybe<Scalars['String']>;
@@ -97,8 +96,8 @@ export type Annotation = {
   id: Scalars['uuid'];
   label?: Maybe<Scalars['String']>;
   /** An object relationship */
-  part: Part;
-  part_id: Scalars['uuid'];
+  part?: Maybe<Part>;
+  part_id?: Maybe<Scalars['uuid']>;
   start?: Maybe<Scalars['Int']>;
   updated_at: Scalars['timestamptz'];
   /** An object relationship */
@@ -177,6 +176,7 @@ export type Annotation_Bool_Exp = {
   _not?: Maybe<Annotation_Bool_Exp>;
   _or?: Maybe<Array<Annotation_Bool_Exp>>;
   color?: Maybe<String_Comparison_Exp>;
+  construct_id?: Maybe<Uuid_Comparison_Exp>;
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
   created_by_id?: Maybe<Int_Comparison_Exp>;
   direction?: Maybe<String_Comparison_Exp>;
@@ -206,6 +206,7 @@ export type Annotation_Inc_Input = {
 /** input type for inserting data into table "annotation" */
 export type Annotation_Insert_Input = {
   color?: Maybe<Scalars['String']>;
+  construct_id?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
   direction?: Maybe<Scalars['String']>;
@@ -223,6 +224,7 @@ export type Annotation_Insert_Input = {
 export type Annotation_Max_Fields = {
   __typename?: 'annotation_max_fields';
   color?: Maybe<Scalars['String']>;
+  construct_id?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
   direction?: Maybe<Scalars['String']>;
@@ -237,6 +239,7 @@ export type Annotation_Max_Fields = {
 /** order by max() on columns of table "annotation" */
 export type Annotation_Max_Order_By = {
   color?: Maybe<Order_By>;
+  construct_id?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   created_by_id?: Maybe<Order_By>;
   direction?: Maybe<Order_By>;
@@ -252,6 +255,7 @@ export type Annotation_Max_Order_By = {
 export type Annotation_Min_Fields = {
   __typename?: 'annotation_min_fields';
   color?: Maybe<Scalars['String']>;
+  construct_id?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
   direction?: Maybe<Scalars['String']>;
@@ -266,6 +270,7 @@ export type Annotation_Min_Fields = {
 /** order by min() on columns of table "annotation" */
 export type Annotation_Min_Order_By = {
   color?: Maybe<Order_By>;
+  construct_id?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   created_by_id?: Maybe<Order_By>;
   direction?: Maybe<Order_By>;
@@ -296,6 +301,7 @@ export type Annotation_On_Conflict = {
 /** Ordering options when selecting data from "annotation". */
 export type Annotation_Order_By = {
   color?: Maybe<Order_By>;
+  construct_id?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   created_by_id?: Maybe<Order_By>;
   direction?: Maybe<Order_By>;
@@ -319,6 +325,8 @@ export enum Annotation_Select_Column {
   /** column name */
   Color = 'color',
   /** column name */
+  ConstructId = 'construct_id',
+  /** column name */
   CreatedAt = 'created_at',
   /** column name */
   CreatedById = 'created_by_id',
@@ -341,6 +349,7 @@ export enum Annotation_Select_Column {
 /** input type for updating data in table "annotation" */
 export type Annotation_Set_Input = {
   color?: Maybe<Scalars['String']>;
+  construct_id?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
   direction?: Maybe<Scalars['String']>;
@@ -416,6 +425,8 @@ export type Annotation_Sum_Order_By = {
 export enum Annotation_Update_Column {
   /** column name */
   Color = 'color',
+  /** column name */
+  ConstructId = 'construct_id',
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
@@ -1031,6 +1042,10 @@ export type Chassis_Variance_Fields = {
 /** columns and relationships of "construct" */
 export type Construct = {
   __typename?: 'construct';
+  /** An array relationship */
+  annotations: Array<Annotation>;
+  /** An aggregate relationship */
+  annotations_aggregate: Annotation_Aggregate;
   created_at: Scalars['timestamptz'];
   created_by_id?: Maybe<Scalars['Int']>;
   /** An object relationship */
@@ -1049,6 +1064,24 @@ export type Construct = {
   updated_at: Scalars['timestamptz'];
   /** An object relationship */
   user?: Maybe<User>;
+};
+
+/** columns and relationships of "construct" */
+export type ConstructAnnotationsArgs = {
+  distinct_on?: Maybe<Array<Annotation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Annotation_Order_By>>;
+  where?: Maybe<Annotation_Bool_Exp>;
+};
+
+/** columns and relationships of "construct" */
+export type ConstructAnnotations_AggregateArgs = {
+  distinct_on?: Maybe<Array<Annotation_Select_Column>>;
+  limit?: Maybe<Scalars['Int']>;
+  offset?: Maybe<Scalars['Int']>;
+  order_by?: Maybe<Array<Annotation_Order_By>>;
+  where?: Maybe<Annotation_Bool_Exp>;
 };
 
 /** columns and relationships of "construct" */
@@ -1136,6 +1169,7 @@ export type Construct_Bool_Exp = {
   _and?: Maybe<Array<Construct_Bool_Exp>>;
   _not?: Maybe<Construct_Bool_Exp>;
   _or?: Maybe<Array<Construct_Bool_Exp>>;
+  annotations?: Maybe<Annotation_Bool_Exp>;
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
   created_by_id?: Maybe<Int_Comparison_Exp>;
   folder?: Maybe<Folder_Bool_Exp>;
@@ -1163,6 +1197,7 @@ export type Construct_Inc_Input = {
 
 /** input type for inserting data into table "construct" */
 export type Construct_Insert_Input = {
+  annotations?: Maybe<Annotation_Arr_Rel_Insert_Input>;
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
   folder?: Maybe<Folder_Obj_Rel_Insert_Input>;
@@ -1247,6 +1282,7 @@ export type Construct_On_Conflict = {
 
 /** Ordering options when selecting data from "construct". */
 export type Construct_Order_By = {
+  annotations_aggregate?: Maybe<Annotation_Aggregate_Order_By>;
   created_at?: Maybe<Order_By>;
   created_by_id?: Maybe<Order_By>;
   folder?: Maybe<Folder_Order_By>;
@@ -4802,6 +4838,12 @@ export type ConstructQuery = { __typename?: 'query_root' } & {
           part?: Maybe<{ __typename?: 'part' } & PartFieldsFragment>;
         } & ConstructPartFieldsFragment
       >;
+      annotations: Array<
+        { __typename?: 'annotation' } & Pick<
+          Annotation,
+          'start' | 'end' | 'label'
+        >
+      >;
     } & ConstructFieldsFragment
   >;
 };
@@ -4859,6 +4901,30 @@ export type InsertConstructPartMutation = { __typename?: 'mutation_root' } & {
         { __typename?: 'construct_part' } & {
           part?: Maybe<{ __typename?: 'part' } & PartFieldsFragment>;
         } & ConstructPartFieldsFragment
+      >;
+    }
+  >;
+};
+
+export type InsertAnnotationMutationVariables = Exact<{
+  construct_id: Scalars['uuid'];
+  input: Array<Annotation_Insert_Input> | Annotation_Insert_Input;
+}>;
+
+export type InsertAnnotationMutation = { __typename?: 'mutation_root' } & {
+  delete_annotation?: Maybe<
+    { __typename?: 'annotation_mutation_response' } & Pick<
+      Annotation_Mutation_Response,
+      'affected_rows'
+    >
+  >;
+  insert_annotation?: Maybe<
+    { __typename?: 'annotation_mutation_response' } & {
+      returning: Array<
+        { __typename?: 'annotation' } & Pick<
+          Annotation,
+          'construct_id' | 'label' | 'id' | 'start' | 'end'
+        >
       >;
     }
   >;
@@ -4976,6 +5042,11 @@ export const ConstructDocument = gql`
           ...PartFields
         }
       }
+      annotations {
+        start
+        end
+        label
+      }
     }
   }
   ${ConstructFieldsFragmentDoc}
@@ -5039,6 +5110,31 @@ export const InsertConstructPartDocument = gql`
   }
   ${ConstructPartFieldsFragmentDoc}
   ${PartFieldsFragmentDoc}
+`;
+export const InsertAnnotationDocument = gql`
+  mutation InsertAnnotation(
+    $construct_id: uuid!
+    $input: [annotation_insert_input!]!
+  ) {
+    delete_annotation(where: { construct_id: { _eq: $construct_id } }) {
+      affected_rows
+    }
+    insert_annotation(
+      objects: $input
+      on_conflict: {
+        constraint: annotation_pkey
+        update_columns: [start, end, label]
+      }
+    ) {
+      returning {
+        construct_id
+        label
+        id
+        start
+        end
+      }
+    }
+  }
 `;
 export const FoldersDocument = gql`
   query Folders {
@@ -5167,6 +5263,20 @@ export function getSdk(
             { ...requestHeaders, ...wrappedRequestHeaders }
           ),
         'InsertConstructPart'
+      );
+    },
+    InsertAnnotation(
+      variables: InsertAnnotationMutationVariables,
+      requestHeaders?: Dom.RequestInit['headers']
+    ): Promise<InsertAnnotationMutation> {
+      return withWrapper(
+        (wrappedRequestHeaders) =>
+          client.request<InsertAnnotationMutation>(
+            InsertAnnotationDocument,
+            variables,
+            { ...requestHeaders, ...wrappedRequestHeaders }
+          ),
+        'InsertAnnotation'
       );
     },
     Folders(

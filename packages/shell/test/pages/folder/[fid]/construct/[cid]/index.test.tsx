@@ -6,7 +6,7 @@ import { Construct } from 'pages/folder/[fid]/construct/[cid]';
 import { construct } from 'test/__mocks__/construct';
 import { folder } from 'test/__mocks__/folder';
 import { server } from 'test/msw/server';
-import { render, screen } from 'test/utils';
+import { render, screen } from 'test/testUtils';
 import { interpret } from 'xstate';
 
 jest.mock('utils/import');

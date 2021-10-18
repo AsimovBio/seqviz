@@ -38,6 +38,7 @@ module.exports = {
         './components/scroll-container': './components/scroll-container',
         './components/stitches-tag': './components/stitches-tag',
         './components/svg': './components/svg',
+        './components/tabs': './components/tabs',
         './components/text': './components/text',
         './components/tooltip': './components/tooltip',
         './stitches.config': './stitches.config',

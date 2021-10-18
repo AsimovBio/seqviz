@@ -3,7 +3,7 @@ import ConstructDesigner from 'components/construct-designer';
 import { dashboardMachine } from 'components/dashboard/dashboard-machine';
 import { DashboardContext } from 'components/layout/dashboard-layout';
 import { construct } from 'test/__mocks__/construct';
-import { render, screen } from 'test/utils';
+import { render, screen } from 'test/testUtils';
 import { interpret } from 'xstate';
 
 jest.mock('utils/import');

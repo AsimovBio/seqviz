@@ -2,7 +2,7 @@ import { fireEvent, waitFor } from '@testing-library/react';
 import ConstructPartController from 'components/construct-designer/construct-part-controller';
 import { createPartMachine } from 'components/construct-designer/construct-part-machine';
 import { constructPart } from 'test/__mocks__/construct';
-import { render, screen } from 'test/utils';
+import { render, screen } from 'test/testUtils';
 import { interpret } from 'xstate';
 
 jest.mock('utils/import');

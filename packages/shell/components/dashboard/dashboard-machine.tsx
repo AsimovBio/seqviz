@@ -2,6 +2,7 @@ import { constructMachine } from 'components/construct-designer/construct-machin
 import { partLibMachine } from 'components/part-library/part-lib-machine';
 import type { Construct, Folder, FoldersQuery } from 'models/graphql';
 import { mutate } from 'swr';
+import { getAnnotationsFromParts } from 'utils/getAnnotationsFromParts';
 import { sdk } from 'utils/request';
 import { assign, createMachine, forwardTo } from 'xstate';
 
@@ -41,6 +42,9 @@ export async function createNew(_, { parts, fid, value }: DashboardEvent) {
 
         ({ insert_construct_one: newConstruct } = await sdk.CreateConstruct({
           input: {
+            annotations: {
+              data: getAnnotationsFromParts(parts.map(({ part }) => part)),
+            },
             folder_id: fid,
             name: 'Untitled construct',
             parts: {

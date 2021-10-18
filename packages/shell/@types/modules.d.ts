@@ -8,6 +8,7 @@ declare module '*/construct.graphql' {
   export const CreateConstruct: DocumentNode;
   export const UpdateConstruct: DocumentNode;
   export const InsertConstructPart: DocumentNode;
+  export const InsertAnnotation: DocumentNode;
 
   export default defaultDocument;
 }

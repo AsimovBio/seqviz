@@ -28,6 +28,11 @@ query Construct($id: uuid!) {
         ...PartFields
       }
     }
+    annotations {
+      start
+      end
+      label
+    }
   }
 }
 
@@ -76,6 +81,31 @@ mutation InsertConstructPart(
       part {
         ...PartFields
       }
+    }
+  }
+}
+
+mutation InsertAnnotation(
+  $construct_id: uuid!
+  $input: [annotation_insert_input!]!
+) {
+  delete_annotation(where: { construct_id: { _eq: $construct_id } }) {
+    affected_rows
+  }
+
+  insert_annotation(
+    objects: $input
+    on_conflict: {
+      constraint: annotation_pkey
+      update_columns: [start, end, label]
+    }
+  ) {
+    returning {
+      construct_id
+      label
+      id
+      start
+      end
     }
   }
 }

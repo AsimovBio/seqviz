@@ -1,5 +1,6 @@
 import type { Construct_Part, ConstructQuery, Part } from 'models/graphql';
 import { mutate } from 'swr';
+import { getAnnotationsFromParts } from 'utils/getAnnotationsFromParts';
 import { sdk } from 'utils/request';
 import { v4 as uuidv4 } from 'uuid';
 import { assign, createMachine, sendParent, spawn } from 'xstate';
@@ -74,11 +75,22 @@ const persist = ({ constructId, constructParts }) =>
           input,
         });
 
+        const {
+          insert_annotation: { returning: updatedAnnotations },
+        } = await sdk.InsertAnnotation({
+          construct_id: constructId,
+          input: getAnnotationsFromParts(
+            constructParts.map(({ part }) => part),
+            constructId
+          ),
+        });
+
         return {
           construct: [
             {
               ...cachedConstruct,
               parts: updatedConstructParts,
+              annotations: updatedAnnotations,
               sequence,
             },
           ],

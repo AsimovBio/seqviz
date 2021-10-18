@@ -4,6 +4,7 @@ import { dashboardMachine } from 'components/dashboard/dashboard-machine';
 import FolderPageHeader from 'components/folder-page-header';
 import Layout from 'components/layout/base-layout';
 import PartsLibrary from 'components/part-library';
+import SequencePanel from 'components/sequence-panel';
 import Sidebar from 'components/sidebar';
 import type {
   Construct,
@@ -16,18 +17,16 @@ import type {
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
 import type { ReactNode } from 'react';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createContext } from 'react';
+import { getModule } from 'utils/import';
 import { sdk } from 'utils/request';
 
 const Box: any = dynamic(() => import('common/components/box'));
-const Header: any = dynamic(() => import('common/components/header'));
 const ScrollContainer: any = dynamic(
   () => import('common/components/scroll-container')
 );
-const Text = dynamic(() => import('common/components/text'));
-
+const Tabs: any = dynamic(getModule('./components/tabs'));
 type DashboardQuery = PartsQuery &
   FoldersQuery &
   ConstructQuery &
@@ -52,7 +51,8 @@ export function DashboardLayout({ children, data: initialData = {} }: Props) {
   const router = useRouter();
   const fid = router.query?.fid;
   const isNew = router.query ? router.query['is-new'] === 'true' : false;
-  const { folder, template } = initialData;
+  const { folder, template, construct } = initialData;
+
   const persistedConstructs =
     typeof window !== 'undefined' && localStorage.getItem('recentConstructs');
 
@@ -124,6 +124,28 @@ export function DashboardLayout({ children, data: initialData = {} }: Props) {
     });
   }, [newConstruct, newFolder, fid, router, send]);
 
+  const tabs = useMemo(
+    () => [
+      {
+        value: 'sequence',
+        title: 'Sequence',
+        content: !!construct ? (
+          <SequencePanel construct={construct[0]} />
+        ) : null,
+      },
+      {
+        value: 'parts-library',
+        title: 'Genetic Parts Library',
+        content: (
+          <ScrollContainer>
+            <PartsLibrary />
+          </ScrollContainer>
+        ),
+      },
+    ],
+    [construct]
+  );
+
   const handleResetUrl = () => {
     const [path] = router.asPath.split('?');
     router.push(path, undefined, { shallow: true });
@@ -177,14 +199,10 @@ export function DashboardLayout({ children, data: initialData = {} }: Props) {
               flexDirection: 'column',
             }}
           >
-            <Header as="header">
-              <Text font="bold" size={1} uppercase>
-                Genetic Parts Library
-              </Text>
-            </Header>
-            <ScrollContainer>
-              <PartsLibrary />
-            </ScrollContainer>
+            <Tabs
+              defaultValue={!!construct ? 'sequence' : 'parts-library'}
+              tabs={tabs}
+            />
           </Box>
           {isMenuActive && (
             <Box
