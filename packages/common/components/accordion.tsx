@@ -1,4 +1,4 @@
-import type { AccordionOwnProps } from '@radix-ui/react-accordion';
+import type { AccordionSingleProps } from '@radix-ui/react-accordion';
 import {
   Content,
   Header,
@@ -18,7 +18,7 @@ type Props = {
   icon?: string;
   isChevronShown: boolean;
   title: string;
-} & AccordionOwnProps;
+} & AccordionSingleProps;
 
 export const StyledAccordion = styled(Root, {
   backgroundColor: '$background',
@@ -137,7 +137,7 @@ export default function Accordion({
             <span className="text">{title}</span>
             {headerContent}
           </StyledDiv>
-          <StyledTrigger>
+          <StyledTrigger as="button">
             {isChevronShown && <StyledChevron aria-hidden />}
           </StyledTrigger>
         </StyledHeader>

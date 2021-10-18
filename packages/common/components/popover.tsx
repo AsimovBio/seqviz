@@ -39,7 +39,7 @@ export default function Popover({
 }: Props) {
   return (
     <Root onOpenChange={handleOpenChange}>
-      <StyledTrigger>{children}</StyledTrigger>
+      <StyledTrigger as="button">{children}</StyledTrigger>
       <StyledContent>
         <StyledArrow offset={arrowOffset} />
         {content}

@@ -3,17 +3,19 @@ import * as Dom from 'graphql-request/dist/types.dom';
 import { gql } from 'graphql-request';
 import { ClientError } from 'graphql-request/dist/types';
 import useSWR, {
-  ConfigInterface as SWRConfigInterface,
-  keyInterface as SWRKeyInterface,
+  SWRConfiguration as SWRConfigInterface,
+  Key as SWRKeyInterface,
 } from 'swr';
 export type Maybe<T> = T | null;
 export type Exact<T extends { [key: string]: unknown }> = {
   [K in keyof T]: T[K];
 };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> &
-  { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> &
-  { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -4812,64 +4814,137 @@ export type Uuid_Comparison_Exp = {
   _nin?: Maybe<Array<Scalars['uuid']>>;
 };
 
-export type ConstructFieldsFragment = { __typename?: 'construct' } & Pick<
-  Construct,
-  'id' | 'name' | 'sequence' | 'sequence_length'
->;
+export type ConstructFieldsFragment = {
+  __typename?: 'construct';
+  id: any;
+  name: string;
+  sequence?: string | null | undefined;
+  sequence_length?: number | null | undefined;
+};
 
 export type ConstructPartFieldsFragment = {
   __typename?: 'construct_part';
-} & Pick<
-  Construct_Part,
-  'construct_id' | 'id' | 'index' | 'orientation' | 'part_id'
->;
+  construct_id: any;
+  id: any;
+  index: number;
+  orientation: string;
+  part_id?: any | null | undefined;
+};
 
 export type ConstructQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
-export type ConstructQuery = { __typename?: 'query_root' } & {
-  construct: Array<
-    { __typename?: 'construct' } & {
-      folder?: Maybe<{ __typename?: 'folder' } & Pick<Folder, 'id'>>;
-      parts: Array<
-        { __typename?: 'construct_part' } & {
-          construct: { __typename?: 'construct' } & ConstructFieldsFragment;
-          part?: Maybe<{ __typename?: 'part' } & PartFieldsFragment>;
-        } & ConstructPartFieldsFragment
-      >;
-      annotations: Array<
-        { __typename?: 'annotation' } & Pick<
-          Annotation,
-          'start' | 'end' | 'label'
-        >
-      >;
-    } & ConstructFieldsFragment
-  >;
+export type ConstructQuery = {
+  __typename?: 'query_root';
+  construct: Array<{
+    __typename?: 'construct';
+    id: any;
+    name: string;
+    sequence?: string | null | undefined;
+    sequence_length?: number | null | undefined;
+    folder?: { __typename?: 'folder'; id: any } | null | undefined;
+    parts: Array<{
+      __typename?: 'construct_part';
+      construct_id: any;
+      id: any;
+      index: number;
+      orientation: string;
+      part_id?: any | null | undefined;
+      construct: {
+        __typename?: 'construct';
+        id: any;
+        name: string;
+        sequence?: string | null | undefined;
+        sequence_length?: number | null | undefined;
+      };
+      part?:
+        | {
+            __typename?: 'part';
+            alias?: string | null | undefined;
+            description?: string | null | undefined;
+            id: any;
+            name: string;
+            sequence?: string | null | undefined;
+            sequence_length?: number | null | undefined;
+            type?:
+              | {
+                  __typename?: 'part_type';
+                  glyph?: string | null | undefined;
+                  name: string;
+                  slug?: string | null | undefined;
+                }
+              | null
+              | undefined;
+          }
+        | null
+        | undefined;
+    }>;
+    annotations: Array<{
+      __typename?: 'annotation';
+      start?: number | null | undefined;
+      end?: number | null | undefined;
+      label?: string | null | undefined;
+    }>;
+  }>;
 };
 
 export type ConstructTemplatesQueryVariables = Exact<{ [key: string]: never }>;
 
-export type ConstructTemplatesQuery = { __typename?: 'query_root' } & {
-  template: Array<
-    { __typename?: 'construct' } & Pick<Construct, 'id' | 'name'> & {
-        parts: Array<
-          { __typename?: 'construct_part' } & {
-            part?: Maybe<{ __typename?: 'part' } & PartFieldsFragment>;
-          } & ConstructPartFieldsFragment
-        >;
-      }
-  >;
+export type ConstructTemplatesQuery = {
+  __typename?: 'query_root';
+  template: Array<{
+    __typename?: 'construct';
+    id: any;
+    name: string;
+    parts: Array<{
+      __typename?: 'construct_part';
+      construct_id: any;
+      id: any;
+      index: number;
+      orientation: string;
+      part_id?: any | null | undefined;
+      part?:
+        | {
+            __typename?: 'part';
+            alias?: string | null | undefined;
+            description?: string | null | undefined;
+            id: any;
+            name: string;
+            sequence?: string | null | undefined;
+            sequence_length?: number | null | undefined;
+            type?:
+              | {
+                  __typename?: 'part_type';
+                  glyph?: string | null | undefined;
+                  name: string;
+                  slug?: string | null | undefined;
+                }
+              | null
+              | undefined;
+          }
+        | null
+        | undefined;
+    }>;
+  }>;
 };
 
 export type CreateConstructMutationVariables = Exact<{
   input: Construct_Insert_Input;
 }>;
 
-export type CreateConstructMutation = { __typename?: 'mutation_root' } & {
-  insert_construct_one?: Maybe<
-    { __typename?: 'construct' } & ConstructFieldsFragment
-  >;
+export type CreateConstructMutation = {
+  __typename?: 'mutation_root';
+  insert_construct_one?:
+    | {
+        __typename?: 'construct';
+        id: any;
+        name: string;
+        sequence?: string | null | undefined;
+        sequence_length?: number | null | undefined;
+      }
+    | null
+    | undefined;
 };
 
 export type UpdateConstructMutationVariables = Exact<{
@@ -4877,10 +4952,18 @@ export type UpdateConstructMutationVariables = Exact<{
   input: Construct_Set_Input;
 }>;
 
-export type UpdateConstructMutation = { __typename?: 'mutation_root' } & {
-  update_construct_by_pk?: Maybe<
-    { __typename?: 'construct' } & ConstructFieldsFragment
-  >;
+export type UpdateConstructMutation = {
+  __typename?: 'mutation_root';
+  update_construct_by_pk?:
+    | {
+        __typename?: 'construct';
+        id: any;
+        name: string;
+        sequence?: string | null | undefined;
+        sequence_length?: number | null | undefined;
+      }
+    | null
+    | undefined;
 };
 
 export type InsertConstructPartMutationVariables = Exact<{
@@ -4888,22 +4971,47 @@ export type InsertConstructPartMutationVariables = Exact<{
   input: Array<Construct_Part_Insert_Input> | Construct_Part_Insert_Input;
 }>;
 
-export type InsertConstructPartMutation = { __typename?: 'mutation_root' } & {
-  delete_construct_part?: Maybe<
-    { __typename?: 'construct_part_mutation_response' } & Pick<
-      Construct_Part_Mutation_Response,
-      'affected_rows'
-    >
-  >;
-  insert_construct_part?: Maybe<
-    { __typename?: 'construct_part_mutation_response' } & {
-      returning: Array<
-        { __typename?: 'construct_part' } & {
-          part?: Maybe<{ __typename?: 'part' } & PartFieldsFragment>;
-        } & ConstructPartFieldsFragment
-      >;
-    }
-  >;
+export type InsertConstructPartMutation = {
+  __typename?: 'mutation_root';
+  delete_construct_part?:
+    | { __typename?: 'construct_part_mutation_response'; affected_rows: number }
+    | null
+    | undefined;
+  insert_construct_part?:
+    | {
+        __typename?: 'construct_part_mutation_response';
+        returning: Array<{
+          __typename?: 'construct_part';
+          construct_id: any;
+          id: any;
+          index: number;
+          orientation: string;
+          part_id?: any | null | undefined;
+          part?:
+            | {
+                __typename?: 'part';
+                alias?: string | null | undefined;
+                description?: string | null | undefined;
+                id: any;
+                name: string;
+                sequence?: string | null | undefined;
+                sequence_length?: number | null | undefined;
+                type?:
+                  | {
+                      __typename?: 'part_type';
+                      glyph?: string | null | undefined;
+                      name: string;
+                      slug?: string | null | undefined;
+                    }
+                  | null
+                  | undefined;
+              }
+            | null
+            | undefined;
+        }>;
+      }
+    | null
+    | undefined;
 };
 
 export type InsertAnnotationMutationVariables = Exact<{
@@ -4911,56 +5019,78 @@ export type InsertAnnotationMutationVariables = Exact<{
   input: Array<Annotation_Insert_Input> | Annotation_Insert_Input;
 }>;
 
-export type InsertAnnotationMutation = { __typename?: 'mutation_root' } & {
-  delete_annotation?: Maybe<
-    { __typename?: 'annotation_mutation_response' } & Pick<
-      Annotation_Mutation_Response,
-      'affected_rows'
-    >
-  >;
-  insert_annotation?: Maybe<
-    { __typename?: 'annotation_mutation_response' } & {
-      returning: Array<
-        { __typename?: 'annotation' } & Pick<
-          Annotation,
-          'construct_id' | 'label' | 'id' | 'start' | 'end'
-        >
-      >;
-    }
-  >;
+export type InsertAnnotationMutation = {
+  __typename?: 'mutation_root';
+  delete_annotation?:
+    | { __typename?: 'annotation_mutation_response'; affected_rows: number }
+    | null
+    | undefined;
+  insert_annotation?:
+    | {
+        __typename?: 'annotation_mutation_response';
+        returning: Array<{
+          __typename?: 'annotation';
+          construct_id?: any | null | undefined;
+          label?: string | null | undefined;
+          id: any;
+          start?: number | null | undefined;
+          end?: number | null | undefined;
+        }>;
+      }
+    | null
+    | undefined;
 };
 
-export type FolderFieldsFragment = { __typename?: 'folder' } & Pick<
-  Folder,
-  'id' | 'name' | 'description'
->;
+export type FolderFieldsFragment = {
+  __typename?: 'folder';
+  id: any;
+  name: string;
+  description: string;
+};
 
 export type FoldersQueryVariables = Exact<{ [key: string]: never }>;
 
-export type FoldersQuery = { __typename?: 'query_root' } & {
-  folder: Array<
-    { __typename?: 'folder' } & {
-      constructs: Array<{ __typename?: 'construct' } & ConstructFieldsFragment>;
-    } & FolderFieldsFragment
-  >;
+export type FoldersQuery = {
+  __typename?: 'query_root';
+  folder: Array<{
+    __typename?: 'folder';
+    id: any;
+    name: string;
+    description: string;
+    constructs: Array<{
+      __typename?: 'construct';
+      id: any;
+      name: string;
+      sequence?: string | null | undefined;
+      sequence_length?: number | null | undefined;
+    }>;
+  }>;
 };
 
 export type FolderQueryVariables = Exact<{
   id: Scalars['uuid'];
 }>;
 
-export type FolderQuery = { __typename?: 'query_root' } & {
-  folder: Array<{ __typename?: 'folder' } & FolderFieldsFragment>;
+export type FolderQuery = {
+  __typename?: 'query_root';
+  folder: Array<{
+    __typename?: 'folder';
+    id: any;
+    name: string;
+    description: string;
+  }>;
 };
 
 export type CreateFolderMutationVariables = Exact<{
   input: Folder_Insert_Input;
 }>;
 
-export type CreateFolderMutation = { __typename?: 'mutation_root' } & {
-  insert_folder_one?: Maybe<
-    { __typename?: 'folder' } & Pick<Folder, 'id' | 'name'>
-  >;
+export type CreateFolderMutation = {
+  __typename?: 'mutation_root';
+  insert_folder_one?:
+    | { __typename?: 'folder'; id: any; name: string }
+    | null
+    | undefined;
 };
 
 export type UpdateFolderMutationVariables = Exact<{
@@ -4968,23 +5098,55 @@ export type UpdateFolderMutationVariables = Exact<{
   input: Folder_Set_Input;
 }>;
 
-export type UpdateFolderMutation = { __typename?: 'mutation_root' } & {
-  update_folder_by_pk?: Maybe<{ __typename?: 'folder' } & FolderFieldsFragment>;
+export type UpdateFolderMutation = {
+  __typename?: 'mutation_root';
+  update_folder_by_pk?:
+    | { __typename?: 'folder'; id: any; name: string; description: string }
+    | null
+    | undefined;
 };
 
-export type PartFieldsFragment = { __typename?: 'part' } & Pick<
-  Part,
-  'alias' | 'description' | 'id' | 'name' | 'sequence' | 'sequence_length'
-> & {
-    type?: Maybe<
-      { __typename?: 'part_type' } & Pick<Part_Type, 'glyph' | 'name' | 'slug'>
-    >;
-  };
+export type PartFieldsFragment = {
+  __typename?: 'part';
+  alias?: string | null | undefined;
+  description?: string | null | undefined;
+  id: any;
+  name: string;
+  sequence?: string | null | undefined;
+  sequence_length?: number | null | undefined;
+  type?:
+    | {
+        __typename?: 'part_type';
+        glyph?: string | null | undefined;
+        name: string;
+        slug?: string | null | undefined;
+      }
+    | null
+    | undefined;
+};
 
 export type PartsQueryVariables = Exact<{ [key: string]: never }>;
 
-export type PartsQuery = { __typename?: 'query_root' } & {
-  part: Array<{ __typename?: 'part' } & PartFieldsFragment>;
+export type PartsQuery = {
+  __typename?: 'query_root';
+  part: Array<{
+    __typename?: 'part';
+    alias?: string | null | undefined;
+    description?: string | null | undefined;
+    id: any;
+    name: string;
+    sequence?: string | null | undefined;
+    sequence_length?: number | null | undefined;
+    type?:
+      | {
+          __typename?: 'part_type';
+          glyph?: string | null | undefined;
+          name: string;
+          slug?: string | null | undefined;
+        }
+      | null
+      | undefined;
+  }>;
 };
 
 export const ConstructFieldsFragmentDoc = gql`

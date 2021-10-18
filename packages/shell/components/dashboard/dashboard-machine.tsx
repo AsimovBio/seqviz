@@ -100,7 +100,7 @@ export const dashboardMachine = createMachine<DashboardContext, DashboardEvent>(
         on: {
           BOOTSTRAP: {
             actions: assign(
-              (_, initialData) => initialData as Partial<DashboardContext>
+              (_, fallbackData) => fallbackData as Partial<DashboardContext>
             ),
           },
           CREATE: { target: 'ready.creating' },

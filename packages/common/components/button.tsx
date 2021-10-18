@@ -1,8 +1,9 @@
+import type { CSS } from '@stitches/react';
 import { memo } from 'react';
 
 import { styled } from '../stitches.config';
 
-const StyledButton = styled('button', {
+export const buttonCss: CSS = {
   alignItems: 'center',
   backgroundColor: '$overlay',
   border: 'none',
@@ -56,6 +57,8 @@ const StyledButton = styled('button', {
       },
     },
   },
-});
+};
+
+const StyledButton = styled('button', buttonCss);
 
 export default memo(StyledButton);

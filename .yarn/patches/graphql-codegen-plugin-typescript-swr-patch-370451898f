@@ -1,0 +1,120 @@
+diff --git a/build/main/visitor.js b/build/main/visitor.js
+index 2b75e7d32c1e0be46e361f9d6a9865079bc47ef0..278959f57ba5237cec00b7cbbec59ceee3799807 100644
+--- a/build/main/visitor.js
++++ b/build/main/visitor.js
+@@ -59,19 +59,19 @@ class SWRVisitor extends visitor_plugin_common_1.ClientSideBaseVisitor {
+         this._additionalImports.push(`${typeImport} { ClientError } from 'graphql-request/dist/types';`);
+         if (this.config.useTypeImports) {
+             if (this._enabledInfinite) {
+-                this._additionalImports.push(`import type { SWRConfig as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`);
++                this._additionalImports.push(`import type { SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`);
+                 this._additionalImports.push(`import useSWR, { useSWRInfinite } from 'swr';`);
+             }
+             else {
+-                this._additionalImports.push(`import type { SWRConfig as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`);
++                this._additionalImports.push(`import type { SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`);
+                 this._additionalImports.push(`import useSWR from 'swr';`);
+             }
+         }
+         else if (this._enabledInfinite) {
+-            this._additionalImports.push(`import useSWR, { useSWRInfinite, SWRConfig as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`);
++            this._additionalImports.push(`import useSWR, { useSWRInfinite, SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`);
+         }
+         else {
+-            this._additionalImports.push(`import useSWR, { SWRConfig as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`);
++            this._additionalImports.push(`import useSWR, { SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`);
+         }
+     }
+     buildOperation(node, documentVariableName, operationType, operationResultType, operationVariablesTypes) {
+diff --git a/build/module/visitor.js b/build/module/visitor.js
+index e62912bd5e8f2ec511b102f8592f903fbb2f506b..b5e1b7bd0e2f1c5c551be737efd1247c9aa0d890 100644
+--- a/build/module/visitor.js
++++ b/build/module/visitor.js
+@@ -53,19 +53,19 @@ export class SWRVisitor extends ClientSideBaseVisitor {
+         this._additionalImports.push(`${typeImport} { ClientError } from 'graphql-request/dist/types';`);
+         if (this.config.useTypeImports) {
+             if (this._enabledInfinite) {
+-                this._additionalImports.push(`import type { SWRConfig as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`);
++                this._additionalImports.push(`import type { SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`);
+                 this._additionalImports.push(`import useSWR, { useSWRInfinite } from 'swr';`);
+             }
+             else {
+-                this._additionalImports.push(`import type { SWRConfig as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`);
++                this._additionalImports.push(`import type { SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`);
+                 this._additionalImports.push(`import useSWR from 'swr';`);
+             }
+         }
+         else if (this._enabledInfinite) {
+-            this._additionalImports.push(`import useSWR, { useSWRInfinite, SWRConfig as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`);
++            this._additionalImports.push(`import useSWR, { useSWRInfinite, SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`);
+         }
+         else {
+-            this._additionalImports.push(`import useSWR, { SWRConfig as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`);
++            this._additionalImports.push(`import useSWR, { SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`);
+         }
+     }
+     buildOperation(node, documentVariableName, operationType, operationResultType, operationVariablesTypes) {
+diff --git a/src/visitor.ts b/src/visitor.ts
+index 73c11453deb19afe630282982d3a1dce06a0bbbf..a77688285b4f4bc5f7284fae8dfeb79ebdbef589 100644
+--- a/src/visitor.ts
++++ b/src/visitor.ts
+@@ -122,24 +122,24 @@ export class SWRVisitor extends ClientSideBaseVisitor<
+     if (this.config.useTypeImports) {
+       if (this._enabledInfinite) {
+         this._additionalImports.push(
+-          `import type { SWRConfig as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`
++          `import type { SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`
+         )
+         this._additionalImports.push(
+           `import useSWR, { useSWRInfinite } from 'swr';`
+         )
+       } else {
+         this._additionalImports.push(
+-          `import type { SWRConfig as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`
++          `import type { SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`
+         )
+         this._additionalImports.push(`import useSWR from 'swr';`)
+       }
+     } else if (this._enabledInfinite) {
+       this._additionalImports.push(
+-        `import useSWR, { useSWRInfinite, SWRConfig as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`
++        `import useSWR, { useSWRInfinite, SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`
+       )
+     } else {
+       this._additionalImports.push(
+-        `import useSWR, { SWRConfig as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`
++        `import useSWR, { SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`
+       )
+     }
+   }
+diff --git a/tests/swr.spec.ts b/tests/swr.spec.ts
+index efd411738d63b36b953f713f7b6255a667c18914..bcb0065b345739e978688239ca15ee798d4dac66 100644
+--- a/tests/swr.spec.ts
++++ b/tests/swr.spec.ts
+@@ -107,7 +107,7 @@ async function test() {
+       })) as Types.ComplexPluginOutput
+ 
+       expect(content.prepend).toContain(
+-        `import useSWR, { SWRConfig as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`
++        `import useSWR, { SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`
+       )
+ 
+       await validate(content, config, docs, schema, usage)
+@@ -124,7 +124,7 @@ async function test() {
+ 
+       expect(content.prepend).toContain(`import useSWR from 'swr';`)
+       expect(content.prepend).toContain(
+-        `import type { SWRConfig as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`
++        `import type { SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface } from 'swr';`
+       )
+ 
+       await validate(content, config, docs, schema, usage)
+@@ -234,7 +234,7 @@ async function test() {
+       const usage = basicUsage
+       const output = await validate(content, config, docs, schema, usage)
+       expect(content.prepend).toContain(
+-        `import useSWR, { useSWRInfinite, SWRConfig as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`
++        `import useSWR, { useSWRInfinite, SWRConfiguration as SWRConfigInterface, Key as SWRKeyInterface, SWRInfiniteConfigInterface } from 'swr';`
+       )
+       expect(output).toContain(readOutput('infinite'))
+     })

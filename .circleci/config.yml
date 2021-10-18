@@ -4,17 +4,17 @@
 #
 version: 2.1
 orbs:
-  node: circleci/node@4.2.0
+  node: circleci/node@4.7.0
 jobs:
   test:
     docker:
       # specify the version you desire here
-      - image: cimg/node:16.2
+      - image: cimg/node:16.10
     resource_class: large
     steps:
       - checkout
       - node/install-yarn:
-          version: '2'
+          version: '3'
       - run: node -v
       - run: yarn -v
 

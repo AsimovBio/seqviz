@@ -1,4 +1,4 @@
-import type { TooltipContentOwnProps } from '@radix-ui/react-tooltip';
+import type { TooltipContentProps } from '@radix-ui/react-tooltip';
 import { Arrow, Content, Root, Trigger } from '@radix-ui/react-tooltip';
 import type { ReactElement, ReactNode } from 'react';
 
@@ -8,7 +8,7 @@ type Props = {
   children: ReactElement<any, any>;
   content: ReactNode;
   disabled?: boolean;
-} & TooltipContentOwnProps;
+} & TooltipContentProps;
 
 const StyledContent = styled(Content, {
   backgroundColor: '$overlay',
@@ -39,7 +39,7 @@ export default function Tooltip({
     children
   ) : (
     <Root>
-      <StyledTrigger>{children}</StyledTrigger>
+      <StyledTrigger as="button">{children}</StyledTrigger>
       <StyledContent {...props}>
         {content}
         <StyledArrow />

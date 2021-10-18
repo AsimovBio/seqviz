@@ -47,11 +47,11 @@ export const DashboardContext = createContext<ContextProps | undefined>(
   undefined
 );
 
-export function DashboardLayout({ children, data: initialData = {} }: Props) {
+export function DashboardLayout({ children, data: fallbackData = {} }: Props) {
   const router = useRouter();
   const fid = router.query?.fid;
   const isNew = router.query ? router.query['is-new'] === 'true' : false;
-  const { folder, template, construct } = initialData;
+  const { folder, template, construct } = fallbackData;
 
   const persistedConstructs =
     typeof window !== 'undefined' && localStorage.getItem('recentConstructs');
@@ -73,14 +73,14 @@ export function DashboardLayout({ children, data: initialData = {} }: Props) {
     'Folders',
     null,
     {
-      initialData: { folder },
+      fallbackData: { folder },
       revalidateOnMount: true,
     }
   );
 
   const { data: templatesData, error: templatesError } =
     sdk.useConstructTemplates(fid ? 'Templates' : null, null, {
-      initialData: { template },
+      fallbackData: { template },
     });
 
   if (userError || foldersError || templatesError) {

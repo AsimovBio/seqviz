@@ -1,7 +1,7 @@
 // @ts-check
 
 /**
- * @type {import('next/dist/next-server/server/config').NextConfig}
+ * @type {import('next/dist/server/config').NextConfig}
  **/
 const { withModuleFederation } = require('@module-federation/nextjs-mf');
 const path = require('path');
@@ -14,9 +14,6 @@ const ssrRemoteEntryPath =
 module.exports = {
   compress: false,
   poweredByHeader: false,
-  experimental: {
-    cpus: 1,
-  },
   webpack: (config, options) => {
     const { defaultLoaders, isServer } = options;
 

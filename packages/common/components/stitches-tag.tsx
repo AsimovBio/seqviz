@@ -1,6 +1,6 @@
-import { getCssString, global } from '../stitches.config';
+import { getCssText, globalCss } from '../stitches.config';
 
-const globalStyles = global({
+const globalStyles = globalCss({
   '*': { boxSizing: 'border-box' },
   html: { lineHeight: 1.15, WebkitTextSizeAdjust: '100%' },
   body: {
@@ -84,7 +84,7 @@ const globalStyles = global({
 
 export default function StitchesTag() {
   return (
-    <style dangerouslySetInnerHTML={{ __html: getCssString() }} id="stitches" />
+    <style dangerouslySetInnerHTML={{ __html: getCssText() }} id="stitches" />
   );
 }
 

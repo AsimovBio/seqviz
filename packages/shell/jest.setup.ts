@@ -1,6 +1,5 @@
 import '@testing-library/jest-dom';
 
-import { cache } from 'swr';
 import { server } from 'test/msw/server';
 
 beforeAll(() => {
@@ -41,7 +40,6 @@ afterEach(() => server.resetHandlers());
 
 afterAll(() => {
   server.close();
-  cache.clear();
   jest.clearAllMocks();
   jest.clearAllTimers();
 });

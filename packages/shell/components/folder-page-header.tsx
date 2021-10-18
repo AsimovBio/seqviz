@@ -123,11 +123,11 @@ export default function FolderPageHeader({
               autoComplete="off"
               autoFocus={isNewFolder}
               css={{
+                mr: '$4',
                 input: {
                   border: 'none',
                   flex: 1,
                   m: 0,
-                  mr: '$4',
                   pr: '$3',
                 },
               }}

@@ -1,7 +1,6 @@
 import { fireEvent } from '@testing-library/react';
 import { DashboardLayout } from 'components/layout/dashboard-layout';
 import { graphql } from 'msw';
-import { cache } from 'swr';
 import { construct } from 'test/__mocks__/construct';
 import { folder } from 'test/__mocks__/folder';
 import { server } from 'test/msw/server';
@@ -19,8 +18,8 @@ jest.mock('next/router', () => ({
 }));
 
 describe('Dashboard Layout', () => {
-  const renderComponent = (initialData?) =>
-    render(<DashboardLayout data={initialData} />);
+  const renderComponent = (fallbackData?) =>
+    render(<DashboardLayout data={fallbackData} />);
 
   it('renders without errors', async () => {
     renderComponent();
@@ -45,8 +44,6 @@ describe('Dashboard Layout', () => {
         );
       })
     );
-
-    cache.clear();
 
     fireEvent.change(inputNode, { target: { value: 'New folder' } });
 

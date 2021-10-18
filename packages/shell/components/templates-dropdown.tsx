@@ -6,7 +6,7 @@ const Box: any = dynamic(() => import('common/components/box'));
 const Icon = dynamic(() => import('common/components/icon'));
 const DropdownMenu = dynamic(() => import('common/components/dropdown-menu'));
 
-const StyledTrigger = dynamic(
+const StyledTrigger: any = dynamic(
   async () => {
     const { StyledTrigger } = await import('common/components/dropdown-menu');
     return StyledTrigger;
@@ -74,6 +74,7 @@ export default function TemplatesDropdown({
     >
       <StyledTrigger
         aria-label="Create construct"
+        color="tertiary"
         css={{
           fontSize: '$1',
           '&[data-state=open]': {

@@ -34,6 +34,7 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
         <SWRConfig
           value={{
             dedupingInterval: 150000,
+            fetcher: fetch,
             focusThrottleInterval: 15000,
           }}
         >

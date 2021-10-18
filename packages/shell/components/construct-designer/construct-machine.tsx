@@ -154,7 +154,7 @@ export const constructMachine = createMachine<
       BOOTSTRAP: {
         target: 'loading',
         actions: assign(
-          (_, initialData) => initialData as Partial<ConstructContext>
+          (_, fallbackData) => fallbackData as Partial<ConstructContext>
         ),
         cond: 'isDiffConstruct',
       },

@@ -62,11 +62,11 @@ const ConstructDesigner = dynamic(
   { ssr: false }
 );
 
-export function Construct({ data: initialData = {} }: Props) {
+export function Construct({ data: fallbackData = {} }: Props) {
   const router = useRouter();
   const { cid, fid } = router.query;
   const { send } = useContext(DashboardContext);
-  const { construct } = initialData;
+  const { construct } = fallbackData;
 
   let currentConstruct;
 
@@ -74,7 +74,7 @@ export function Construct({ data: initialData = {} }: Props) {
     cid ? cid : null,
     { id: cid },
     {
-      initialData: { construct },
+      fallbackData: { construct },
     }
   );
 
