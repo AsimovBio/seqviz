@@ -1,5 +1,3 @@
-import path from "path";
-
 import { COLORS } from "../utils/colors";
 import { dnaComplement, partFactory } from "../utils/parser";
 import parseBenchling from "./parsers/benchling";
@@ -88,7 +86,7 @@ const fileToParts = async (file, options = { fileName: "", colors: [], backbone:
   const firstLine = file.search ? file.substring(0, file.search("\n")) : "";
   const dnaCharLength = firstLine.replace(/[^atcgATCG]/, "").length;
   const dnaOnlyFile = dnaCharLength / firstLine.length > 0.8; // is it >80% dna?
-  const sourceName = fileName.split(path.sep).pop();
+  const sourceName = fileName.split(["/", "\\"]).pop();
   const name = fileName && sourceName ? sourceName.substring(0, sourceName.search("\\.")) : "Untitled";
   const source = { name: sourceName, file: file };
 

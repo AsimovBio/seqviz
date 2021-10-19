@@ -29,13 +29,13 @@
 
 ## Features
 
-`SeqViz` aims to be a DNA sequence viewer with a simple API and easy customizability. It currently provides:
+`SeqViz` aims to be an intuitive and customizable DNA sequence viewer. It currently provides:
 
 - **Multiple input formats**
 
   - Sequence
   - Accession (NCBI or iGEM)
-  - File (FASTA, GenBank, SBOL, SnapGene)
+  - File (FASTA, GenBank, SBOL)
 
 - **Circular plasmid viewer**
 
@@ -71,9 +71,11 @@ npm install seqviz
 #### CDN
 
 <!-- cdn-example(cmd:) -->
+
 ```html
 <script src="https://unpkg.com/seqviz"></script>
 ```
+
 <!-- /cdn-example -->
 
 ### Instantiation

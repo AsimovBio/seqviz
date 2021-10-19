@@ -26,7 +26,6 @@ let viewerInput = {
   showPrimers: true,
   showComplement: true,
   showIndex: true,
-  zoom: { linear: 50 },
   colors: ["#8CDEBD"],
   onSelection: console.log,
   onSearch: results => {
@@ -45,7 +44,7 @@ let viewerInput = {
     { start: 0, end: 9, direction: 1 },
     { start: 50, end: 550, direction: 1 }
   ],
-  zoom: { circular: 0, linear: 50 }
+  zoom: { circular: 100, linear: 50 }
   // rotateOnScroll: false
 };
 
