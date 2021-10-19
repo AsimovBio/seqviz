@@ -1,6 +1,5 @@
 const path = require("path");
 const webpack = require("webpack");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
 const nodeExternals = require("webpack-node-externals");
 let BundleAnalyzerPlugin = require("webpack-bundle-analyzer");
 BundleAnalyzerPlugin = BundleAnalyzerPlugin.BundleAnalyzerPlugin;
@@ -15,7 +14,6 @@ const banner = `${libraryName} - ${packageName} - ${VERSION} \nprovided and main
 
 const cdnBuild = {
   entry: path.join(__dirname, "..", "src", "viewer.js"),
-  target: "web",
   output: {
     path: path.join(__dirname, "..", "dist"),
     filename: "seqviz.min.js",
@@ -26,13 +24,18 @@ const cdnBuild = {
   },
   mode: "production",
   resolve: {
-    extensions: ["", ".js", ".jsx"]
+    extensions: ["", ".js", ".jsx"],
+    fallback: {
+      fs: false,
+      net: false,
+      tls: false
+    },
+    alias: {
+      react: path.resolve(__dirname, "../node_modules/react"),
+      "react-dom": path.resolve(__dirname, "../node_modules/react-dom")
+    }
   },
-  node: {
-    fs: "empty",
-    net: "empty",
-    tls: "empty"
-  },
+  node: {},
   module: {
     rules: [
       {
@@ -52,12 +55,7 @@ const cdnBuild = {
       {
         test: /\.(ico|jpg|jpeg|png|gif|webp|svg)(\?.*)?$/,
         exclude: /node_modules/,
-        use: [
-          "file-loader",
-          {
-            loader: "image-webpack-loader"
-          }
-        ]
+        type: "asset/resource"
       },
       {
         test: /\.(css)$/,
@@ -66,14 +64,7 @@ const cdnBuild = {
       }
     ]
   },
-  resolve: {
-    alias: {
-      react: path.resolve(__dirname, "../node_modules/react"),
-      "react-dom": path.resolve(__dirname, "../node_modules/react-dom")
-    }
-  },
   plugins: [
-    new UglifyJsPlugin(),
     new webpack.BannerPlugin(banner)
     // new BundleAnalyzerPlugin({ defaultSizes: "stat" })
   ],
