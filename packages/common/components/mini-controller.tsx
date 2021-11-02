@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { styled } from '../stitches.config';
 import Box from './box';
 import Button from './button';
+import Glyph from './glyph';
 import Icon from './icon';
 
 export type Props = {
@@ -21,10 +22,8 @@ export type Props = {
 
 const StyledContainer = styled(Box, {
   display: 'flex',
-  height: '7.75rem',
   justifyContent: 'center',
   position: 'relative',
-  width: '7.75rem',
   button: {
     position: 'relative',
     zIndex: 1,
@@ -33,8 +32,7 @@ const StyledContainer = styled(Box, {
     content: '',
     height: '2px',
     position: 'absolute',
-    top: '50%',
-    transform: 'translate(0, -50%)',
+    top: '48%',
     width: '100%',
     zIndex: 0,
   },
@@ -128,19 +126,12 @@ const StyledPartWrapper = styled(Button, {
   display: 'flex',
   flex: 1,
   justifyContent: 'center',
+  padding: 0,
   transition: '$standard',
   transformOrigin: 'center center',
   '&.reverse': {
+    top: '-2%',
     transform: 'rotate(180deg)',
-  },
-  svg: {
-    fill: 'none',
-    stroke: 'currentColor',
-    strokeLinecap: 'butt',
-    strokeAlignment: 'inner',
-    strokeWidth: '1.5',
-    width: '2rem',
-    transform: 'translateY(calc(-50% + 2.5px))',
   },
 });
 
@@ -180,6 +171,9 @@ function MiniController({
       css={{
         '&::after': {
           backgroundColor: isActive ? '$quaternary' : '$text',
+          width: name.includes('Backbone') ? '50%' : '100%',
+          left: name === "Backbone 5'" ? '50%' : '0',
+          right: name === "Backbone 3'" ? '50%' : '0',
         },
       }}
       data-testid="construct-part-container"
@@ -228,9 +222,7 @@ function MiniController({
           name="TOGGLE_ACTIVE"
           onClick={handleEvent}
         >
-          <Icon label={name}>
-            <span dangerouslySetInnerHTML={{ __html: glyph }} />
-          </Icon>
+          <Glyph glyph={glyph} name={name} />
         </StyledPartWrapper>
 
         <StyledButton

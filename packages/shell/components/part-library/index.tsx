@@ -12,6 +12,7 @@ const Button = dynamic(() => import('common/components/button'));
 const CopyToClipboard = dynamic(
   () => import('common/components/copy-to-clipboard')
 );
+const Glyph = dynamic(() => import('common/components/glyph'));
 const Icon = dynamic(() => import('common/components/icon'));
 const Text = dynamic(() => import('common/components/text'));
 
@@ -57,9 +58,7 @@ export default function PartsLibrary() {
                 },
               }}
             >
-              <Icon label={name}>
-                <Box dangerouslySetInnerHTML={{ __html: glyph }} />
-              </Icon>
+              <Glyph glyph={glyph} name={name} />
             </Box>
           );
         },

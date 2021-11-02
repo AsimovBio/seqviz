@@ -31,7 +31,7 @@ export type ConstructEvent = { type: string; [key: string]: any };
 export const DEFAULT_PART = {
   type: {
     glyph:
-      '<svg id="empty" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="20"/></svg>',
+      '<svg id="empty" viewBox="0 0 24 48"><rect id="part" x="6" y="12" width="12" height="12"></rect><path id="axis" fill="none" stroke="#000" stroke-miterlimit="10" d="M-.5 24h37"></path></svg>',
   },
   name: 'Untitled part',
 };
