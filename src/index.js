@@ -1,13 +1,15 @@
+/** THIS IS A TEST OF GIT SUBTREE */
+
 /**
  * This module is only used for developing seqviz
  * See viewer.js for the library's entrypoint
  */
 
-import { Viewer } from "./viewer";
+import { Viewer } from './viewer';
 
-import "./index.css";
+import './index.css';
 
-const type = "both";
+const type = 'both';
 
 const annotations = true;
 const primers = true;
@@ -15,7 +17,7 @@ const complement = true;
 const index = true;
 
 const viewerInput = {
-  accession: "BBa_K1598008",
+  accession: 'BBa_K1598008',
   viewer: type,
   showAnnotations: annotations,
   showPrimers: primers,
@@ -23,13 +25,13 @@ const viewerInput = {
   showIndex: index,
   zoom: { linear: 50 },
   colors: [],
-  onSearch: results => {
-    console.log("Your Search Results: ", results);
+  onSearch: (results) => {
+    console.log('Your Search Results: ', results);
   },
-  search: { query: "gtacc" },
-  backbone: "pSB1C3",
-  enzymes: ["EcoRI"],
-  copyEvent: event => event.key === "c" && (event.metaKey || event.ctrlKey)
+  search: { query: 'gtacc' },
+  backbone: 'pSB1C3',
+  enzymes: ['EcoRI'],
+  copyEvent: (event) => event.key === 'c' && (event.metaKey || event.ctrlKey),
 };
 
 // const viewerInput = {
@@ -96,7 +98,7 @@ const viewerInput = {
 //   showPrimers: true
 // };
 
-let viewer = Viewer("app-root", viewerInput);
+let viewer = Viewer('app-root', viewerInput);
 viewer.render();
 
 /**
