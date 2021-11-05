@@ -1,8 +1,7 @@
-import { fireEvent, waitFor } from '@testing-library/react';
 import ConstructPartController from 'components/construct-designer/construct-part-controller';
 import { createPartMachine } from 'components/construct-designer/construct-part-machine';
 import { constructPart } from 'test/__mocks__/construct';
-import { render, screen } from 'test/testUtils';
+import { fireEvent, render, screen, waitFor } from 'test/testUtils';
 import { interpret } from 'xstate';
 
 jest.mock('utils/import');
@@ -20,7 +19,12 @@ describe('ConstructPartController', () => {
   const constructPartSvc = interpret(constructPartMachine);
 
   const renderComponent = () =>
-    render(<ConstructPartController constructPartRef={constructPartSvc} />);
+    render(
+      <ConstructPartController
+        constructPartRef={constructPartSvc}
+        isLabelShown={true}
+      />
+    );
 
   beforeAll(() => {
     constructPartSvc.start();
@@ -28,30 +32,6 @@ describe('ConstructPartController', () => {
 
   afterAll(() => {
     constructPartSvc.stop();
-  });
-
-  it('handles events', async () => {
-    const sendSpy = jest.spyOn(constructPartSvc, 'send');
-    renderComponent();
-
-    fireEvent.mouseOver(await screen.findByTestId('construct-part-container'));
-    await waitFor(() => {
-      expect(sendSpy).toHaveBeenCalledWith({
-        type: 'FOCUS',
-        value: true,
-      });
-    });
-
-    await waitFor(() => {
-      const trigger = screen.getByTestId('toggle-flip');
-      expect(trigger).toBeInTheDocument();
-      fireEvent.click(trigger);
-    });
-
-    expect(sendSpy).toHaveBeenLastCalledWith({
-      type: 'FLIP',
-      value: '',
-    });
   });
 
   it('toggles its active state on click', async () => {
@@ -62,19 +42,18 @@ describe('ConstructPartController', () => {
     renderComponent();
 
     await waitFor(() => {
-      const trigger = screen.getByTestId('activate');
+      const trigger = screen.getByTestId('part-controller-activate');
       expect(trigger).toBeInTheDocument();
       fireEvent.click(trigger);
     });
 
     expect(sendSpy).toHaveBeenLastCalledWith({
       type: 'TOGGLE_ACTIVE',
-      value: '',
     });
 
     expect(onTransitionSpy).toHaveBeenCalledWith(
       expect.objectContaining({ value: 'editing' }),
-      { type: 'TOGGLE_ACTIVE', value: '' }
+      { type: 'TOGGLE_ACTIVE' }
     );
   });
 });

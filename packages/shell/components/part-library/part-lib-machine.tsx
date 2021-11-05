@@ -42,10 +42,9 @@ export const partLibMachine = createMachine<
   },
   {
     actions: {
-      select: sendParent((_, { value }) => ({
+      select: sendParent((_, { part }) => ({
         type: 'PARTLIB.SELECT',
-        part: value,
-        part_id: value.id,
+        part,
       })),
     },
     guards: {},

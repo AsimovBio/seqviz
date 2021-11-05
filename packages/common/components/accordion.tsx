@@ -1,3 +1,4 @@
+import { ChevronDownIcon } from '@heroicons/react/outline';
 import type { AccordionSingleProps } from '@radix-ui/react-accordion';
 import {
   Content,
@@ -6,7 +7,6 @@ import {
   Root,
   Trigger,
 } from '@radix-ui/react-accordion';
-import { ChevronDownIcon } from '@radix-ui/react-icons';
 import type { ReactNode } from 'react';
 
 import { styled } from '../stitches.config';
@@ -103,7 +103,7 @@ export const StyledContent = styled(Content, {
     },
     '&.active': {
       backgroundColor: '$active',
-      'svg path': { fill: '$primary' },
+      'svg path': { stroke: '$primary' },
     },
     ':first-child': {
       flex: '0 2.75em',
@@ -116,7 +116,7 @@ export const StyledDiv = styled('div', {
   display: 'flex',
   justifyContent: 'space-between',
   width: '100%',
-  '> svg': { flex: '0 2.75em', path: { fill: '$primary' } },
+  '> svg': { path: { stroke: '$primary' } },
 });
 
 export default function Accordion({

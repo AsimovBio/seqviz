@@ -155,7 +155,7 @@ export function Construct({ data: fallbackData = {} }: Props) {
     <>
       <Header as="header">
         <Label htmlFor="construct-name">
-          <Icon label="Circle" />
+          <Icon label="DotsCircleHorizontal" />
         </Label>
         <Input
           css={{ border: 'none', flex: 1, m: 0 }}

@@ -40,7 +40,7 @@ export const buttonCss: CSS = {
         '&:hover': {
           backgroundColor: '$senary',
           color: '$text',
-          '& svg path': { fill: '$quaternary' },
+          '& svg path': { stroke: '$quaternary' },
         },
       },
       transparent: {

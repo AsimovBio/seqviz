@@ -19,7 +19,7 @@ const Label: any = dynamic(
   { ssr: false }
 );
 
-type Props = { constructPartRef: ActorRef<any, any> };
+type Props = { constructPartRef: ActorRef<any, any>; isLabelShown: boolean };
 
 const BACKGROUND_COLORS_MAP = {
   '5-utr': '$senary',
@@ -35,7 +35,7 @@ const BACKGROUND_COLORS_MAP = {
 };
 
 function ConstructPartController(
-  { constructPartRef }: Props,
+  { constructPartRef, isLabelShown = true }: Props,
   ref: Ref<HTMLDivElement>
 ) {
   const [state, send] = useActor(constructPartRef);
@@ -43,6 +43,7 @@ function ConstructPartController(
   const {
     isActive,
     isFocused,
+    isColored,
     part: {
       name,
       type: { name: typeName, slug },
@@ -54,56 +55,61 @@ function ConstructPartController(
       <Box
         css={{
           display: 'flex',
-          flexDirection: 'column',
           flex: 1,
+          flexDirection: 'column',
           maxWidth: '7.75rem',
+          svg: {
+            stroke: isColored ? BACKGROUND_COLORS_MAP[slug] : 'currentColor',
+          },
         }}
       >
-        <MiniController context={state.context} onNotify={send} />
-        <Label
-          css={{
-            display: 'flex',
-            flexDirection: 'column',
-            overflow: 'hidden',
-            px: '$2',
-            py: '$3',
-            textAlign: 'center',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-          }}
-          title={`${name}\n${typeName}`}
-        >
-          <Text
-            as="span"
+        <MiniController context={state.context} onEvent={send} />
+        {isLabelShown && (
+          <Label
             css={{
-              backgroundColor: isActive
-                ? '$senary'
-                : isFocused
-                ? BACKGROUND_COLORS_MAP[slug]
-                : 'none',
-              color: isActive ? '$quaternary' : 'inherit',
-              display: 'block',
-              mb: '$1',
-              width: '100%',
-            }}
-            size={0}
-          >
-            {name}
-          </Text>
-          <Text
-            as="span"
-            css={{
-              color: '$mutedText',
-              display: 'block',
+              display: 'flex',
+              flexDirection: 'column',
               overflow: 'hidden',
+              px: '$2',
+              py: '$3',
+              textAlign: 'center',
               textOverflow: 'ellipsis',
-              width: '100%',
+              whiteSpace: 'nowrap',
             }}
-            size={0}
+            title={`${name}\n${typeName}`}
           >
-            {typeName}
-          </Text>
-        </Label>
+            <Text
+              as="span"
+              css={{
+                backgroundColor: isActive
+                  ? '$senary'
+                  : isFocused
+                  ? BACKGROUND_COLORS_MAP[slug]
+                  : 'none',
+                color: isActive ? '$quaternary' : 'inherit',
+                display: 'block',
+                mb: '$1',
+                width: '100%',
+              }}
+              size={0}
+            >
+              {name}
+            </Text>
+            <Text
+              as="span"
+              css={{
+                color: '$mutedText',
+                display: 'block',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                width: '100%',
+              }}
+              size={0}
+            >
+              {typeName}
+            </Text>
+          </Label>
+        )}
       </Box>
     </div>
   );

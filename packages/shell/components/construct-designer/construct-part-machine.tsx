@@ -2,8 +2,8 @@ import type { Construct_Part } from 'models/graphql';
 import { actions, assign, createMachine, send, sendParent } from 'xstate';
 
 export type ConstructPartContext = {
-  prevPart: Construct_Part;
   isActive: boolean;
+  isColored: boolean;
   isFocused: boolean;
   isNew?: boolean;
 } & Construct_Part;
@@ -32,26 +32,33 @@ export const createPartMachine = (constructPart) =>
       context: {
         ...constructPart,
         isActive: false,
+        isColored: false,
         isFocused: false,
-        prevPart: constructPart,
       },
       on: {
         ADD: {
-          target: 'reading',
           actions: 'add',
         },
         CHANGE: {
           actions: ['change'],
         },
-        DELETE: 'deleted',
+        DELETE: {
+          target: 'deleted',
+          cond: 'isActive',
+        },
         FLIP: {
-          actions: ['setOrientation', 'commit'],
+          actions: ['record', 'setOrientation', 'commit'],
+          cond: 'isActive',
         },
         FOCUS: {
           actions: 'setFocused',
         },
         MOVE: {
-          actions: ['move', 'commit'],
+          actions: ['move'],
+          cond: 'isActive',
+        },
+        RESET: {
+          target: 'reading',
         },
       },
       states: {
@@ -70,25 +77,22 @@ export const createPartMachine = (constructPart) =>
           },
         },
         editing: {
-          entry: assign({ prevPart: (context) => context }),
           on: {
-            COMMIT: [
-              {
-                target: 'reading',
-                actions: 'commit',
-              },
-            ],
-            RESET: [
-              {
-                target: 'reading',
-              },
-            ],
             SWAP: {
               actions: 'swap',
+              cond: 'isActive',
             },
             TOGGLE_ACTIVE: {
-              actions: ['activate', 'disengage'],
+              actions: [
+                assign({ isNew: false }) as any,
+                'activate',
+                'disengage',
+              ],
               target: 'reading',
+            },
+            TOGGLE_COLOR: {
+              actions: ['record', 'setColor', 'commit'],
+              cond: 'isActive',
             },
           },
         },
@@ -99,14 +103,12 @@ export const createPartMachine = (constructPart) =>
     },
     {
       actions: {
-        add: sendParent((_, { value: index }) => ({
-          type: 'CONSTRUCTPART.ADD',
-          index,
+        activate: assign(({ isActive }) => ({
+          isActive: !isActive,
         })),
-        activate: sendParent(({ id, isActive }) => ({
-          type: 'CONSTRUCTPART.ACTIVATE',
-          id,
-          isActive,
+        add: sendParent(({ index }) => ({
+          type: 'CONSTRUCTPART.ADD',
+          index: index + 1,
         })),
         change: assign((context, { type, ...rest }) => ({
           ...context,
@@ -120,35 +122,40 @@ export const createPartMachine = (constructPart) =>
           type: 'CONSTRUCTPART.DELETE',
           id,
         })),
-        engage: sendParent(({ id }) => ({
-          type: 'PARTLIB.ENGAGE',
-          id,
-        })),
-        move: sendParent(({ id }, { value: index }) => ({
-          type: 'CONSTRUCTPART.MOVE',
-          id,
-          index,
-        })),
         disengage: sendParent(({ id }) => ({
           type: 'PARTLIB.RESET',
           id,
         })),
+        record: sendParent(() => ({
+          type: 'RECORD',
+        })),
+        engage: sendParent(({ id }) => ({
+          type: 'PARTLIB.ENGAGE',
+          id,
+        })),
+        move: sendParent(({ id, index }, { value }) => ({
+          type: 'CONSTRUCTPART.MOVE',
+          id,
+          index: index + parseInt(value, 10),
+        })),
         setFocused: assign({
           isFocused: (_, { value }) => value,
+        }),
+        setColor: assign({
+          isColored: (_, { value }) => value,
         }),
         setOrientation: assign({
           orientation: ({ orientation }) =>
             orientation === 'forward' ? 'reverse' : 'forward',
         }),
         swap: assign({
-          part: (_, { value }) => value,
-          part_id: (_, { value: { id } }) => id,
+          part: (_, { part }) => part,
+          part_id: (_, { part: { id } }) => id,
         }),
       },
       guards: {
-        isNew: ({ isNew }) => {
-          return isNew;
-        },
+        isActive: ({ isActive }) => isActive,
+        isNew: ({ isNew }) => isNew,
       },
     }
   );

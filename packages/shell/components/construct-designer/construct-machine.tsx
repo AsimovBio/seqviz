@@ -3,13 +3,16 @@ import { mutate } from 'swr';
 import { getAnnotationsFromParts } from 'utils/getAnnotationsFromParts';
 import { sdk } from 'utils/request';
 import { v4 as uuidv4 } from 'uuid';
-import { assign, createMachine, sendParent, spawn } from 'xstate';
+import { actions, assign, createMachine, sendParent, spawn } from 'xstate';
 
 import { createPartMachine } from './construct-part-machine';
+
+const { pure, send } = actions;
 
 type ConstructPart = Partial<Construct_Part> & { isNew: boolean; ref: any };
 
 export type ConstructContext = {
+  clipboardItems: ConstructPart[];
   constructId: string;
   constructParts: ConstructPart[];
   next: ConstructPart[][];
@@ -21,6 +24,7 @@ export interface ConstructStateSchema {
   states: {
     loading: {};
     ready: {};
+    updating: {};
     persisting: {};
   };
   value: any;
@@ -50,7 +54,17 @@ const persist = ({ constructId, constructParts }) =>
         }
 
         const sequence = constructParts
-          .map(({ part: { sequence = '' } }) => sequence)
+          .map(
+            ({
+              ref: {
+                state: {
+                  context: {
+                    part: { sequence = '' },
+                  },
+                },
+              },
+            }) => sequence
+          )
           .join('');
 
         await sdk.UpdateConstruct({
@@ -59,7 +73,13 @@ const persist = ({ constructId, constructParts }) =>
         });
 
         const input = constructParts.map(
-          ({ construct_id, id, index, orientation, part_id }) => ({
+          ({
+            ref: {
+              state: {
+                context: { construct_id, id, index, orientation, part_id },
+              },
+            },
+          }) => ({
             construct_id,
             id,
             index,
@@ -80,7 +100,15 @@ const persist = ({ constructId, constructParts }) =>
         } = await sdk.InsertAnnotation({
           construct_id: constructId,
           input: getAnnotationsFromParts(
-            constructParts.map(({ part }) => part),
+            constructParts.map(
+              ({
+                ref: {
+                  state: {
+                    context: { part },
+                  },
+                },
+              }) => part
+            ),
             constructId
           ),
         });
@@ -104,13 +132,84 @@ const persist = ({ constructId, constructParts }) =>
     false
   );
 
+export const filterActive = ({
+  ref: {
+    state: {
+      context: { isActive },
+    },
+  },
+}) => isActive;
+
+export const areConsecutiveParts = ({ constructParts }) => {
+  const activeCParts = constructParts.filter(filterActive);
+
+  if (!activeCParts.length) {
+    return false;
+  }
+
+  const differenceArr = activeCParts.slice(1).map(
+    (
+      {
+        ref: {
+          state: {
+            context: { index },
+          },
+        },
+      },
+      i
+    ) => {
+      const {
+        ref: {
+          state: { context },
+        },
+      } = activeCParts[i];
+
+      return index - context.index;
+    }
+  );
+
+  return differenceArr.every((value) => value === 1);
+};
+
 export const createConstructPart = (props?: Partial<Construct_Part>) => ({
-  ...props,
   id: uuidv4(),
   isNew: true,
   orientation: 'forward',
   part: DEFAULT_PART as Part,
+  ...props,
 });
+
+export const insertPart = (
+  { constructId, constructParts },
+  { id, ...rest }: Partial<ConstructPart>
+) => {
+  const { index } = rest;
+  const newPart = createConstructPart({
+    construct_id: constructId,
+    ...rest,
+  });
+
+  const ref = spawn(createPartMachine(newPart), {
+    name: `constructPart-${newPart.id}`,
+  });
+
+  if (index === 0) {
+    const first = constructParts.shift();
+    return [first, { ...newPart, ref }, ...constructParts];
+  } else if (index < 0) {
+    constructParts.unshift({
+      ...newPart,
+      ref,
+    });
+  } else {
+    constructParts.splice(index, 0, {
+      ...newPart,
+      ref,
+    });
+  }
+
+  return constructParts;
+};
 
 export const constructMachine = createMachine<
   ConstructContext,
@@ -120,10 +219,11 @@ export const constructMachine = createMachine<
   {
     id: 'construct',
     context: {
-      prev: [],
+      clipboardItems: [],
+      constructId: null,
       constructParts: [],
       next: [],
-      constructId: null,
+      prev: [],
     },
     initial: 'idle',
     states: {
@@ -133,6 +233,11 @@ export const constructMachine = createMachine<
         always: 'ready',
       },
       ready: {},
+      updating: {
+        after: {
+          TIMEOUT: { target: 'persisting' },
+        },
+      },
       error: {},
       persisting: {
         invoke: {
@@ -158,118 +263,133 @@ export const constructMachine = createMachine<
         ),
         cond: 'isDiffConstruct',
       },
-      'CONSTRUCTPART.ACTIVATE': { actions: 'activate' },
-      'CONSTRUCTPART.ADD': {
-        actions: ['updatePrev', 'add', 'sort'],
-        target: 'persisting',
+      COPY: {
+        actions: ['copy'],
       },
-      'CONSTRUCTPART.COMMIT': {
-        actions: ['updatePrev', 'commit'],
-        target: 'persisting',
+      CUT: {
+        actions: ['copy', 'cut'],
       },
-      'CONSTRUCTPART.DELETE': {
-        actions: ['updatePrev', 'delete', 'sort'],
-        cond: 'isNotOnly',
-        target: 'persisting',
+      DELETE: {
+        actions: ['updatePrev', 'deleteActive'],
       },
-      'CONSTRUCTPART.MOVE': {
-        actions: ['updatePrev', 'move', 'sort'],
-        cond: 'indexIsWithinBounds',
-        target: 'persisting',
+      MOVE: {
+        actions: ['updatePrev', 'moveActive'],
+        cond: 'areConsecutiveParts',
+        target: 'updating',
       },
-      'PARTLIB.ENGAGE': {
-        actions: ['activate', 'engage'],
+      PASTE: {
+        actions: ['updatePrev', 'paste'],
+        target: 'updating',
       },
-      'PARTLIB.RESET': {
-        actions: 'reset',
+      RECORD: {
+        actions: ['updatePrev'],
       },
-      'PARTLIB.SELECT': {
-        actions: ['updatePrev', 'swap', 'commit'],
-        target: 'persisting',
+      INDEX: {
+        actions: ['index'],
       },
       UNDO: {
-        actions: ['undo', 'hydrate', 'sort'],
+        actions: ['updateNext', 'undo', 'hydrate'],
         cond: ({ prev }) => prev.length > 0,
+        target: 'updating',
       },
       REDO: {
-        actions: ['redo', 'hydrate', 'sort'],
+        actions: ['redo', 'hydrate'],
         cond: ({ next }) => next.length > 0,
+        target: 'updating',
+      },
+      'CONSTRUCTPART.ADD': {
+        actions: ['updatePrev', 'add'],
+        target: 'updating',
+      },
+      'CONSTRUCTPART.COMMIT': {
+        target: 'updating',
+      },
+      'CONSTRUCTPART.DELETE': {
+        actions: ['updatePrev', 'delete'],
+        cond: 'isNotOnly',
+        target: 'updating',
+      },
+      'CONSTRUCTPART.MOVE': {
+        actions: ['updatePrev', 'move'],
+        cond: 'indexIsWithinBounds',
+        target: 'updating',
+      },
+      'PARTLIB.ENGAGE': {
+        actions: 'engage',
+      },
+      'PARTLIB.RESET': {
+        actions: 'resetLib',
+      },
+      'PARTLIB.SELECT': {
+        actions: ['updatePrev', 'swap'],
+        target: 'updating',
       },
     },
   },
   {
     actions: {
       add: assign({
-        constructParts: ({ constructId, constructParts }, { index }) => {
-          const newPart = createConstructPart({
-            construct_id: constructId,
-            index,
-          });
-
-          const ref = spawn(createPartMachine(newPart), {
-            name: `constructPart-${newPart.id}`,
-          });
-
-          if (index === 0) {
-            const first = constructParts.shift();
-            return [first, { ...newPart, ref }, ...constructParts];
-          } else if (index < 0) {
-            constructParts.unshift({
-              ...newPart,
-              ref,
-            });
-          } else {
-            constructParts.splice(index, 0, {
-              ...newPart,
-              ref,
-            });
-          }
-
-          return constructParts;
-        },
+        constructParts: insertPart,
       }),
-      activate: ({ constructParts }, { id: constructPartId, isActive }) => {
-        constructParts.forEach(({ id, ref }) => {
-          if (id === constructPartId) {
-            ref.send('CHANGE', {
-              isActive: !isActive,
-              isNew: false,
-            });
-          } else {
-            ref.send('CHANGE', { isActive: false });
-            ref.send('RESET');
-          }
-        });
-      },
       engage: sendParent(() => ({
         type: 'PARTLIB.ENGAGE',
       })),
-      commit: assign({
-        constructParts: ({ constructParts }, { type, ...value }) => {
-          const activeConstructPart = constructParts.find(
+      copy: assign({
+        clipboardItems: ({ constructParts }) =>
+          constructParts.filter(filterActive),
+      }),
+      cut: pure(({ constructParts }) =>
+        constructParts
+          .filter(filterActive)
+          .map(({ id, ref }) => send({ type: 'DELETE', id }, { to: ref }))
+      ),
+      paste: assign((context) => {
+        const { clipboardItems, constructParts } = context;
+        const activeConstructParts = constructParts.filter(filterActive);
+
+        const lastActivePart =
+          activeConstructParts[activeConstructParts.length - 1];
+
+        let index = constructParts.length;
+
+        if (lastActivePart) {
+          ({
+            ref: {
+              state: {
+                context: { index },
+              },
+            },
+          } = lastActivePart);
+        }
+
+        [...clipboardItems].reverse().forEach(
+          (
+            {
+              ref: {
+                state: { context: cPartContext },
+              },
+            },
+            i
+          ) => insertPart(context, { ...cPartContext, index: index + 1 })
+        );
+
+        return context;
+      }),
+      delete: assign({
+        constructParts: ({ constructParts }, { id: constructPartId }) =>
+          constructParts.filter(({ id }) => id !== constructPartId),
+      }),
+      deleteActive: assign({
+        constructParts: ({ constructParts }) =>
+          constructParts.filter(
             ({
-              id,
               ref: {
                 state: {
                   context: { isActive },
                 },
               },
-            }) => isActive || id === value.id
-          );
-
-          return constructParts.map((constructPart) =>
-            activeConstructPart?.id === constructPart.id
-              ? {
-                  ...constructPart,
-                  ...value,
-                }
-              : constructPart
-          );
-        },
-      }),
-      delete: assign({
-        constructParts: ({ constructParts }, { id: constructPartId }) =>
-          constructParts.filter(({ id }) => id !== constructPartId),
+            }) => !isActive
+          ),
       }),
       move: assign({
         constructParts: (
@@ -282,9 +402,29 @@ export const constructMachine = createMachine<
           let existing;
 
           if (idx !== -1) {
-            existing = constructParts[idx];
-            constructParts.splice(idx, 1);
+            [existing] = constructParts.splice(idx, 1);
             constructParts.splice(index, 0, existing);
+          }
+
+          return constructParts;
+        },
+      }),
+      moveActive: assign({
+        constructParts: ({ constructParts }, { value }) => {
+          const activeCParts = constructParts.filter(filterActive);
+          const {
+            ref: {
+              state: {
+                context: { index },
+              },
+            },
+          } = activeCParts[0];
+
+          const newIdx = index + parseInt(value, 10);
+
+          if (newIdx >= 0) {
+            const cParts = constructParts.splice(index, activeCParts.length);
+            constructParts.splice(newIdx, 0, ...cParts);
           }
 
           return constructParts;
@@ -293,54 +433,63 @@ export const constructMachine = createMachine<
       hydrate: assign({
         constructParts: ({ constructParts }) =>
           constructParts?.map((constructPart) => {
-            if (!constructPart.part) {
+            const { id, part, ref } = constructPart;
+
+            if (!part) {
               constructPart.part = DEFAULT_PART as Part;
+            }
+
+            // clean up old actors
+            if (ref) {
+              ref.stop();
+              delete constructPart.ref;
             }
 
             return {
               ...constructPart,
-              ref: spawn(createPartMachine(constructPart), {
-                name: `constructPart-${constructPart.id}`,
-              }),
+              ref: spawn(
+                createPartMachine({
+                  ...constructPart,
+                }),
+                {
+                  name: `constructPart-${id}`,
+                }
+              ),
             };
           }),
       }),
-      reset: sendParent(() => ({
+      resetParts: pure(({ constructParts }) =>
+        constructParts.map(({ ref }) => send('RESET', { to: ref }))
+      ),
+      resetLib: sendParent(() => ({
         type: 'PARTLIB.RESET',
       })),
-      sort: assign({
-        constructParts: ({ constructParts }) =>
-          constructParts.map((constructPart, i) => {
-            constructPart.ref.send('CHANGE', { index: i });
-            return { ...constructPart, index: i };
-          }),
-      }),
-      swap: ({ constructParts }, { part, part_id }) => {
-        const activeConstructPart = constructParts.find(
-          ({
-            ref: {
-              state: {
-                context: { isActive },
-              },
-            },
-          }) => isActive
-        );
-
-        activeConstructPart?.ref.send('CHANGE', { part, part_id });
-      },
+      index: pure(({ constructParts }) =>
+        constructParts.map(({ ref }, i) =>
+          send({ type: 'CHANGE', index: i }, { to: ref })
+        )
+      ),
+      swap: pure(({ constructParts }, { part }) =>
+        constructParts
+          .filter(filterActive)
+          .map(({ ref }) => send({ type: 'SWAP', part }, { to: ref }))
+      ),
       updatePrev: assign(({ constructParts, prev }) => ({
         prev: [...prev, [...constructParts]],
         next: [],
       })),
-      undo: assign(({ constructParts, next, prev }) => {
-        const previous = prev.pop();
-
+      updateNext: assign(({ constructParts, next }) => {
+        const partsContext = constructParts.map(
+          ({ ref }) => ref.getSnapshot().context
+        );
         return {
-          constructParts: previous,
-          next: [constructParts, ...next],
-          prev,
+          next: [partsContext, ...next],
         };
       }),
+      undo: assign(({ prev }) => ({
+        constructParts: prev.pop(),
+        prev,
+      })),
       redo: assign(({ constructParts, next, prev }) => {
         const future = next[0];
         const newFuture = next.slice(1);
@@ -352,7 +501,9 @@ export const constructMachine = createMachine<
         };
       }),
     },
+    delays: { TIMEOUT: 1000 },
     guards: {
+      areConsecutiveParts,
       isNotOnly: ({ constructParts }) => constructParts.length > 1,
       indexIsWithinBounds: ({ constructParts }, { index }) =>
         index >= 0 && index < constructParts.length,

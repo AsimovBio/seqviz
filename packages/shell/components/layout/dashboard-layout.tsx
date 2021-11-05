@@ -37,7 +37,7 @@ export type Props = {
   children?: ReactNode;
 };
 
-type ContextProps = {
+export type ContextProps = {
   send: any;
   service: any;
   state: any;
@@ -185,8 +185,7 @@ export function DashboardLayout({ children, data: fallbackData = {} }: Props) {
               display: 'flex',
               flexDirection: 'column',
               gridArea: 'construct',
-              justifyContent: 'space-between',
-              minHeight: '18.25em',
+              minHeight: '15em',
               overflow: 'hidden',
             }}
           >

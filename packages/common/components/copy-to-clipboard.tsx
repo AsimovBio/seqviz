@@ -37,11 +37,11 @@ export default function CopyToClipboard({ children, text }: Props) {
           svg: {
             height: '$0',
             width: '$0',
-            path: { fill: '$quaternary' },
+            path: { stroke: '$quaternary' },
           },
         }}
       >
-        <Icon label="CheckCircled" />
+        <Icon label="CheckCircle" />
         &nbsp;Copied to clipboard
       </Text>
     );

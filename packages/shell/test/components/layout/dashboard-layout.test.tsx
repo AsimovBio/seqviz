@@ -1,10 +1,9 @@
-import { fireEvent } from '@testing-library/react';
 import { DashboardLayout } from 'components/layout/dashboard-layout';
 import { graphql } from 'msw';
 import { construct } from 'test/__mocks__/construct';
 import { folder } from 'test/__mocks__/folder';
 import { server } from 'test/msw/server';
-import { render, screen } from 'test/testUtils';
+import { fireEvent, render, screen } from 'test/testUtils';
 
 jest.mock('utils/import');
 

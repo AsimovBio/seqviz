@@ -1,6 +1,5 @@
-import { act, fireEvent, screen } from '@testing-library/react';
 import CopyToClipboard from 'components/copy-to-clipboard';
-import { render } from 'test/utils';
+import { act, fireEvent, render, screen } from 'test/utils';
 
 // Mocking navigator.clipboard here since it doesn't currently exist in JSDom
 Object.assign(navigator, {

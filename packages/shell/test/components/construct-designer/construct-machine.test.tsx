@@ -1,4 +1,5 @@
 import { constructMachine } from 'components/construct-designer/construct-machine';
+import { waitFor } from 'test/testUtils';
 import { construct, constructPart } from 'test/__mocks__/construct';
 import { interpret } from 'xstate';
 
@@ -45,14 +46,14 @@ describe('constructMachine', () => {
         expect(context).toEqual({
           ...constructPart,
           isActive: false,
+          isColored: false,
           isFocused: false,
-          prevPart: constructPart,
         });
       }
     );
   });
 
-  it('should sort constructParts on "ADD"', () => {
+  it('should sort constructParts on "ADD"', async () => {
     constructSvc.send({
       type: 'BOOTSTRAP',
       constructParts: [constructPart],
@@ -61,8 +62,16 @@ describe('constructMachine', () => {
 
     constructSvc.onTransition(
       ({ context: { constructParts }, event: { type } }) => {
-        if (type === 'CONSTRUCTPART.ADD') {
-          expect(constructParts[0]).toEqual(
+        const [
+          {
+            ref: {
+              state: { context },
+            },
+          },
+        ] = constructParts;
+
+        if (type === 'INDEX') {
+          expect(context).toEqual(
             expect.objectContaining({
               index: 0,
               part: expect.objectContaining({ name: 'Untitled part' }),
@@ -73,5 +82,6 @@ describe('constructMachine', () => {
     );
 
     constructSvc.send({ type: 'CONSTRUCTPART.ADD', index: -1 });
+    constructSvc.send({ type: 'INDEX' });
   });
 });

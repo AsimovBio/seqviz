@@ -21,13 +21,21 @@ export default function SequencePanel({ construct }) {
     },
   } = context;
 
-  const [state, _] = useActor<any, any>(constructSvc);
+  const [state] = useActor<any, any>(constructSvc);
 
   const { constructParts } = state.context;
 
-  const activePart = constructParts.find(
-    (part) => part.ref._state.context.isActive
+  const activeParts = constructParts.filter(
+    ({
+      ref: {
+        state: {
+          context: { isActive },
+        },
+      },
+    }) => isActive
   );
+  const lastPart = activeParts[activeParts.length - 1];
+  const cPartIds = activeParts.map(({ id }) => id);
 
   return (
     <Box
@@ -66,7 +74,7 @@ export default function SequencePanel({ construct }) {
                 <Box
                   as="li"
                   css={{
-                    backgroundColor: activePart?.id === id ? '$senary' : '',
+                    backgroundColor: cPartIds.includes(id) ? '$senary' : '',
                     cursor: 'pointer',
                     pl: '$1',
                   }}
@@ -89,7 +97,10 @@ export default function SequencePanel({ construct }) {
           }))}
           css={{ width: '100%', height: '100%' }}
           name={construct.name}
-          search={{ query: activePart?.part?.sequence, mismatch: 0 }}
+          search={{
+            query: lastPart?.part?.sequence,
+            mismatch: 0,
+          }}
           seq={construct.sequence}
           viewer="linear"
         />

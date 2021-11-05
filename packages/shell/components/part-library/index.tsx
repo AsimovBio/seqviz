@@ -85,7 +85,7 @@ export default function PartsLibrary() {
                   width: '100%',
                 }}
                 onClick={() => {
-                  send({ type: 'SELECT', value: part });
+                  send({ type: 'SELECT', part });
                 }}
               >
                 <Box as="span">{value}</Box>
@@ -161,12 +161,12 @@ export default function PartsLibrary() {
                   svg: {
                     height: '$0',
                     width: '$0',
-                    path: { fill: '$mutedText' },
+                    path: { stroke: '$mutedText' },
                   },
                 }}
                 title="Click sequence to copy"
               >
-                <Icon label="Copy" />
+                <Icon label="Duplicate" />
               </Box>
             </Text>
           );

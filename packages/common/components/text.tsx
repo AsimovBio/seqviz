@@ -4,7 +4,6 @@ export default styled('p', {
   color: '$body',
   fontFamily: '$body',
   m: 0,
-
   variants: {
     size: {
       0: {
@@ -21,6 +20,12 @@ export default styled('p', {
       },
       4: {
         fontSize: '$4',
+      },
+      5: {
+        fontSize: '$5',
+      },
+      6: {
+        fontSize: '$6',
       },
     },
     font: {

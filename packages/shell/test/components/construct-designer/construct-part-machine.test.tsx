@@ -12,8 +12,8 @@ describe('partMachine', () => {
     expect(actualState.matches('editing')).toBeTruthy();
   });
 
-  it('should transition to "reading" on the "COMMIT" event', () => {
-    const actualState = machine.transition('editing', { type: 'COMMIT' });
+  it('should transition to "reading" on the "RESET" event', () => {
+    const actualState = machine.transition('editing', { type: 'RESET' });
 
     expect(actualState.matches('reading')).toBeTruthy();
   });

@@ -39,6 +39,7 @@ module.exports = {
         './components/svg': './components/svg',
         './components/tabs': './components/tabs',
         './components/text': './components/text',
+        './components/toolbar': './components/toolbar',
         './components/tooltip': './components/tooltip',
         './stitches.config': './stitches.config',
       },

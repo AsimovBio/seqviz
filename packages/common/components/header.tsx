@@ -11,5 +11,5 @@ export default styled(Box, {
   px: '$3',
   py: '$2',
   width: '100%',
-  svg: { mr: '$2', path: { fill: '$primary' } },
+  svg: { mr: '$2', path: { stroke: '$primary' } },
 });

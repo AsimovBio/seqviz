@@ -131,7 +131,7 @@ export default function Sidebar() {
             color="transparent"
             onClick={handleToggleNav}
           >
-            <Icon label="HamburgerMenu" />
+            <Icon label="Menu" />
           </Button>
         </Box>
         <Box
@@ -161,7 +161,7 @@ export default function Sidebar() {
                     onClick={() => handleClearRecentConstructs()}
                     value="folder"
                   >
-                    <Icon label="Cross2" />
+                    <Icon label="X" />
                     &nbsp;Clear
                   </Button>
                 </HiddenWrapper>
@@ -185,7 +185,7 @@ export default function Sidebar() {
                       >
                         <Box as="a">
                           <Tooltip content={name}>
-                            <Icon label="Circle" />
+                            <Icon label="DotsCircleHorizontal" />
                           </Tooltip>
                           <Text className="text">{name}</Text>
                         </Box>
@@ -273,7 +273,7 @@ export default function Sidebar() {
                           >
                             <Box as="a" css={{ pl: isNavOpen ? '1.75em' : 0 }}>
                               <Tooltip content={name} side="right">
-                                <Icon label="Circle" />
+                                <Icon label="DotsCircleHorizontal" />
                               </Tooltip>
                               <span className="text">{name}</span>
                             </Box>

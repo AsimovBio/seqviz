@@ -116,8 +116,8 @@ export default function FolderPageHeader({
           )}
           <Label htmlFor="folder-name">
             <Icon
-              css={{ mr: '$2', path: { fill: '$primary' } }}
-              label="Circle"
+              css={{ mr: '$2', path: { stroke: '$primary' } }}
+              label="Folder"
             />
             <AutosizeInput
               autoComplete="off"
