@@ -1,4 +1,5 @@
 import * as React from "react";
+import isEqual from "../../utils/isEqual";
 
 import { calcGC, calcTm } from "../../utils/sequence";
 
@@ -32,8 +33,14 @@ const withSelectionHandler = WrappedComp =>
   class extends React.Component {
     static displayName = `SelectionHandler`;
 
-    /** Only state is the selection range */
-    state = { ...defaultSelection };
+    state = {
+      ...defaultSelection,
+      /**
+       * a map between the id of child elements and their associated SelectRanges
+       * @type {Object.<string, SelectRange>}
+       */
+      idToRange: new Map()
+    };
 
     previousBase = null; // previous base cursor is over, used in circular drag select
 
@@ -49,12 +56,6 @@ const withSelectionHandler = WrappedComp =>
 
     lastClick = Date.now(); // unix time of the last click (awful attempt at detecting double clicks)
 
-    /**
-     * a map between the id of child elements and their associated SelectRanges
-     * @type {Object.<string, SelectRange>}
-     */
-    idToRange = new Map();
-
     componentDidMount = () => {
       document.addEventListener("mouseup", this.stopDrag);
     };
@@ -64,31 +65,27 @@ const withSelectionHandler = WrappedComp =>
     };
 
     componentDidUpdate = () => {
-      console.log('IDS MAP', this.idToRange);
-      // TODO: Need to retrigger this after visibleBlocks changes in InfiniteScroll to selection of a part
-      // that is out of view(otherwise the idToRange value does not contain the selected value)
-      // TODO: Consider making this only fire when selectionAnnotation OR idToRange have changed
       if (!!this.props.selectedAnnotation) {
-        let knownRange = this.idToRange.get(this.props.selectedAnnotation) // only look for SeqBlocks
 
-        console.log('KNOWN RANGE', knownRange);
-        if (!knownRange) {
-          return; // there isn't a known range with the id of the element
-        }
-        const { start, end, direction, element } = knownRange;
-        const clockwise = direction ? direction === 1 : true;
-        const selectionStart = clockwise ? start : end;
-        const selectionEnd = clockwise ? end : start;
+          let knownRange = this.state.idToRange.get(this.props.selectedAnnotation) // only look for SeqBlocks
 
-        const newSelection = {
-          ...element,
-          ...knownRange,
-          start: selectionStart,
-          end: selectionEnd,
-          clockwise: clockwise
-        };
-
-        this.setSelection(newSelection);
+          if (!knownRange) {
+            return; // there isn't a known range with the id of the element
+          }
+          const { start, end, direction, element } = knownRange;
+          const clockwise = direction ? direction === 1 : true;
+          const selectionStart = clockwise ? start : end;
+          const selectionEnd = clockwise ? end : start;
+          
+          const newSelection = {
+            ...element,
+            ...knownRange,
+            start: selectionStart,
+            end: selectionEnd,
+            clockwise: clockwise
+          };
+          
+          this.setSelection(newSelection);
       } else {
         this.setSelection({ ...defaultSelection });
       }
@@ -116,7 +113,11 @@ const withSelectionHandler = WrappedComp =>
      * @param  {SelectRange} selectRange
      */
     inputRef = (ref, selectRange) => {
-      this.idToRange.set(ref, { ref, ...selectRange });
+      this.setState(state => {
+        const idToRange = new Map(state.idToRange);
+        idToRange.set(ref, { ref, ...selectRange })
+        return { idToRange };
+      });
     };
 
     /**
@@ -124,7 +125,11 @@ const withSelectionHandler = WrappedComp =>
      * @param  {string} ref  if of the element to drop from list
      */
     removeMountedBlock = ref => {
-      this.idToRange.delete(ref);
+      this.setState(state => {
+        const idToRange = new Map(state.idToRange);
+        idToRange.delete(ref);
+        return { idToRange };
+      });
     };
 
     /**
@@ -148,8 +153,8 @@ const withSelectionHandler = WrappedComp =>
       const msSinceLastClick = Date.now() - this.lastClick;
 
       let knownRange = this.dragEvent
-        ? this.idToRange.get(e.currentTarget.id) // only look for SeqBlocks
-        : this.idToRange.get(e.target.id) || this.idToRange.get(e.currentTarget.id); // elements and SeqBlocks
+        ? this.state.idToRange.get(e.currentTarget.id) // only look for SeqBlocks
+        : this.state.idToRange.get(e.target.id) || this.state.idToRange.get(e.currentTarget.id); // elements and SeqBlocks
       if (!knownRange) {
         return; // there isn't a known range with the id of the element
       }
