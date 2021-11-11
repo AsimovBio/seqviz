@@ -55,7 +55,7 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
       return;
     }
 
-    const { seqBlocks, size } = this.props;
+    const { selectedAnnotation, seqBlocks, size } = this.props;
     const { centralIndex, visibleBlocks } = this.state;
 
     if (this.context && centralIndex !== this.context.linear) {
@@ -64,6 +64,16 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
       this.handleScrollOrResize(); // reset
     } else if (isEqual(prevState.visibleBlocks, visibleBlocks)) {
       this.restoreSnapshot(snapshot); // something, like ORFs or index view, has changed
+    }
+
+    if (selectedAnnotation !== prevProps.selectedAnnotation) {
+      const targetSeqBlockIndex = seqBlocks.findIndex(block => {
+        const { props: { annotationRows } } = block;
+        return annotationRows[0].some(({ id }) => id === selectedAnnotation);
+      });
+      if (targetSeqBlockIndex > -1) {
+        this.scrollToIndex(targetSeqBlockIndex);
+      }
     }
   };
 
@@ -91,6 +101,57 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
     const blockY = top - accumulatedY; // last extra distance
     return { blockY, blockIndex };
   };
+
+  scrollToIndex = (index) => {
+    const {
+      seqBlocks,
+      blockHeights,
+      totalHeight,
+      size: { height }
+    } = this.props;
+    const { visibleBlocks } = this.state;
+    const { clientHeight, scrollHeight } = this.scroller.current;
+    // const centralIndex = this.context.linear;
+
+    // find the first block that contains the new central index
+    // const centerBlockIndex = seqBlocks.findIndex(
+    //   block => block.props.firstBase <= centralIndex && block.props.firstBase + bpsPerBlock >= centralIndex
+    // );
+
+    // build up the list of blocks that are visible just beneath this first block
+    let newVisibleBlocks = [];
+    if (scrollHeight <= clientHeight) {
+      newVisibleBlocks = visibleBlocks;
+    } else if (index > -1) {
+      const centerBlock = seqBlocks[index];
+
+      // create some padding above the new center block
+      const topAdjust = index > 0 ? blockHeights[index - 1] : 0;
+      let top = centerBlock.props.y - topAdjust;
+      let bottom = top + height;
+      if (bottom > totalHeight) {
+        bottom = totalHeight;
+        top = totalHeight - height;
+      }
+      blockHeights.reduce((total, h, i) => {
+        if (total >= top && total <= bottom) {
+          newVisibleBlocks.push(i);
+        }
+        return total + h;
+      }, 0);
+
+      // Don't scroll exactly to centralIndex because most of the time
+      // item of interest is at centralIndex and if this is at the top
+      // it can be obscured by things like the search box
+      this.scroller.current.scrollTop = centerBlock.props.y - blockHeights[0] / 2;
+    }
+
+    if (!isEqual(newVisibleBlocks, visibleBlocks)) {
+      this.setState({
+        visibleBlocks: newVisibleBlocks
+      });
+    }
+  }
 
   /**
    * Scroll to centralIndex. Likely from circular clicking on an element
@@ -262,6 +323,8 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
       size: { width },
     } = this.props;
     const { visibleBlocks } = this.state;
+
+    console.log(visibleBlocks, seqBlocks);
 
     // find the height of the empty div needed to correctly position the rest
     const [firstRendered] = visibleBlocks;

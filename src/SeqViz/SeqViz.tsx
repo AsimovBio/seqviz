@@ -38,6 +38,7 @@ export interface SeqVizProps {
     query: string;
     mismatch: number;
   };
+  selectedAnnotation: Annotation;
   showComplement: boolean;
   showAnnotations: boolean;
   showIndex: boolean;
@@ -235,6 +236,7 @@ export default class SeqViz extends React.Component<SeqVizProps, any> {
    * Update selection in state. Should only be performed from handlers/selection.jsx
    */
   setSelection = (selection: SeqVizSelection) => {
+    console.log('NEW SELECTION', selection);
     const { onSelection } = this.props;
     this.setState({ selection });
 

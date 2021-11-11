@@ -82,6 +82,37 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
       document.removeEventListener("mouseup", this.stopDrag);
     };
 
+    componentDidUpdate = () => {
+      console.log('IDS MAP', this.idToRange);
+      // TODO: Need to retrigger this after visibleBlocks changes in InfiniteScroll to selection of a part
+      // that is out of view(otherwise the idToRange value does not contain the selected value)
+      // TODO: Consider making this only fire when selectionAnnotation OR idToRange have changed
+      if (!!this.props.selectedAnnotation) {
+        let knownRange = this.idToRange.get(this.props.selectedAnnotation) // only look for SeqBlocks
+
+        console.log('KNOWN RANGE', knownRange);
+        if (!knownRange) {
+          return; // there isn't a known range with the id of the element
+        }
+        const { start, end, direction, element } = knownRange;
+        const clockwise = direction ? direction === 1 : true;
+        const selectionStart = clockwise ? start : end;
+        const selectionEnd = clockwise ? end : start;
+
+        const newSelection = {
+          ...element,
+          ...knownRange,
+          start: selectionStart,
+          end: selectionEnd,
+          clockwise: clockwise
+        };
+
+        this.setSelection(newSelection);
+      } else {
+        this.setSelection({ ...defaultSelection });
+      }
+    }
+
     /** Stop the current drag event from happening */
     stopDrag = () => {
       this.dragEvent = false;
