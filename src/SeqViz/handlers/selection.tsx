@@ -1,4 +1,5 @@
 import * as React from "react";
+import isEqual from "../../utils/isEqual";
 
 import { calcGC, calcTm } from "../../utils/sequence";
 
@@ -52,8 +53,14 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
   class extends React.Component {
     static displayName = `SelectionHandler`;
 
-    /** Only state is the selection range */
-    state = { ...defaultSelection };
+    state = {
+      ...defaultSelection,
+      /**
+       * a map between the id of child elements and their associated SelectRanges
+       * @type {Object.<string, SelectRange>}
+       */
+      idToRange: new Map()
+    };
 
     previousBase: null | number = null; // previous base cursor is over, used in circular drag select
 
@@ -69,11 +76,6 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
 
     lastClick = Date.now(); // unix time of the last click (awful attempt at detecting double clicks)
 
-    /**
-     * a map between the id of child elements and their associated SelectRanges
-     */
-    idToRange = new Map();
-
     componentDidMount = () => {
       document.addEventListener("mouseup", this.stopDrag);
     };
@@ -83,31 +85,28 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
     };
 
     componentDidUpdate = () => {
-      console.log('IDS MAP', this.idToRange);
-      // TODO: Need to retrigger this after visibleBlocks changes in InfiniteScroll to selection of a part
-      // that is out of view(otherwise the idToRange value does not contain the selected value)
-      // TODO: Consider making this only fire when selectionAnnotation OR idToRange have changed
-      if (!!this.props.selectedAnnotation) {
-        let knownRange = this.idToRange.get(this.props.selectedAnnotation) // only look for SeqBlocks
+      // @ts-expect-error ts-migrate(2339) FIXME: Property 'selectedAnnotation' does not exist on type 'Readon... Remove this comment to see the full error message
+      if (this.props.selectedAnnotation) {
+          // @ts-expect-error ts-migrate(2339) FIXME: Property 'selectedAnnotation' does not exist on type 'Readon... Remove this comment to see the full error message
+          let knownRange = this.state.idToRange.get(this.props.selectedAnnotation) // only look for SeqBlocks
 
-        console.log('KNOWN RANGE', knownRange);
-        if (!knownRange) {
-          return; // there isn't a known range with the id of the element
-        }
-        const { start, end, direction, element } = knownRange;
-        const clockwise = direction ? direction === 1 : true;
-        const selectionStart = clockwise ? start : end;
-        const selectionEnd = clockwise ? end : start;
-
-        const newSelection = {
-          ...element,
-          ...knownRange,
-          start: selectionStart,
-          end: selectionEnd,
-          clockwise: clockwise
-        };
-
-        this.setSelection(newSelection);
+          if (!knownRange) {
+            return; // there isn't a known range with the id of the element
+          }
+          const { start, end, direction, element } = knownRange;
+          const clockwise = direction ? direction === 1 : true;
+          const selectionStart = clockwise ? start : end;
+          const selectionEnd = clockwise ? end : start;
+          
+          const newSelection = {
+            ...element,
+            ...knownRange,
+            start: selectionStart,
+            end: selectionEnd,
+            clockwise: clockwise
+          };
+          
+          this.setSelection(newSelection);
       } else {
         this.setSelection({ ...defaultSelection });
       }
@@ -131,16 +130,26 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
     /**
      * a ref callback for mapping the id of child to its SelectRange
      * it stores the id of all elements
-     **/
+     * @param  {string} ref element's id, as it appears in DOM
+     * @param  {SelectRange} selectRange
+     */
     inputRef = (ref: unknown, selectRange: object) => {
-      this.idToRange.set(ref, { ref, ...selectRange });
+      this.setState((state: typeof this.state) => {
+        const idToRange = new Map(state.idToRange);
+        idToRange.set(ref, { ref, ...selectRange })
+        return { idToRange };
+      });
     };
 
     /**
      * remove the id of the passed element from the list of tracked refs
      */
     removeMountedBlock = (ref: unknown) => {
-      this.idToRange.delete(ref);
+      this.setState((state: typeof this.state) => {
+        const idToRange = new Map(state.idToRange);
+        idToRange.delete(ref);
+        return { idToRange };
+      });
     };
 
     /**
@@ -164,8 +173,8 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
       const msSinceLastClick = Date.now() - this.lastClick;
 
       let knownRange = this.dragEvent
-        ? this.idToRange.get(e.currentTarget.id) // only look for SeqBlocks
-        : this.idToRange.get(e.target.id) || this.idToRange.get(e.currentTarget.id); // elements and SeqBlocks
+        ? this.state.idToRange.get(e.currentTarget.id) // only look for SeqBlocks
+        : this.state.idToRange.get(e.target.id) || this.state.idToRange.get(e.currentTarget.id); // elements and SeqBlocks
       if (!knownRange) {
         return; // there isn't a known range with the id of the element
       }
