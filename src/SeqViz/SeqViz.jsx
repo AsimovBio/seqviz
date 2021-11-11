@@ -47,6 +47,7 @@ export default class SeqViz extends React.Component {
       query: PropTypes.string,
       mismatch: PropTypes.number
     }).isRequired,
+    selectedAnnotation: PropTypes.string,
     seq: PropTypes.string,
     showComplement: PropTypes.bool.isRequired,
     showIndex: PropTypes.bool.isRequired,
@@ -246,6 +247,7 @@ export default class SeqViz extends React.Component {
    * Update selection in state. Should only be performed from handlers/selection.jsx
    */
   setSelection = selection => {
+    console.log('NEW SELECTION', selection);
     const { onSelection } = this.props;
 
     this.setState({ selection });
