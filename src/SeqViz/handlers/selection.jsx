@@ -33,14 +33,13 @@ const withSelectionHandler = WrappedComp =>
   class extends React.Component {
     static displayName = `SelectionHandler`;
 
-    state = {
-      ...defaultSelection,
-      /**
-       * a map between the id of child elements and their associated SelectRanges
-       * @type {Object.<string, SelectRange>}
-       */
-      idToRange: new Map()
-    };
+    state = { ...defaultSelection };
+    
+    /**
+     * a map between the id of child elements and their associated SelectRanges
+     * @type {Object.<string, SelectRange>}
+     */
+    idToRange = new Map();
 
     previousBase = null; // previous base cursor is over, used in circular drag select
 
@@ -64,30 +63,13 @@ const withSelectionHandler = WrappedComp =>
       document.removeEventListener("mouseup", this.stopDrag);
     };
 
-    componentDidUpdate = () => {
-      if (!!this.props.selectedAnnotation) {
-
-          let knownRange = this.state.idToRange.get(this.props.selectedAnnotation) // only look for SeqBlocks
-
-          if (!knownRange) {
-            return; // there isn't a known range with the id of the element
-          }
-          const { start, end, direction, element } = knownRange;
-          const clockwise = direction ? direction === 1 : true;
-          const selectionStart = clockwise ? start : end;
-          const selectionEnd = clockwise ? end : start;
-          
-          const newSelection = {
-            ...element,
-            ...knownRange,
-            start: selectionStart,
-            end: selectionEnd,
-            clockwise: clockwise
-          };
-          
-          this.setSelection(newSelection);
-      } else {
-        this.setSelection({ ...defaultSelection });
+    componentDidUpdate = (prevProps) => {
+      if (!isEqual(this.props.selectedRange, prevProps.selectedRange)) {
+        if (!!this.props.selectedRange) {
+          this.setSelection(this.props.selectedRange);
+        } else  {
+          this.setSelection({ ...defaultSelection });
+        }
       }
     }
 
@@ -113,11 +95,7 @@ const withSelectionHandler = WrappedComp =>
      * @param  {SelectRange} selectRange
      */
     inputRef = (ref, selectRange) => {
-      this.setState(state => {
-        const idToRange = new Map(state.idToRange);
-        idToRange.set(ref, { ref, ...selectRange })
-        return { idToRange };
-      });
+      this.idToRange.set(ref, { ref, ...selectRange })
     };
 
     /**
@@ -125,11 +103,7 @@ const withSelectionHandler = WrappedComp =>
      * @param  {string} ref  if of the element to drop from list
      */
     removeMountedBlock = ref => {
-      this.setState(state => {
-        const idToRange = new Map(state.idToRange);
-        idToRange.delete(ref);
-        return { idToRange };
-      });
+      this.idToRange.delete(ref);
     };
 
     /**
@@ -153,8 +127,9 @@ const withSelectionHandler = WrappedComp =>
       const msSinceLastClick = Date.now() - this.lastClick;
 
       let knownRange = this.dragEvent
-        ? this.state.idToRange.get(e.currentTarget.id) // only look for SeqBlocks
-        : this.state.idToRange.get(e.target.id) || this.state.idToRange.get(e.currentTarget.id); // elements and SeqBlocks
+        ? this.idToRange.get(e.currentTarget.id) // only look for SeqBlocks
+        : this.idToRange.get(e.target.id) || this.idToRange.get(e.currentTarget.id); // elements and SeqBlocks
+      
       if (!knownRange) {
         return; // there isn't a known range with the id of the element
       }
@@ -216,6 +191,7 @@ const withSelectionHandler = WrappedComp =>
           break;
         }
         case "SEQ": {
+          console.log('SEQ SELECT', knownRange);
           if (Linear) {
             this.linearSeqEvent(e, knownRange);
           } else if (Circular) {
@@ -231,11 +207,14 @@ const withSelectionHandler = WrappedComp =>
      * Handle a sequence selection on a linear viewer
      */
     linearSeqEvent = (e, knownRange) => {
+      console.log('mouse event', e.target?.id, e.currentTarget?.id, e.type)
+
       const { selection } = this.props;
 
       const currBase = this.calculateBaseLinear(e, knownRange);
       const clockwiseDrag = selection.start !== null && currBase >= selection.start;
-
+      console.log('linearSeqEvent', knownRange, selection);
+      console.log('currBase', currBase);
       if (e.type === "mousedown" && currBase !== null) {
         // this is the start of a drag event
         this.setSelection({
