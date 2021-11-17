@@ -55,7 +55,7 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
       return;
     }
 
-    const { selectedAnnotation, seqBlocks, size } = this.props;
+    const { selection, seqBlocks, size } = this.props;
     const { centralIndex, visibleBlocks } = this.state;
 
     if (this.context && centralIndex !== this.context.linear) {
@@ -66,12 +66,12 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
       this.restoreSnapshot(snapshot); // something, like ORFs or index view, has changed
     }
 
-    if (selectedAnnotation !== prevProps.selectedAnnotation) {
+    if (!isEqual(selection, prevProps.selection)) {
       const targetSeqBlockIndex = seqBlocks.findIndex(block => {
-        const { props: { annotationRows } } = block;
-        return annotationRows[0].some(({ id }) => id === selectedAnnotation);
+        const { props: { firstBase, bpsPerBlock } } = block;
+        return selection.start >= firstBase && selection.start < firstBase + bpsPerBlock;
       });
-      if (targetSeqBlockIndex > -1) {
+      if ((targetSeqBlockIndex > -1) && !visibleBlocks.includes(targetSeqBlockIndex)) {
         this.scrollToIndex(targetSeqBlockIndex);
       }
     }
@@ -323,8 +323,6 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
       size: { width },
     } = this.props;
     const { visibleBlocks } = this.state;
-
-    console.log(visibleBlocks, seqBlocks);
 
     // find the height of the empty div needed to correctly position the rest
     const [firstRendered] = visibleBlocks;

@@ -316,7 +316,7 @@ const withEventRouter = WrappedComp =>
           // Need tabIndex for onKeyDown to work
           tabIndex={-1}
         >
-          <WrappedComp {...rest} mouseEvent={this.handleMouseEvent} />
+          <WrappedComp {...rest} mouseEvent={this.handleMouseEvent} selection={this.props.selection} />
         </div>
       );
     }
