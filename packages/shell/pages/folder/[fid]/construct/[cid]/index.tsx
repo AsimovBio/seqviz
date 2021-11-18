@@ -5,11 +5,12 @@ import {
   DashboardLayout,
 } from 'components/layout/dashboard-layout';
 import {
+  ConstructDocument,
   ConstructTemplatesDocument,
   FoldersDocument,
   PartsDocument,
+  PartTypesDocument,
 } from 'models/graphql';
-import { ConstructDocument } from 'models/graphql';
 import type {
   GetServerSideProps,
   GetServerSidePropsContext,
@@ -66,11 +67,11 @@ export function Construct({ data: fallbackData = {} }: Props) {
   const router = useRouter();
   const { cid, fid } = router.query;
   const { send } = useContext(DashboardContext);
-  const { construct } = fallbackData;
+  const { construct, part_type } = fallbackData;
 
   let currentConstruct;
 
-  const { data } = sdk.useConstruct(
+  const { data: constructData, error: constructError } = sdk.useConstruct(
     cid ? cid : null,
     { id: cid },
     {
@@ -78,11 +79,20 @@ export function Construct({ data: fallbackData = {} }: Props) {
     }
   );
 
-  if (data) {
+  if (constructData) {
     ({
       construct: [currentConstruct],
-    } = data);
+    } = constructData);
   }
+
+  const { data: partTypesData, error: partTypesError } = sdk.usePartTypes(
+    fid ? 'PartTypes' : null,
+    null,
+    {
+      fallbackData: { part_type },
+    }
+  );
+  const { part_type: partTypes } = partTypesData ?? {};
 
   useEffect(() => {
     if (currentConstruct) {
@@ -167,7 +177,10 @@ export function Construct({ data: fallbackData = {} }: Props) {
       </Header>
       {currentConstruct && (
         <ErrorBoundary FallbackComponent={ErrorFallback}>
-          <ConstructDesigner construct={currentConstruct} />
+          <ConstructDesigner
+            construct={currentConstruct}
+            partTypes={partTypes}
+          />
         </ErrorBoundary>
       )}
     </>
@@ -180,6 +193,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
     const { cid } = query;
     let folders;
     let parts;
+    let partTypes;
     let construct;
     let templates;
 
@@ -190,6 +204,9 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
 
       (req as NextApiRequest).body = { query: PartsDocument };
       parts = await requestUtil(req, res);
+
+      (req as NextApiRequest).body = { query: PartTypesDocument };
+      partTypes = await requestUtil(req, res);
 
       (req as NextApiRequest).body = {
         query: ConstructDocument,
@@ -211,7 +228,13 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
 
     return {
       props: {
-        data: { ...folders, ...parts, ...construct, ...templates },
+        data: {
+          ...construct,
+          ...folders,
+          ...partTypes,
+          ...parts,
+          ...templates,
+        },
       },
     };
   },

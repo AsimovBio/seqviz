@@ -48,6 +48,7 @@ __metadata:
     "@radix-ui/react-polymorphic": ^0.0.14
     "@radix-ui/react-popover": ^0.1.1
     "@radix-ui/react-primitive": ^0.1.1
+    "@radix-ui/react-scroll-area": ^0.1.1
     "@radix-ui/react-tabs": ^0.1.1
     "@radix-ui/react-toolbar": ^0.1.1
     "@radix-ui/react-tooltip": ^0.1.1
@@ -85,6 +86,7 @@ __metadata:
     regenerator-runtime: ^0.13.9
     seqviz: ^3.0.42
     supports-color: ^9.0.2
+    ts-debounce: ^4.0.0
     ts-jest: ^27.0.5
     ts-node: ^10.2.1
     typescript: ^4.4.3
@@ -3568,6 +3570,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@radix-ui/number@npm:0.1.0":
+  version: 0.1.0
+  resolution: "@radix-ui/number@npm:0.1.0"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+  checksum: 6d4efbf9158c1b1d18861da9c232e27a67ed496e46ab621521cc076952f1b93e6c56121e9b597e2e245b77dea294f0b1f79cd2ea1467d8361ba51334b00ffb1f
+  languageName: node
+  linkType: hard
+
 "@radix-ui/popper@npm:0.1.0":
   version: 0.1.0
   resolution: "@radix-ui/popper@npm:0.1.0"
@@ -3911,6 +3922,26 @@ __metadata:
   peerDependencies:
     react: ^16.8 || ^17.0
   checksum: 3dbeea12d7b9722ded653cf90e6c049e264ec26bd93d24825ea91a8f9792520e13994f7bbbe7989aca5023b2bdc97abad633a46a5596f4950d2af2cdc508d20e
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-scroll-area@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@radix-ui/react-scroll-area@npm:0.1.1"
+  dependencies:
+    "@babel/runtime": ^7.13.10
+    "@radix-ui/number": 0.1.0
+    "@radix-ui/primitive": 0.1.0
+    "@radix-ui/react-compose-refs": 0.1.0
+    "@radix-ui/react-context": 0.1.1
+    "@radix-ui/react-presence": 0.1.1
+    "@radix-ui/react-primitive": 0.1.1
+    "@radix-ui/react-use-callback-ref": 0.1.0
+    "@radix-ui/react-use-direction": 0.1.0
+    "@radix-ui/react-use-layout-effect": 0.1.0
+  peerDependencies:
+    react: ^16.8 || ^17.0
+  checksum: 3eb7ba1ce90224323bdc6835920a00feac241b20acc6944e36f003787bd135040cea2184aa014b63868b2457cb3cb6b0b6211ff0a40a3c37c85f50b600864f3a
   languageName: node
   linkType: hard
 
@@ -21754,6 +21785,13 @@ resolve@^2.0.0-next.3:
   version: 3.0.0
   resolution: "ts-debounce@npm:3.0.0"
   checksum: ef79f2095da00571970c46af5badf646648f2289b3d7cc71880b24532e322b9ab71ef53a0fa97c948ceff145631b3794d928c2f51c90bf5c368c43148307db66
+  languageName: node
+  linkType: hard
+
+"ts-debounce@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "ts-debounce@npm:4.0.0"
+  checksum: e1e509632c5aa09c40d3fa315b3a95b2c2e8813ccc706a400aa08e41f691e658061f34b42a1e8a578a043540d6db198e6ecf3ce26a5356a02a0940985fb1e379
   languageName: node
   linkType: hard
 

@@ -47,7 +47,6 @@ describe('constructMachine', () => {
           ...constructPart,
           isActive: false,
           isColored: false,
-          isFocused: false,
         });
       }
     );

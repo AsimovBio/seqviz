@@ -1,7 +1,6 @@
 import { useActor } from '@xstate/react';
 import dynamic from 'next/dynamic';
-import type { Ref } from 'react';
-import React, { forwardRef, memo } from 'react';
+import React, { memo } from 'react';
 import { getModule } from 'utils/import';
 import type { ActorRef } from 'xstate/lib/types';
 
@@ -21,98 +20,67 @@ const Label: any = dynamic(
 
 type Props = { constructPartRef: ActorRef<any, any>; isLabelShown: boolean };
 
-const BACKGROUND_COLORS_MAP = {
-  '5-utr': '$senary',
-  'polyadenylation-signal': '$octonary',
-  '3-utr': '$senary',
-  cds: '$denary',
-  'pol-ii-promoter': '$nonary',
-  'fluorescent-protein': '$senary',
-  'selection-system': '$denary',
-  'heavy-chain': '$denary',
-  'light-chain': '$denary',
-  'nuclear-trafficking-tag': '$senary',
-};
-
-function ConstructPartController(
-  { constructPartRef, isLabelShown = true }: Props,
-  ref: Ref<HTMLDivElement>
-) {
+function ConstructPartController({
+  constructPartRef,
+  isLabelShown = true,
+}: Props) {
   const [state, send] = useActor(constructPartRef);
 
   const {
-    isActive,
-    isFocused,
-    isColored,
+    orientation,
     part: {
       name,
-      type: { name: typeName, slug },
+      type: { name: typeName },
     },
   } = state.context;
 
   return (
-    <div ref={ref}>
-      <Box
-        css={{
-          display: 'flex',
-          flex: 1,
-          flexDirection: 'column',
-          maxWidth: '7.75rem',
-          svg: {
-            stroke: isColored ? BACKGROUND_COLORS_MAP[slug] : 'currentColor',
-          },
-        }}
-      >
-        <MiniController context={state.context} onEvent={send} />
-        {isLabelShown && (
-          <Label
+    <Box
+      css={{
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+        '&::after': {
+          backgroundColor: '$text',
+          content: '',
+          left: '50%',
+          position: 'absolute',
+          width: '1px',
+          height: orientation === 'reverse' ? '1em' : '2em',
+          bottom: 0,
+        },
+      }}
+    >
+      <MiniController context={state.context} onEvent={send} />
+      {isLabelShown && (
+        <Label
+          css={{
+            overflow: 'hidden',
+            textAlign: 'right',
+            textOverflow: 'ellipsis',
+            transform: 'rotate(-45deg)',
+            transformOrigin: 'right top',
+            whiteSpace: 'nowrap',
+            position: 'absolute',
+            top: '100%',
+            right: '50%',
+          }}
+          title={`${name}\n${typeName}`}
+        >
+          <Text
+            as="span"
             css={{
-              display: 'flex',
-              flexDirection: 'column',
-              overflow: 'hidden',
-              px: '$2',
-              py: '$3',
-              textAlign: 'center',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap',
+              display: 'block',
+              width: '100%',
             }}
-            title={`${name}\n${typeName}`}
+            size={0}
           >
-            <Text
-              as="span"
-              css={{
-                backgroundColor: isActive
-                  ? '$senary'
-                  : isFocused
-                  ? BACKGROUND_COLORS_MAP[slug]
-                  : 'none',
-                color: isActive ? '$quaternary' : 'inherit',
-                display: 'block',
-                mb: '$1',
-                width: '100%',
-              }}
-              size={0}
-            >
-              {name}
-            </Text>
-            <Text
-              as="span"
-              css={{
-                color: '$mutedText',
-                display: 'block',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                width: '100%',
-              }}
-              size={0}
-            >
-              {typeName}
-            </Text>
-          </Label>
-        )}
-      </Box>
-    </div>
+            {name}
+          </Text>
+        </Label>
+      )}
+    </Box>
   );
 }
 
-export default memo(forwardRef(ConstructPartController));
+export default memo(ConstructPartController);

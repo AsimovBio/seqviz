@@ -1,8 +1,15 @@
 import ConstructDesigner from 'components/construct-designer';
 import { dashboardMachine } from 'components/dashboard/dashboard-machine';
 import { DashboardContext } from 'components/layout/dashboard-layout';
-import { construct } from 'test/__mocks__/construct';
-import { fireEvent, getByTestId, render, screen } from 'test/testUtils';
+import { construct, constructParts } from 'test/__mocks__/construct';
+import { partType } from 'test/__mocks__/parts';
+import {
+  fireEvent,
+  getByTestId,
+  render,
+  screen,
+  waitFor,
+} from 'test/testUtils';
 import { interpret } from 'xstate';
 
 jest.mock('utils/import');
@@ -23,15 +30,12 @@ describe('ConstructDesigner', () => {
       );
     };
 
-    return render(<ConstructDesigner construct={construct} />, {
-      wrapper: DashboardWrapper,
-    });
-  };
-
-  const clickPart = (part, triggerId) => {
-    const trigger = getByTestId(part, triggerId);
-    expect(trigger).toBeInTheDocument();
-    fireEvent.click(trigger);
+    return render(
+      <ConstructDesigner construct={construct} partTypes={[partType]} />,
+      {
+        wrapper: DashboardWrapper,
+      }
+    );
   };
 
   beforeAll(() => {
@@ -51,7 +55,7 @@ describe('ConstructDesigner', () => {
     renderComponent();
 
     expect(
-      await screen.findAllByTestId('construct-part-container')
+      await screen.findAllByTestId('mini-controller-container')
     ).toHaveLength(construct.parts.length);
 
     expect(sendSpy).toHaveBeenCalledWith({
@@ -64,40 +68,40 @@ describe('ConstructDesigner', () => {
   it('activates multiple parts at a time', () => {
     renderComponent();
 
-    const partControllers = screen.getAllByTestId('construct-part-container');
+    const partControllers = screen.getAllByTestId('mini-controller-container');
     const [firstPartController, secondPartController] = partControllers;
 
-    clickPart(firstPartController, 'part-controller-activate');
+    fireEvent.mouseMove(firstPartController, { buttons: 1 });
+    expect(firstPartController.classList.contains('active')).toBe(true);
 
-    expect(firstPartController.classList.contains('hovered')).toBe(true);
-
-    clickPart(secondPartController, 'part-controller-activate');
+    fireEvent.mouseMove(secondPartController, { buttons: 1 });
 
     expect(
       partControllers.filter((controller) =>
-        controller.classList.contains('hovered')
+        controller.classList.contains('active')
       )
     ).toHaveLength(2);
   });
 
-  xit('handles handles keyboard events for undo/redo', async () => {
-    const { container } = renderComponent();
+  it('handles handles keyboard events for undo/redo', async () => {
+    const { container, debug } = renderComponent();
     const event = {
       key: 'z',
       keyCode: 90,
       code: 'KeyZ',
       metaKey: true,
     };
-    const testId = 'construct-part-container';
+    const testId = 'mini-controller-container';
+    let updatedPartControllers;
 
-    const partControllers = screen.getAllByTestId(testId);
+    const partControllers = await screen.findAllByTestId(testId);
 
-    clickPart(partControllers[0], 'part-controller-activate');
+    fireEvent.mouseMove(partControllers[3], { buttons: 1 });
 
-    fireEvent.click(await screen.findByTestId('button-copy'));
-    fireEvent.click(await screen.findByTestId('button-paste'));
+    fireEvent.click(screen.getByTestId('button-copy'));
+    fireEvent.click(screen.getByTestId('button-paste'));
 
-    let updatedPartControllers = screen.getAllByTestId(testId);
+    updatedPartControllers = screen.getAllByTestId(testId);
 
     expect(updatedPartControllers.length).toEqual(partControllers.length + 1);
 
@@ -108,7 +112,7 @@ describe('ConstructDesigner', () => {
 
     expect(updatedPartControllers.length).toEqual(partControllers.length);
 
-    clickPart(updatedPartControllers[0], 'part-controller-activate');
+    fireEvent.mouseMove(updatedPartControllers[0], { buttons: 1 });
     fireEvent.click(await screen.findByTestId('button-delete'));
 
     updatedPartControllers = screen.getAllByTestId(testId);
@@ -130,25 +134,25 @@ describe('ConstructDesigner', () => {
     expect(updatedPartControllers.length).toEqual(partControllers.length - 1);
   });
 
-  xit('handles activation of newly added part', async () => {
+  it('handles activation of newly added part', async () => {
     renderComponent();
 
-    const partControllers = screen.getAllByTestId('construct-part-container');
+    const partControllers = screen.getAllByTestId('mini-controller-container');
     const [firstPartController] = partControllers;
 
-    clickPart(firstPartController, 'part-controller-activate');
+    fireEvent.mouseMove(firstPartController, { buttons: 1 });
 
-    expect(firstPartController.classList.contains('hovered')).toBe(true);
+    expect(firstPartController.classList.contains('active')).toBe(true);
 
     fireEvent.click(await screen.findByTestId('button-copy'));
     fireEvent.click(await screen.findByTestId('button-paste'));
 
     const updatedPartControllers = screen.getAllByTestId(
-      'construct-part-container'
+      'mini-controller-container'
     );
 
     const [_, newPartController] = updatedPartControllers;
 
-    expect(newPartController.classList.contains('hovered')).toBe(true);
+    expect(newPartController.classList.contains('active')).toBe(true);
   });
 });

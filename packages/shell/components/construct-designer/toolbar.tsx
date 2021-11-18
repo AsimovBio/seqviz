@@ -2,6 +2,7 @@ import type { Construct_Part } from 'models/graphql';
 import dynamic from 'next/dynamic';
 
 const Icon: any = dynamic(import('common/components/icon'), { ssr: false });
+
 const StyledButton: any = dynamic(
   async () => {
     const { StyledButton } = await import('common/components/toolbar');
@@ -43,9 +44,10 @@ export default function Toolbar({
     <StyledRoot
       css={{
         display: 'block',
-        flex: '0 0 4rem',
+        gridArea: 'toolbar',
         button: {
           display: 'inline-block',
+          margin: '1px',
         },
       }}
       data-testid="construct-toolbar"

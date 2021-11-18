@@ -13,7 +13,7 @@ jest.mock('xstate', () => {
 });
 
 describe('ConstructToolbar', () => {
-  const constructPartMachine = createPartMachine(constructPart);
+  const constructPartMachine = createPartMachine({ context: constructPart });
   const constructPartSvc = interpret(constructPartMachine);
   const onEventSpy = jest.fn();
   const onToggleLabelsSpy = jest.fn();
@@ -40,7 +40,7 @@ describe('ConstructToolbar', () => {
     constructPartSvc.stop();
   });
 
-  xit('handles events', async () => {
+  it('handles events', async () => {
     const trigger = await screen.findByTestId('button-toggle-flip');
     fireEvent.click(trigger);
 

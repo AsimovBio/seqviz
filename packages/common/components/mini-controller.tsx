@@ -1,10 +1,9 @@
-import type { SyntheticEvent } from 'react';
+import type { MouseEvent } from 'react';
+import { SyntheticEvent, useRef } from 'react';
 import { memo } from 'react';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { debounce } from 'ts-debounce';
 
 import { styled } from '../stitches.config';
-import Box from './box';
 import Button from './button';
 import Glyph from './glyph';
 
@@ -13,22 +12,27 @@ export type Props = {
     index: number;
     isActive: boolean;
     isColored: boolean;
-    isFocused: boolean;
     orientation: 'forward' | 'reverse';
     part: { type: { glyph: string; slug: string }; name: string };
   };
-  onEvent: ({ type: string, value: unknown }) => void;
+  onEvent: (event: string | { type: string; [key: string]: unknown }) => void;
 };
 
-const StyledContainer = styled(Box, {
+export const StyledPartWrapper = styled(Button, {
+  alignItems: 'center',
   display: 'flex',
   justifyContent: 'center',
+  lineHeight: 0,
+  padding: 0,
   position: 'relative',
-  button: {
-    position: 'relative',
-    zIndex: 1,
+  transformOrigin: 'center center',
+  transition: '$standard',
+  cursor: 'text',
+  '&.reverse': {
+    transform: 'rotate(180deg)',
   },
   '&::after': {
+    backgroundColor: '$text',
     content: '',
     height: '2px',
     position: 'absolute',
@@ -39,78 +43,77 @@ const StyledContainer = styled(Box, {
   },
 });
 
-const StyledPartWrapper = styled(Button, {
-  alignItems: 'center',
-  display: 'flex',
-  flex: 1,
-  justifyContent: 'center',
-  lineHeight: 0,
-  padding: 0,
-  transformOrigin: 'center center',
-  transition: '$standard',
-  '&.reverse': {
-    transform: 'rotate(180deg)',
-  },
-});
+const PART_TYPE_COLOR_MAP = {
+  '5-utr': '$senary',
+  'polyadenylation-signal': '$octonary',
+  '3-utr': '$senary',
+  cds: '$denary',
+  'pol-ii-promoter': '$nonary',
+  'fluorescent-protein': '$senary',
+  'selection-system': '$denary',
+  'heavy-chain': '$denary',
+  'light-chain': '$denary',
+  'nuclear-trafficking-tag': '$senary',
+};
 
 function MiniController({
   context: {
     isActive,
-    isFocused,
-    isColored,
     orientation,
     part: {
       name,
-      type: { glyph, slug },
+      type: { glyph },
     },
   },
   onEvent,
 }: Props) {
-  const [isHovering, setHovering] = useState<boolean>(false);
-  const handleEvent = ({ currentTarget: { name, value } }) => {
-    onEvent({ type: name, value: value ? value : undefined });
+  const handleMouseDown = () => {
+    onEvent({ type: 'SELECT_START' });
   };
 
-  const handleHover = (e: SyntheticEvent<HTMLDivElement>) => {
-    setHovering(e.type === 'mouseenter');
+  const handleMouseMove = (e: MouseEvent) => {
+    if (e.buttons !== 1 || e.isDefaultPrevented()) {
+      return;
+    }
+
+    onEvent('ACTIVATE');
   };
 
-  useEffect(() => {
-    onEvent({ type: 'FOCUS', value: isHovering });
+  const handleMouseEnter = ({ buttons }: MouseEvent) => {
+    if (buttons === 1) {
+      onEvent('SELECT_CHANGE');
+    }
+  };
 
-    return () => {
-      onEvent({ type: 'FOCUS', value: false });
-    };
-  }, [isHovering, onEvent]);
+  let className = orientation;
+
+  if (isActive) {
+    className += ' active';
+  }
 
   return (
-    <StyledContainer
-      className={isFocused || isActive ? 'hovered' : undefined}
+    <StyledPartWrapper
+      className={className}
       css={{
+        color: 'inherit',
+        mb: '$2',
+        '&, &:hover, &:focus, &.active, &:active': {
+          backgroundColor: isActive ? '$senary' : '$transparent',
+        },
+        svg: { fill: isActive ? '$senary' : '$overlay' },
         '&::after': {
-          backgroundColor: isActive ? '$quaternary' : '$text',
           width: name.includes('Backbone') ? '50%' : '100%',
-          left: name === "Backbone 5'" ? '50%' : '0',
-          right: name === "Backbone 3'" ? '50%' : '0',
+          left: name === "Backbone 5'" ? '50%' : 0,
+          right: name === "Backbone 3'" ? '50%' : 0,
         },
       }}
-      data-testid="construct-part-container"
-      onMouseEnter={handleHover}
-      onMouseLeave={handleHover}
+      data-testid="mini-controller-container"
+      onMouseDown={handleMouseDown}
+      onMouseEnter={handleMouseEnter}
+      onMouseMove={handleMouseMove}
     >
-      <StyledPartWrapper
-        className={orientation}
-        color="transparent"
-        css={{
-          color: isActive ? '$quaternary' : 'inherit',
-        }}
-        data-testid="part-controller-activate"
-        name="TOGGLE_ACTIVE"
-        onClick={handleEvent}
-      >
-        <Glyph glyph={glyph} name={name} />
-      </StyledPartWrapper>
-    </StyledContainer>
+      <Glyph glyph={glyph} name={name} />
+    </StyledPartWrapper>
   );
 }
 

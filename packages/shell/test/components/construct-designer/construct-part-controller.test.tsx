@@ -15,7 +15,7 @@ jest.mock('xstate', () => {
 });
 
 describe('ConstructPartController', () => {
-  const constructPartMachine = createPartMachine(constructPart);
+  const constructPartMachine = createPartMachine({ context: constructPart });
   const constructPartSvc = interpret(constructPartMachine);
 
   const renderComponent = () =>
@@ -42,18 +42,16 @@ describe('ConstructPartController', () => {
     renderComponent();
 
     await waitFor(() => {
-      const trigger = screen.getByTestId('part-controller-activate');
+      const trigger = screen.getByTestId('mini-controller-container');
       expect(trigger).toBeInTheDocument();
-      fireEvent.click(trigger);
+      fireEvent.mouseMove(trigger, { buttons: 1 });
     });
 
-    expect(sendSpy).toHaveBeenLastCalledWith({
-      type: 'TOGGLE_ACTIVE',
-    });
+    expect(sendSpy).toHaveBeenLastCalledWith('ACTIVATE');
 
-    expect(onTransitionSpy).toHaveBeenCalledWith(
+    expect(onTransitionSpy).toHaveBeenLastCalledWith(
       expect.objectContaining({ value: 'editing' }),
-      { type: 'TOGGLE_ACTIVE' }
+      { type: 'ACTIVATE' }
     );
   });
 });

@@ -1,11 +1,11 @@
 import type { Construct_Part } from 'models/graphql';
-import { actions, assign, createMachine, send, sendParent } from 'xstate';
+import { actions, assign, createMachine, sendParent } from 'xstate';
+
+const { choose } = actions;
 
 export type ConstructPartContext = {
   isActive: boolean;
   isColored: boolean;
-  isFocused: boolean;
-  isNew?: boolean;
 } & Construct_Part;
 
 interface ConstructPartStateSchema {
@@ -20,8 +20,10 @@ interface ConstructPartStateSchema {
 
 export type ConstructPartEvent = { type: string; [key: string]: any };
 
-export const createPartMachine = (constructPart) =>
-  createMachine<
+export const createPartMachine = (config) => {
+  const { context, ...restConfig } = config;
+
+  return createMachine<
     ConstructPartContext,
     ConstructPartEvent,
     ConstructPartStateSchema
@@ -30,10 +32,9 @@ export const createPartMachine = (constructPart) =>
       id: 'constructPart',
       initial: 'reading',
       context: {
-        ...constructPart,
+        ...context,
         isActive: false,
         isColored: false,
-        isFocused: false,
       },
       on: {
         ADD: {
@@ -50,45 +51,41 @@ export const createPartMachine = (constructPart) =>
           actions: ['record', 'setOrientation', 'commit'],
           cond: 'isActive',
         },
-        FOCUS: {
-          actions: 'setFocused',
-        },
         MOVE: {
           actions: ['move'],
           cond: 'isActive',
         },
-        RESET: {
-          target: 'reading',
+        SELECT_START: {
+          actions: ['selectStart'],
+        },
+        SELECT_CHANGE: {
+          actions: ['selectChange'],
+          cond: 'isActive',
         },
       },
       states: {
         reading: {
-          entry: actions.choose([
+          entry: choose([
             {
-              actions: send({ type: 'TOGGLE_ACTIVE' }),
-              cond: 'isNew',
+              actions: assign({ isActive: false }) as any,
             },
           ]),
           on: {
-            TOGGLE_ACTIVE: {
+            ACTIVATE: {
               actions: ['activate', 'engage'],
               target: 'editing',
             },
           },
         },
         editing: {
+          entry: assign({ isActive: true }) as any,
           on: {
+            RESET: {
+              target: 'reading',
+            },
             SWAP: {
               actions: 'swap',
               cond: 'isActive',
-            },
-            TOGGLE_ACTIVE: {
-              actions: [
-                assign({ isNew: false }) as any,
-                'activate',
-                'disengage',
-              ],
-              target: 'reading',
             },
             TOGGLE_COLOR: {
               actions: ['record', 'setColor', 'commit'],
@@ -100,11 +97,13 @@ export const createPartMachine = (constructPart) =>
           onEntry: 'delete',
         },
       },
+      ...restConfig,
     },
     {
       actions: {
-        activate: assign(({ isActive }) => ({
-          isActive: !isActive,
+        activate: sendParent((context) => ({
+          type: 'CONSTRUCTPART.ACTIVATE',
+          context,
         })),
         add: sendParent(({ index }) => ({
           type: 'CONSTRUCTPART.ADD',
@@ -138,9 +137,14 @@ export const createPartMachine = (constructPart) =>
           id,
           index: index + parseInt(value, 10),
         })),
-        setFocused: assign({
-          isFocused: (_, { value }) => value,
-        }),
+        selectStart: sendParent((context) => ({
+          type: 'CONSTRUCTPART.SELECT_START',
+          context,
+        })),
+        selectChange: sendParent((context) => ({
+          type: 'CONSTRUCTPART.SELECT_CHANGE',
+          context,
+        })),
         setColor: assign({
           isColored: (_, { value }) => value,
         }),
@@ -155,7 +159,7 @@ export const createPartMachine = (constructPart) =>
       },
       guards: {
         isActive: ({ isActive }) => isActive,
-        isNew: ({ isNew }) => isNew,
       },
     }
   );
+};

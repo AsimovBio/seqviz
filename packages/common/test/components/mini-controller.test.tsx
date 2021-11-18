@@ -10,7 +10,6 @@ describe('MiniController', () => {
         context={{
           index: 0,
           isActive: true,
-          isFocused: true,
           orientation: 'forward',
           part: { type: { glyph: '' }, name: '' },
         }}
@@ -25,18 +24,15 @@ describe('MiniController', () => {
 
   it('should call onEvent on mouseEnter/mouseLeave', async () => {
     renderComponent();
+    const container = await screen.findByTestId('mini-controller-container');
 
-    fireEvent.mouseEnter(await screen.findByTestId('construct-part-container'));
-    expect(onEventSpy).toHaveBeenCalledWith({ type: 'FOCUS', value: true });
+    fireEvent.mouseDown(container);
+    expect(onEventSpy).toHaveBeenLastCalledWith({ type: 'SELECT_START' });
 
-    fireEvent.mouseLeave(await screen.findByTestId('construct-part-container'));
-    expect(onEventSpy).toHaveBeenCalledWith({ type: 'FOCUS', value: false });
-  });
+    fireEvent.mouseEnter(container, { buttons: 1 });
+    expect(onEventSpy).toHaveBeenLastCalledWith('SELECT_CHANGE');
 
-  it('should call onEvent on button click', async () => {
-    renderComponent();
-
-    fireEvent.click(await screen.findByTestId('part-controller-activate'));
-    expect(onEventSpy).toHaveBeenLastCalledWith({ type: 'TOGGLE_ACTIVE' });
+    fireEvent.mouseMove(container, { buttons: 1 });
+    expect(onEventSpy).toHaveBeenLastCalledWith('ACTIVATE');
   });
 });

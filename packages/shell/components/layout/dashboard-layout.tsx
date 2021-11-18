@@ -6,16 +6,10 @@ import Layout from 'components/layout/base-layout';
 import PartsLibrary from 'components/part-library';
 import SequencePanel from 'components/sequence-panel';
 import Sidebar from 'components/sidebar';
-import type {
-  Construct,
-  ConstructQuery,
-  ConstructTemplatesQuery,
-  Folder,
-  FoldersQuery,
-  PartsQuery,
-} from 'models/graphql';
+import type { Construct, Folder } from 'models/graphql';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/router';
+import type { DashboardQuery } from 'pages';
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { createContext } from 'react';
@@ -27,10 +21,6 @@ const ScrollContainer: any = dynamic(
   () => import('common/components/scroll-container')
 );
 const Tabs: any = dynamic(getModule('./components/tabs'));
-type DashboardQuery = PartsQuery &
-  FoldersQuery &
-  ConstructQuery &
-  ConstructTemplatesQuery;
 
 export type Props = {
   data?: Partial<DashboardQuery>;
@@ -51,6 +41,7 @@ export function DashboardLayout({ children, data: fallbackData = {} }: Props) {
   const router = useRouter();
   const fid = router.query?.fid;
   const isNew = router.query ? router.query['is-new'] === 'true' : false;
+
   const { folder, template, construct } = fallbackData;
 
   const persistedConstructs =
@@ -167,16 +158,13 @@ export function DashboardLayout({ children, data: fallbackData = {} }: Props) {
         <Box
           as="main"
           css={{
-            backgroundColor: '$background',
             display: 'grid',
             flex: '1 1 auto',
             gridArea: 'main',
             gridGap: '$1',
-            gridTemplateAreas: '"construct" \
-              "library"',
+            gridTemplateAreas: '"construct" "library"',
             gridTemplateColumns: 'auto',
             gridTemplateRows: 'max-content 1fr',
-            justifyContent: 'stretch',
             position: 'relative',
           }}
         >
@@ -185,8 +173,7 @@ export function DashboardLayout({ children, data: fallbackData = {} }: Props) {
               display: 'flex',
               flexDirection: 'column',
               gridArea: 'construct',
-              minHeight: '15em',
-              overflow: 'hidden',
+              minHeight: '20rem',
             }}
           >
             {children}

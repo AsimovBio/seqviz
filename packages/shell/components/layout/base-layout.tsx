@@ -38,10 +38,8 @@ export default function Layout({ children }: Props) {
           display: 'grid',
           gridTemplateColumns: 'auto 1fr',
           gridTemplateRows: '2.75em 1fr',
-          gridTemplateAreas:
-            '"sidebar header" \
-            "sidebar main" \
-            "sidebar footer"',
+          gridTemplateAreas: '"sidebar header" \
+            "sidebar main"',
           gridGap: '$1',
           p: '$1',
           height: '100vh',

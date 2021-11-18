@@ -33,6 +33,7 @@ module.exports = {
         './components/icon': './components/icon',
         './components/mini-controller': './components/mini-controller',
         './components/popover': './components/popover',
+        './components/scroll-area': './components/scroll-area',
         './components/scroll-container': './components/scroll-container',
         './components/sequence-viewer': './components/sequence-viewer',
         './components/stitches-tag': './components/stitches-tag',

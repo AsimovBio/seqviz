@@ -2,12 +2,10 @@ import { createPartMachine } from 'components/construct-designer/construct-part-
 import { constructPart } from 'test/__mocks__/construct';
 
 describe('partMachine', () => {
-  const machine = createPartMachine(constructPart);
+  const machine = createPartMachine({ context: constructPart });
 
   it('should transition to "editing" on the "TOGGLE_ACTIVE" event', () => {
-    const actualState = machine.transition('reading', {
-      type: 'TOGGLE_ACTIVE',
-    });
+    const actualState = machine.transition('reading', 'ACTIVATE');
 
     expect(actualState.matches('editing')).toBeTruthy();
   });

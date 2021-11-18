@@ -3,7 +3,7 @@ import faker from 'faker';
 import { folder } from './folder';
 import { parts } from './parts';
 
-const constructParts = Array.from({ length: 10 }, (element, index) => ({
+export const constructParts = Array.from({ length: 10 }, (element, index) => ({
   construct_id: faker.datatype.uuid(),
   id: faker.datatype.uuid(),
   index,

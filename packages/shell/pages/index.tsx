@@ -5,6 +5,7 @@ import type {
   ConstructTemplatesQuery,
   FoldersQuery,
   PartsQuery,
+  PartTypesQuery,
 } from 'models/graphql';
 import { PartsDocument } from 'models/graphql';
 import { FoldersDocument } from 'models/graphql';
@@ -17,10 +18,11 @@ import requestUtil from 'utils/request';
 
 import type { NextPageWithLayout } from './_app';
 
-type DashboardQuery = PartsQuery &
+export type DashboardQuery = ConstructQuery &
+  ConstructTemplatesQuery &
   FoldersQuery &
-  ConstructQuery &
-  ConstructTemplatesQuery;
+  PartTypesQuery &
+  PartsQuery;
 
 export type Props = {
   data?: Partial<DashboardQuery>;
