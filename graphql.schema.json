@@ -1524,6 +1524,30 @@
             "deprecationReason": null
           },
           {
+            "name": "construct_part",
+            "description": "An object relationship",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "construct_part",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "construct_part_id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "uuid",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "created_at",
             "description": null,
             "args": [],
@@ -1598,18 +1622,6 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "part",
-            "description": "An object relationship",
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "part",
               "ofType": null
             },
             "isDeprecated": false,
@@ -2279,6 +2291,30 @@
             "deprecationReason": null
           },
           {
+            "name": "construct_part",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "construct_part_bool_exp",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "construct_part_id",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "uuid_comparison_exp",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "created_at",
             "description": null,
             "type": {
@@ -2344,18 +2380,6 @@
             "type": {
               "kind": "INPUT_OBJECT",
               "name": "String_comparison_exp",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "part",
-            "description": null,
-            "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "part_bool_exp",
               "ofType": null
             },
             "defaultValue": null,
@@ -2522,6 +2546,30 @@
             "deprecationReason": null
           },
           {
+            "name": "construct_part",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "construct_part_obj_rel_insert_input",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "construct_part_id",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "uuid",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "created_at",
             "description": null,
             "type": {
@@ -2587,18 +2635,6 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "part",
-            "description": null,
-            "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "part_obj_rel_insert_input",
               "ofType": null
             },
             "defaultValue": null,
@@ -2677,6 +2713,18 @@
           },
           {
             "name": "construct_id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "uuid",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "construct_part_id",
             "description": null,
             "args": [],
             "type": {
@@ -2832,6 +2880,18 @@
             "deprecationReason": null
           },
           {
+            "name": "construct_part_id",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "created_at",
             "description": null,
             "type": {
@@ -2963,6 +3023,18 @@
           },
           {
             "name": "construct_id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "uuid",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "construct_part_id",
             "description": null,
             "args": [],
             "type": {
@@ -3107,6 +3179,18 @@
           },
           {
             "name": "construct_id",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "construct_part_id",
             "description": null,
             "type": {
               "kind": "ENUM",
@@ -3387,6 +3471,30 @@
             "deprecationReason": null
           },
           {
+            "name": "construct_part",
+            "description": null,
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "construct_part_order_by",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "construct_part_id",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "order_by",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "created_at",
             "description": null,
             "type": {
@@ -3452,18 +3560,6 @@
             "type": {
               "kind": "ENUM",
               "name": "order_by",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "part",
-            "description": null,
-            "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "part_order_by",
               "ofType": null
             },
             "defaultValue": null,
@@ -3571,6 +3667,12 @@
             "deprecationReason": null
           },
           {
+            "name": "construct_part_id",
+            "description": "column name",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "created_at",
             "description": "column name",
             "isDeprecated": false,
@@ -3647,6 +3749,18 @@
           },
           {
             "name": "construct_id",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "uuid",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "construct_part_id",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -4162,6 +4276,12 @@
           },
           {
             "name": "construct_id",
+            "description": "column name",
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "construct_part_id",
             "description": "column name",
             "isDeprecated": false,
             "deprecationReason": null
@@ -11396,6 +11516,45 @@
         ],
         "inputFields": null,
         "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "construct_part_obj_rel_insert_input",
+        "description": "input type for inserting object relation for remote table \"construct_part\"",
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "data",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "INPUT_OBJECT",
+                "name": "construct_part_insert_input",
+                "ofType": null
+              }
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "on_conflict",
+            "description": "on conflict condition",
+            "type": {
+              "kind": "INPUT_OBJECT",
+              "name": "construct_part_on_conflict",
+              "ofType": null
+            },
+            "defaultValue": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
       },

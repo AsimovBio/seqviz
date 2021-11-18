@@ -37,6 +37,19 @@ export default function SequencePanel({ construct }) {
   const lastPart = activeParts[activeParts.length - 1];
   const cPartIds = activeParts.map(({ id }) => id);
 
+  const annotations = construct.annotations?.map(({ label, ...rest }) => ({
+    name: label,
+    ...rest,
+  }));
+
+  const {
+    start,
+    end,
+    id: ref,
+  } = annotations?.find((a) => a.construct_part_id === lastPart?.id) || {};
+
+  const selectedRange = { start, end, ref };
+
   return (
     <Box
       css={{
@@ -97,10 +110,28 @@ export default function SequencePanel({ construct }) {
           }))}
           css={{ width: '100%', height: '100%' }}
           name={construct.name}
-          search={{
-            query: lastPart?.part?.sequence,
-            mismatch: 0,
+          onSelection={(selection) => {
+            if (
+              selection.type === 'ANNOTATION' &&
+              selection.ref !== selectedRange?.ref
+            ) {
+              // Toggle active part if a different annotation was clicked within SeqViz
+              const newSelectedAnnotation = annotations.find(
+                (a) => a.id === selection.ref
+              );
+              const newSelectedPart = constructParts.find(
+                (cp) => cp.id === newSelectedAnnotation?.construct_part_id
+              );
+              newSelectedPart?.ref?.send({ type: 'TOGGLE_ACTIVE' });
+            } else if (
+              selection.type === 'SEQ' &&
+              selection.start === selection.end
+            ) {
+              // Deactivate currently active part if a single cursor was dropped in SeqViz
+              lastPart?.ref?.send({ type: 'TOGGLE_ACTIVE' });
+            }
           }}
+          selectedRange={selectedRange}
           seq={construct.sequence}
           viewer="linear"
         />

@@ -32,6 +32,8 @@ query Construct($id: uuid!) {
       start
       end
       label
+      id
+      construct_part_id
     }
   }
 }

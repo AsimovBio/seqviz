@@ -93,14 +93,15 @@ export type Annotation = {
   /** An object relationship */
   construct?: Maybe<Construct>;
   construct_id?: Maybe<Scalars['uuid']>;
+  /** An object relationship */
+  construct_part?: Maybe<Construct_Part>;
+  construct_part_id?: Maybe<Scalars['uuid']>;
   created_at: Scalars['timestamptz'];
   created_by_id?: Maybe<Scalars['Int']>;
   direction?: Maybe<Scalars['String']>;
   end?: Maybe<Scalars['Int']>;
   id: Scalars['uuid'];
   label?: Maybe<Scalars['String']>;
-  /** An object relationship */
-  part?: Maybe<Part>;
   part_id?: Maybe<Scalars['uuid']>;
   start?: Maybe<Scalars['Int']>;
   updated_at: Scalars['timestamptz'];
@@ -182,13 +183,14 @@ export type Annotation_Bool_Exp = {
   color?: Maybe<String_Comparison_Exp>;
   construct?: Maybe<Construct_Bool_Exp>;
   construct_id?: Maybe<Uuid_Comparison_Exp>;
+  construct_part?: Maybe<Construct_Part_Bool_Exp>;
+  construct_part_id?: Maybe<Uuid_Comparison_Exp>;
   created_at?: Maybe<Timestamptz_Comparison_Exp>;
   created_by_id?: Maybe<Int_Comparison_Exp>;
   direction?: Maybe<String_Comparison_Exp>;
   end?: Maybe<Int_Comparison_Exp>;
   id?: Maybe<Uuid_Comparison_Exp>;
   label?: Maybe<String_Comparison_Exp>;
-  part?: Maybe<Part_Bool_Exp>;
   part_id?: Maybe<Uuid_Comparison_Exp>;
   start?: Maybe<Int_Comparison_Exp>;
   updated_at?: Maybe<Timestamptz_Comparison_Exp>;
@@ -213,13 +215,14 @@ export type Annotation_Insert_Input = {
   color?: Maybe<Scalars['String']>;
   construct?: Maybe<Construct_Obj_Rel_Insert_Input>;
   construct_id?: Maybe<Scalars['uuid']>;
+  construct_part?: Maybe<Construct_Part_Obj_Rel_Insert_Input>;
+  construct_part_id?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
   direction?: Maybe<Scalars['String']>;
   end?: Maybe<Scalars['Int']>;
   id?: Maybe<Scalars['uuid']>;
   label?: Maybe<Scalars['String']>;
-  part?: Maybe<Part_Obj_Rel_Insert_Input>;
   part_id?: Maybe<Scalars['uuid']>;
   start?: Maybe<Scalars['Int']>;
   updated_at?: Maybe<Scalars['timestamptz']>;
@@ -231,6 +234,7 @@ export type Annotation_Max_Fields = {
   __typename?: 'annotation_max_fields';
   color?: Maybe<Scalars['String']>;
   construct_id?: Maybe<Scalars['uuid']>;
+  construct_part_id?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
   direction?: Maybe<Scalars['String']>;
@@ -246,6 +250,7 @@ export type Annotation_Max_Fields = {
 export type Annotation_Max_Order_By = {
   color?: Maybe<Order_By>;
   construct_id?: Maybe<Order_By>;
+  construct_part_id?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   created_by_id?: Maybe<Order_By>;
   direction?: Maybe<Order_By>;
@@ -262,6 +267,7 @@ export type Annotation_Min_Fields = {
   __typename?: 'annotation_min_fields';
   color?: Maybe<Scalars['String']>;
   construct_id?: Maybe<Scalars['uuid']>;
+  construct_part_id?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
   direction?: Maybe<Scalars['String']>;
@@ -277,6 +283,7 @@ export type Annotation_Min_Fields = {
 export type Annotation_Min_Order_By = {
   color?: Maybe<Order_By>;
   construct_id?: Maybe<Order_By>;
+  construct_part_id?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   created_by_id?: Maybe<Order_By>;
   direction?: Maybe<Order_By>;
@@ -309,13 +316,14 @@ export type Annotation_Order_By = {
   color?: Maybe<Order_By>;
   construct?: Maybe<Construct_Order_By>;
   construct_id?: Maybe<Order_By>;
+  construct_part?: Maybe<Construct_Part_Order_By>;
+  construct_part_id?: Maybe<Order_By>;
   created_at?: Maybe<Order_By>;
   created_by_id?: Maybe<Order_By>;
   direction?: Maybe<Order_By>;
   end?: Maybe<Order_By>;
   id?: Maybe<Order_By>;
   label?: Maybe<Order_By>;
-  part?: Maybe<Part_Order_By>;
   part_id?: Maybe<Order_By>;
   start?: Maybe<Order_By>;
   updated_at?: Maybe<Order_By>;
@@ -333,6 +341,8 @@ export enum Annotation_Select_Column {
   Color = 'color',
   /** column name */
   ConstructId = 'construct_id',
+  /** column name */
+  ConstructPartId = 'construct_part_id',
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
@@ -357,6 +367,7 @@ export enum Annotation_Select_Column {
 export type Annotation_Set_Input = {
   color?: Maybe<Scalars['String']>;
   construct_id?: Maybe<Scalars['uuid']>;
+  construct_part_id?: Maybe<Scalars['uuid']>;
   created_at?: Maybe<Scalars['timestamptz']>;
   created_by_id?: Maybe<Scalars['Int']>;
   direction?: Maybe<Scalars['String']>;
@@ -434,6 +445,8 @@ export enum Annotation_Update_Column {
   Color = 'color',
   /** column name */
   ConstructId = 'construct_id',
+  /** column name */
+  ConstructPartId = 'construct_part_id',
   /** column name */
   CreatedAt = 'created_at',
   /** column name */
@@ -1465,6 +1478,13 @@ export type Construct_Part_Mutation_Response = {
   affected_rows: Scalars['Int'];
   /** data from the rows affected by the mutation */
   returning: Array<Construct_Part>;
+};
+
+/** input type for inserting object relation for remote table "construct_part" */
+export type Construct_Part_Obj_Rel_Insert_Input = {
+  data: Construct_Part_Insert_Input;
+  /** on conflict condition */
+  on_conflict?: Maybe<Construct_Part_On_Conflict>;
 };
 
 /** on conflict condition type for table "construct_part" */
@@ -4901,6 +4921,8 @@ export type ConstructQuery = {
       start?: number | null | undefined;
       end?: number | null | undefined;
       label?: string | null | undefined;
+      id: any;
+      construct_part_id?: any | null | undefined;
     }>;
   }>;
 };
@@ -5250,6 +5272,8 @@ export const ConstructDocument = gql`
         start
         end
         label
+        id
+        construct_part_id
       }
     }
   }
