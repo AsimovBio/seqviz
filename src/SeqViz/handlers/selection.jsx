@@ -14,7 +14,7 @@ export const defaultSelection = {
   start: 0,
   end: 0,
   length: 0,
-  clockwise: true
+  clockwise: true,
 };
 
 /** Default context object */
@@ -34,7 +34,7 @@ const withSelectionHandler = WrappedComp =>
     static displayName = `SelectionHandler`;
 
     state = { ...defaultSelection };
-    
+
     /**
      * a map between the id of child elements and their associated SelectRanges
      * @type {Object.<string, SelectRange>}
@@ -63,15 +63,18 @@ const withSelectionHandler = WrappedComp =>
       document.removeEventListener("mouseup", this.stopDrag);
     };
 
-    componentDidUpdate = (prevProps) => {
+    componentDidUpdate = prevProps => {
       if (!isEqual(this.props.selectedRange, prevProps.selectedRange)) {
         if (!!this.props.selectedRange) {
-          this.setSelection(this.props.selectedRange);
-        } else  {
+          this.setSelection({
+            ...defaultSelection,
+            ...this.props.selectedRange
+          });
+        } else if (this.props.selection?.type === 'ANNOTATION' || this.props.selection?.type === '') {
           this.setSelection({ ...defaultSelection });
         }
       }
-    }
+    };
 
     /** Stop the current drag event from happening */
     stopDrag = () => {
@@ -95,7 +98,7 @@ const withSelectionHandler = WrappedComp =>
      * @param  {SelectRange} selectRange
      */
     inputRef = (ref, selectRange) => {
-      this.idToRange.set(ref, { ref, ...selectRange })
+      this.idToRange.set(ref, { ref, ...selectRange });
     };
 
     /**
@@ -129,7 +132,7 @@ const withSelectionHandler = WrappedComp =>
       let knownRange = this.dragEvent
         ? this.idToRange.get(e.currentTarget.id) // only look for SeqBlocks
         : this.idToRange.get(e.target.id) || this.idToRange.get(e.currentTarget.id); // elements and SeqBlocks
-      
+
       if (!knownRange) {
         return; // there isn't a known range with the id of the element
       }
@@ -157,7 +160,7 @@ const withSelectionHandler = WrappedComp =>
             ...knownRange,
             start: selectionStart,
             end: selectionEnd,
-            clockwise: clockwise
+            clockwise: clockwise,
           });
 
           this.dragEvent = false;
@@ -183,7 +186,7 @@ const withSelectionHandler = WrappedComp =>
             ...knownRange,
             start: selectionStart,
             end: selectionEnd,
-            clockwise: clockwise
+            clockwise: clockwise,
           });
 
           this.dragEvent = false;
@@ -191,7 +194,6 @@ const withSelectionHandler = WrappedComp =>
           break;
         }
         case "SEQ": {
-          console.log('SEQ SELECT', knownRange);
           if (Linear) {
             this.linearSeqEvent(e, knownRange);
           } else if (Circular) {
@@ -207,21 +209,19 @@ const withSelectionHandler = WrappedComp =>
      * Handle a sequence selection on a linear viewer
      */
     linearSeqEvent = (e, knownRange) => {
-      console.log('mouse event', e.target?.id, e.currentTarget?.id, e.type)
-
       const { selection } = this.props;
 
       const currBase = this.calculateBaseLinear(e, knownRange);
       const clockwiseDrag = selection.start !== null && currBase >= selection.start;
-      console.log('linearSeqEvent', knownRange, selection);
-      console.log('currBase', currBase);
+
       if (e.type === "mousedown" && currBase !== null) {
         // this is the start of a drag event
         this.setSelection({
           ...defaultSelection, // clears other meta
           start: e.shiftKey ? selection.start : currBase,
           end: currBase,
-          clockwise: clockwiseDrag
+          clockwise: clockwiseDrag,
+          type: 'SEQ'
         });
         this.dragEvent = true;
       } else if (this.dragEvent && currBase !== null) {
@@ -230,7 +230,8 @@ const withSelectionHandler = WrappedComp =>
           ...defaultSelection, // clears other meta
           start: selection.start,
           end: currBase,
-          clockwise: clockwiseDrag
+          clockwise: clockwiseDrag,
+          type: 'SEQ'
         });
       }
     };
@@ -259,7 +260,7 @@ const withSelectionHandler = WrappedComp =>
           start: selStart,
           end: currBase,
           ref: "",
-          clockwise: clockwise
+          clockwise: clockwise,
         });
       } else if (e.type === "mousemove" && this.dragEvent && currBase && currBase !== this.previousBase) {
         const increased = currBase > this.previousBase; // bases increased
@@ -329,7 +330,7 @@ const withSelectionHandler = WrappedComp =>
           start: start,
           end: end,
           ref: ref,
-          clockwise: clockwise
+          clockwise: clockwise,
         });
       }
     };
@@ -411,7 +412,7 @@ const withSelectionHandler = WrappedComp =>
 
       const { clockwise, start, end, ref, type, element, name } = {
         ...this.props.selection,
-        ...newSelection
+        ...newSelection,
       };
 
       const length = this.calcSelectionLength(start, end, clockwise);
@@ -430,7 +431,7 @@ const withSelectionHandler = WrappedComp =>
         end,
         length,
         clockwise,
-        element
+        element,
       };
 
       setSelection(selection);
