@@ -1,7 +1,6 @@
 {
   "name": "seqviz",
   "version": "3.0.43",
-  "private": false,
   "description": "A DNA sequence viewer supporting custom, GenBank, FASTA, NCBI accession, and iGEM input",
   "scripts": {
     "build": "rm -rf ./dist && webpack --config ./config/webpack.config.js --display-error-details --verbose",
@@ -157,7 +156,10 @@
     ]
   },
   "dependencies": {
+    "base64-js": "^1.5.1",
     "bufferpack": "0.0.6",
+    "ieee754": "^1.2.1",
+    "isarray": "^2.0.5",
     "node-fetch": "^2.6.1",
     "prop-types": "^15.7.2",
     "react-sizeme": "^2.6.12",
