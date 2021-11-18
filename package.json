@@ -132,6 +132,7 @@
     "buffer": "^6.0.3",
     "bufferpack": "0.0.6",
     "ieee754": "^1.2.1",
+    "isarray": "^2.0.5",
     "node-fetch": "^2.6.1",
     "prettier": "^2.5.1",
     "prop-types": "^15.7.2",

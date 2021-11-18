@@ -54,7 +54,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
     static displayName = `SelectionHandler`;
 
     state = { ...defaultSelection };
-    
+
     /**
      * a map between the id of child elements and their associated SelectRanges
      * @type {Object.<string, SelectRange>}
@@ -83,18 +83,22 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
       document.removeEventListener("mouseup", this.stopDrag);
     };
 
-    componentDidUpdate = (prevProps) => {
+    componentDidUpdate = prevProps => {
       // @ts-expect-error ts-migrate(2339) FIXME: Property 'selectedRange' does not exist on type 'Reado... Remove this comment to see the full error message
       if (!isEqual(this.props.selectedRange, prevProps.selectedRange)) {
         // @ts-expect-error ts-migrate(2339) FIXME: Property 'selectedRange' does not exist on type 'Reado... Remove this comment to see the full error message
-        if (this.props.selectedRange) {
-          // @ts-expect-error ts-migrate(2339) FIXME: Property 'selectedRange' does not exist on type 'Reado... Remove this comment to see the full error message
-          this.setSelection(this.props.selectedRange);
-        } else  {
+        if (!!this.props.selectedRange) {
+          this.setSelection({
+            ...defaultSelection,
+            // @ts-expect-error ts-migrate(2339) FIXME: Property 'selectedRange' does not exist on type 'Reado... Remove this comment to see the full error message
+            ...this.props.selectedRange
+          });
+        // @ts-expect-error ts-migrate(2339) FIXME: Property 'selection' does not exist on type 'Reado... Remove this comment to see the full error message
+        } else if (this.props.selection?.type === 'ANNOTATION' || this.props.selection?.type === '') {
           this.setSelection({ ...defaultSelection });
         }
       }
-    }
+    };
 
     /** Stop the current drag event from happening */
     stopDrag = () => {
@@ -118,7 +122,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
      * @param  {SelectRange} selectRange
      */
     inputRef = (ref: unknown, selectRange: object) => {
-      this.idToRange.set(ref, { ref, ...selectRange })
+      this.idToRange.set(ref, { ref, ...selectRange });
     };
 
     /**
@@ -151,7 +155,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
       let knownRange = this.dragEvent
         ? this.idToRange.get(e.currentTarget.id) // only look for SeqBlocks
         : this.idToRange.get(e.target.id) || this.idToRange.get(e.currentTarget.id); // elements and SeqBlocks
-      
+
       if (!knownRange) {
         return; // there isn't a known range with the id of the element
       }
@@ -213,7 +217,6 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
           break;
         }
         case "SEQ": {
-          console.log('SEQ SELECT', knownRange);
           if (Linear) {
             this.linearSeqEvent(e, knownRange);
           } else if (Circular) {
@@ -236,8 +239,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
 
       const currBase = this.calculateBaseLinear(e, knownRange);
       const clockwiseDrag = selection.start !== null && currBase >= selection.start;
-      console.log('linearSeqEvent', knownRange, selection);
-      console.log('currBase', currBase);
+
       if (e.type === "mousedown" && currBase !== null) {
         // this is the start of a drag event
         this.setSelection({
@@ -245,6 +247,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
           start: e.shiftKey ? selection.start : currBase,
           end: currBase,
           clockwise: clockwiseDrag,
+          type: 'SEQ'
         });
         this.dragEvent = true;
       } else if (this.dragEvent && currBase !== null) {
@@ -254,6 +257,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
           start: selection.start,
           end: currBase,
           clockwise: clockwiseDrag,
+          type: 'SEQ'
         });
       }
     };
