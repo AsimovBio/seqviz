@@ -2,6 +2,7 @@
   "name": "seqviz",
   "version": "3.0.43",
   "description": "A DNA sequence viewer supporting custom, GenBank, FASTA, NCBI accession, and iGEM input",
+  "private": true,
   "scripts": {
     "build": "rm -rf ./dist && webpack --config ./config/webpack.config.js --display-error-details --verbose",
     "demo": "cd demo && npm run deploy && cd .. && git add . && git commit -m \"Update demo\"",
@@ -15,6 +16,7 @@
     "test": "node ./config/scripts/test.js",
     "test:ci": "CI=true npm run test && npm run build"
   },
+  "npmClient": "yarn",
   "keywords": [
     "seqviz",
     "DNA",
@@ -180,7 +182,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.1.0",
     "babel-jest": "^26.6.3",
-    "babel-loader": "^8.2.1",
+    "babel-loader": "^8.2.3",
     "babel-plugin-module-resolver": "^3.1.1",
     "babel-plugin-named-asset-import": "^0.3.7",
     "babel-plugin-transform-imports": "^2.0.0",
@@ -206,6 +208,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-webpack-plugin": "^2.3.0",
     "file-loader": "^4.3.0",
+    "find-cache-dir": "^3.3.2",
     "fs-extra": "^8.1.0",
     "html-webpack-plugin": "^4.5.0",
     "identity-obj-proxy": "^3.0.0",
@@ -216,6 +219,7 @@
     "jest-watch-typeahead": "^0.6.1",
     "mini-css-extract-plugin": "^0.8.2",
     "optimize-css-assets-webpack-plugin": "^5.0.4",
+    "pify": "^5.0.0",
     "pnp-webpack-plugin": "^1.6.4",
     "postcss-flexbugs-fixes": "^4.2.1",
     "postcss-loader": "^3.0.0",
