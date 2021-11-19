@@ -20,7 +20,7 @@
   },
   "npmClient": "yarn",
   "workspaces": [
-    "packages/*"
+    "packages/!(seqviz*)"
   ],
   "devDependencies": {
     "@babel/core": "^7.15.5",
