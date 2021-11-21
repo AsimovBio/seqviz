@@ -34,6 +34,8 @@ export default function SequencePanel({ construct }) {
       },
     }) => isActive
   );
+
+  console.log('activeParts', activeParts);
   const lastPart = activeParts[activeParts.length - 1];
   const cPartIds = activeParts.map(({ id }) => id);
 
@@ -92,7 +94,7 @@ export default function SequencePanel({ construct }) {
                     pl: '$1',
                   }}
                   key={id}
-                  onClick={() => send({ type: 'TOGGLE_ACTIVE' })}
+                  onClick={() => send({ type: 'ACTIVATE' })}
                 >
                   <Icon css={{ size: 12 }} label="Plus" />
                   &nbsp;
@@ -122,13 +124,13 @@ export default function SequencePanel({ construct }) {
               const newSelectedPart = constructParts.find(
                 (cp) => cp.id === newSelectedAnnotation?.construct_part_id
               );
-              newSelectedPart?.ref?.send({ type: 'TOGGLE_ACTIVE' });
+              newSelectedPart?.ref?.send({ type: 'ACTIVATE' });
             } else if (
               selection.type === 'SEQ' &&
               selection.start === selection.end
             ) {
               // Deactivate currently active part if a single cursor was dropped in SeqViz
-              lastPart?.ref?.send({ type: 'TOGGLE_ACTIVE' });
+              lastPart?.ref?.send({ type: 'ACTIVATE' });
             }
           }}
           selectedRange={selectedRange}
