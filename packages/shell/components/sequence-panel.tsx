@@ -21,7 +21,7 @@ export default function SequencePanel({ construct }) {
     },
   } = context;
 
-  const [state] = useActor<any, any>(constructSvc);
+  const [state, sendToConstruct] = useActor<any, any>(constructSvc);
 
   const { constructParts } = state.context;
 
@@ -35,8 +35,6 @@ export default function SequencePanel({ construct }) {
     }) => isActive
   );
 
-  console.log('activeParts', activeParts);
-  const lastPart = activeParts[activeParts.length - 1];
   const cPartIds = activeParts.map(({ id }) => id);
 
   const annotations = construct.annotations?.map(({ label, ...rest }) => ({
@@ -44,13 +42,16 @@ export default function SequencePanel({ construct }) {
     ...rest,
   }));
 
-  const {
-    start,
-    end,
-    id: ref,
-  } = annotations?.find((a) => a.construct_part_id === lastPart?.id) || {};
+  const selectedAnnotations =
+    annotations
+      ?.filter((a) => cPartIds.includes(a.construct_part_id))
+      .sort((a) => a.start) || [];
 
-  const selectedRange = { start, end, ref };
+  const selectedRange = {
+    start: selectedAnnotations[0]?.start,
+    end: selectedAnnotations[selectedAnnotations.length - 1]?.end,
+    ref: selectedAnnotations[0]?.id,
+  };
 
   return (
     <Box
@@ -113,10 +114,7 @@ export default function SequencePanel({ construct }) {
           css={{ width: '100%', height: '100%' }}
           name={construct.name}
           onSelection={(selection) => {
-            if (
-              selection.type === 'ANNOTATION' &&
-              selection.ref !== selectedRange?.ref
-            ) {
+            if (selection.type === 'ANNOTATION') {
               // Toggle active part if a different annotation was clicked within SeqViz
               const newSelectedAnnotation = annotations.find(
                 (a) => a.id === selection.ref
@@ -130,7 +128,8 @@ export default function SequencePanel({ construct }) {
               selection.start === selection.end
             ) {
               // Deactivate currently active part if a single cursor was dropped in SeqViz
-              lastPart?.ref?.send({ type: 'ACTIVATE' });
+              // activeParts.forEach((ap) => ap.ref?.send({ type: 'ACTIVATE' }));
+              sendToConstruct({ type: 'RESET' });
             }
           }}
           selectedRange={selectedRange}
