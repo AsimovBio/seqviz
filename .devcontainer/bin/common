@@ -1,9 +1,0 @@
-devcontainer_bin_dir="$(cd $(dirname "${BASH_SOURCE[0]}") && pwd)"
-devcontainer_dir="$(cd "${devcontainer_bin_dir}/.." && pwd)"
-project_dir="$(cd "${devcontainer_dir}/.." && pwd)"
-workspaces_dir="$(cd "${project_dir}/.." && pwd)"
-
-abort() {
-  printf "%s\n" "$@"
-  exit 1
-}

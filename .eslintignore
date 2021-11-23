@@ -1,4 +1,0 @@
-**/package.json
-packages/**/@types/modules.d.ts
-packages/**/models/graphql.ts
-packages/seqviz
