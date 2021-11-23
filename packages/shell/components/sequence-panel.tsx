@@ -50,7 +50,11 @@ export default function SequencePanel({ construct }) {
   const selectedRange = {
     start: selectedAnnotations[0]?.start,
     end: selectedAnnotations[selectedAnnotations.length - 1]?.end,
-    ref: selectedAnnotations[0]?.id,
+    ref: selectedAnnotations.map(({ id }) => id),
+  };
+
+  const resetSelections = () => {
+    sendToConstruct({ type: 'RESET' });
   };
 
   return (
@@ -95,7 +99,10 @@ export default function SequencePanel({ construct }) {
                     pl: '$1',
                   }}
                   key={id}
-                  onClick={() => send({ type: 'ACTIVATE' })}
+                  onClick={() => {
+                    resetSelections();
+                    send({ type: 'ACTIVATE' });
+                  }}
                 >
                   <Icon css={{ size: 12 }} label="Plus" />
                   &nbsp;
@@ -116,20 +123,20 @@ export default function SequencePanel({ construct }) {
           onSelection={(selection) => {
             if (selection.type === 'ANNOTATION') {
               // Toggle active part if a different annotation was clicked within SeqViz
-              const newSelectedAnnotation = annotations.find(
-                (a) => a.id === selection.ref
+              const newSelectedAnnotation = annotations.find(({ id }) =>
+                selection.ref.includes(id)
               );
               const newSelectedPart = constructParts.find(
-                (cp) => cp.id === newSelectedAnnotation?.construct_part_id
+                ({ id }) => id === newSelectedAnnotation?.construct_part_id
               );
+              resetSelections();
               newSelectedPart?.ref?.send({ type: 'ACTIVATE' });
             } else if (
               selection.type === 'SEQ' &&
               selection.start === selection.end
             ) {
               // Deactivate currently active part if a single cursor was dropped in SeqViz
-              // activeParts.forEach((ap) => ap.ref?.send({ type: 'ACTIVATE' }));
-              sendToConstruct({ type: 'RESET' });
+              resetSelections();
             }
           }}
           selectedRange={selectedRange}
