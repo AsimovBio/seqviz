@@ -5,12 +5,13 @@ import Box from './box';
 
 type Props = { children: ReactNode; maxHeight?: string };
 
-const ScrollContainer = ({ children, maxHeight }: Props) => {
+const ScrollContainer = ({ children, maxHeight, ...props }: Props) => {
   if (maxHeight) {
     return <Box css={{ maxHeight, overflowY: 'auto' }}>{children}</Box>;
   }
   return (
     <Box
+      {...props}
       css={{
         flex: 1,
         overflowY: 'auto',

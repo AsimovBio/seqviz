@@ -66,50 +66,39 @@ export default function SequencePanel({ construct }) {
         my: '0.2em',
       }}
     >
-      <ScrollContainer>
+      <ScrollContainer css={{ maxWidth: '20rem', justifyContent: 'center' }}>
         <Box
           as="ul"
           css={{
             listStyle: 'none',
-
+            maxWidth: 'fit-content',
+            px: '$3',
             li: {
               display: 'flex',
               alignItems: 'center',
             },
           }}
         >
-          <Box
-            as="ul"
-            css={{
-              listStyle: 'none',
-              pl: '$2',
-              li: {
-                display: 'flex',
-                alignItems: 'center',
-              },
-            }}
-          >
-            {constructParts &&
-              constructParts.map(({ id, part: { name }, ref: { send } }) => (
-                <Box
-                  as="li"
-                  css={{
-                    backgroundColor: cPartIds.includes(id) ? '$senary' : '',
-                    cursor: 'pointer',
-                    pl: '$1',
-                  }}
-                  key={id}
-                  onClick={() => {
-                    resetSelections();
-                    send({ type: 'ACTIVATE' });
-                  }}
-                >
-                  <Icon css={{ size: 12 }} label="Plus" />
-                  &nbsp;
-                  {name}
-                </Box>
-              ))}
-          </Box>
+          {constructParts &&
+            constructParts.map(({ id, part: { name }, ref: { send } }) => (
+              <Box
+                as="li"
+                css={{
+                  backgroundColor: cPartIds.includes(id) ? '$senary' : '',
+                  cursor: 'pointer',
+                  pl: '$1',
+                }}
+                key={id}
+                onClick={() => {
+                  resetSelections();
+                  send({ type: 'ACTIVATE' });
+                }}
+              >
+                <Icon css={{ size: 12 }} label="Plus" />
+                &nbsp;
+                {name}
+              </Box>
+            ))}
         </Box>
       </ScrollContainer>
       <Box css={{ flex: 2 }}>
