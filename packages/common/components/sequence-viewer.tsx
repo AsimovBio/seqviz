@@ -1,7 +1,15 @@
 import { SeqViz } from 'seqviz';
 
-import { styled } from '../stitches.config';
+import { styled, theme } from '../stitches.config';
 
+const {
+  colors: {
+    senary: { value: senaryColor },
+    quaternary: { value: quaternaryColor },
+  },
+} = theme;
+
+// TODO: Replace these colors with theme colors
 const DEFAULT_COLORS = [
   // These colors are copied from the SeqViz source code
   // https://github.com/Lattice-Automation/seqviz/blob/d40a3b01b70a238badb08b08538b68d2ded777fb/src/utils/colors.js#L54
@@ -43,6 +51,10 @@ export default function SequenceViwer({
     <StyledSeqViz
       colors={colors}
       direction={DIR_MAP.get(direction) ?? 0}
+      selectionColors={{
+        block: senaryColor,
+        edge: quaternaryColor,
+      }}
       seq={sequence}
       {...props}
     />
