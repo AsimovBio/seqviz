@@ -50,7 +50,7 @@ export default function SequencePanel({ construct }) {
   const selectedRange = {
     start: selectedAnnotations[0]?.start,
     end: selectedAnnotations[selectedAnnotations.length - 1]?.end,
-    ref: selectedAnnotations.map(({ id }) => id),
+    ref: selectedAnnotations.map(({ id }) => id).join(','),
   };
 
   const resetSelections = () => {
