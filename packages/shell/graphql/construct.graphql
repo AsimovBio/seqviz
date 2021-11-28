@@ -5,6 +5,15 @@ fragment ConstructFields on construct {
   sequence_length
 }
 
+fragment AnnotationFields on annotation {
+  construct_id
+  construct_part_id
+  end
+  id
+  label
+  start
+}
+
 fragment ConstructPartFields on construct_part {
   construct_id
   id
@@ -29,11 +38,7 @@ query Construct($id: uuid!) {
       }
     }
     annotations {
-      start
-      end
-      label
-      id
-      construct_part_id
+      ...AnnotationFields
     }
   }
 }
@@ -103,11 +108,7 @@ mutation InsertAnnotation(
     }
   ) {
     returning {
-      construct_id
-      label
-      id
-      start
-      end
+      ...AnnotationFields
     }
   }
 }

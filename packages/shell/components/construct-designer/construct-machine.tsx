@@ -132,18 +132,7 @@ const persist = ({ constructId, constructParts }) =>
           insert_annotation: { returning: updatedAnnotations },
         } = await sdk.InsertAnnotation({
           construct_id: constructId,
-          input: getAnnotationsFromParts(
-            constructParts.map(
-              ({
-                ref: {
-                  state: {
-                    context: { part },
-                  },
-                },
-              }) => part
-            ),
-            constructId
-          ),
+          input: getAnnotationsFromParts(updatedConstructParts, constructId),
         });
 
         return {

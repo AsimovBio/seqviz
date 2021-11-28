@@ -4858,6 +4858,16 @@ export type ConstructFieldsFragment = {
   sequence_length?: number | null | undefined;
 };
 
+export type AnnotationFieldsFragment = {
+  __typename?: 'annotation';
+  construct_id?: any | null | undefined;
+  construct_part_id?: any | null | undefined;
+  end?: number | null | undefined;
+  id: any;
+  label?: string | null | undefined;
+  start?: number | null | undefined;
+};
+
 export type ConstructPartFieldsFragment = {
   __typename?: 'construct_part';
   construct_id: any;
@@ -4918,11 +4928,12 @@ export type ConstructQuery = {
     }>;
     annotations: Array<{
       __typename?: 'annotation';
-      start?: number | null | undefined;
-      end?: number | null | undefined;
-      label?: string | null | undefined;
-      id: any;
+      construct_id?: any | null | undefined;
       construct_part_id?: any | null | undefined;
+      end?: number | null | undefined;
+      id: any;
+      label?: string | null | undefined;
+      start?: number | null | undefined;
     }>;
   }>;
 };
@@ -5069,10 +5080,11 @@ export type InsertAnnotationMutation = {
         returning: Array<{
           __typename?: 'annotation';
           construct_id?: any | null | undefined;
-          label?: string | null | undefined;
-          id: any;
-          start?: number | null | undefined;
+          construct_part_id?: any | null | undefined;
           end?: number | null | undefined;
+          id: any;
+          label?: string | null | undefined;
+          start?: number | null | undefined;
         }>;
       }
     | null
@@ -5214,6 +5226,16 @@ export const ConstructFieldsFragmentDoc = gql`
     sequence_length
   }
 `;
+export const AnnotationFieldsFragmentDoc = gql`
+  fragment AnnotationFields on annotation {
+    construct_id
+    construct_part_id
+    end
+    id
+    label
+    start
+  }
+`;
 export const ConstructPartFieldsFragmentDoc = gql`
   fragment ConstructPartFields on construct_part {
     construct_id
@@ -5269,17 +5291,14 @@ export const ConstructDocument = gql`
         }
       }
       annotations {
-        start
-        end
-        label
-        id
-        construct_part_id
+        ...AnnotationFields
       }
     }
   }
   ${ConstructFieldsFragmentDoc}
   ${ConstructPartFieldsFragmentDoc}
   ${PartFieldsFragmentDoc}
+  ${AnnotationFieldsFragmentDoc}
 `;
 export const ConstructTemplatesDocument = gql`
   query ConstructTemplates {
@@ -5355,14 +5374,11 @@ export const InsertAnnotationDocument = gql`
       }
     ) {
       returning {
-        construct_id
-        label
-        id
-        start
-        end
+        ...AnnotationFields
       }
     }
   }
+  ${AnnotationFieldsFragmentDoc}
 `;
 export const FoldersDocument = gql`
   query Folders {

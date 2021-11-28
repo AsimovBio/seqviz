@@ -2,6 +2,7 @@ declare module '*/construct.graphql' {
   import { DocumentNode } from 'graphql';
   const defaultDocument: DocumentNode;
   export const ConstructFields: DocumentNode;
+  export const AnnotationFields: DocumentNode;
   export const ConstructPartFields: DocumentNode;
   export const Construct: DocumentNode;
   export const ConstructTemplates: DocumentNode;

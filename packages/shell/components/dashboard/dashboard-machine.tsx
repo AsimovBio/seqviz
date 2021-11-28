@@ -42,19 +42,32 @@ export async function createNew(_, { parts, fid, value }: DashboardEvent) {
 
         ({ insert_construct_one: newConstruct } = await sdk.CreateConstruct({
           input: {
-            annotations: {
-              data: getAnnotationsFromParts(parts.map(({ part }) => part)),
-            },
             folder_id: fid,
             name: 'Untitled construct',
-            parts: {
-              data: parts.map(({ construct_id, part, id, ...rest }) => rest),
-            },
             sequence: parts
               .map(({ part: { sequence = '' } }) => sequence)
               .join(''),
           },
         }));
+
+        const { id: constructId } = newConstruct;
+
+        // ConstructParts and Annotations are separate queries because Annotations rely on new ConstructPart id
+        // TODO: Rework queries / Hasura so that ConstructParts and Annotations are properly created on CreateConstruct mutation
+        const {
+          insert_construct_part: { returning: updatedConstructParts },
+        } = await sdk.InsertConstructPart({
+          construct_id: constructId,
+          input: parts.map(({ part, id, ...rest }) => ({
+            ...rest,
+            construct_id: constructId,
+          })),
+        });
+
+        await sdk.InsertAnnotation({
+          construct_id: constructId,
+          input: getAnnotationsFromParts(updatedConstructParts, constructId),
+        });
 
         const activeFolder = folders.find(({ id }) => id === fid);
 
