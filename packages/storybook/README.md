@@ -1,1 +1,0 @@
-A federated host module for displaying Kernel UI components in Storybook.
