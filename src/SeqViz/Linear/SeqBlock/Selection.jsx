@@ -15,7 +15,7 @@ export class Edges extends React.PureComponent {
   id = randomid();
 
   render() {
-    const { findXAndWidth, selectEdgeHeight, firstBase, lastBase, fullSeq } = this.props;
+    const { findXAndWidth, selectEdgeHeight, firstBase, lastBase, fullSeq, selectionColors } = this.props;
     const { ref, start, end, clockwise } = this.context;
 
     let startEdge = null;
@@ -72,7 +72,7 @@ export class Edges extends React.PureComponent {
     const rect = {
       y: "-10",
       style: {
-        fill: "black",
+        fill: selectionColors.edge,
         width: start === end ? 1 : 2
       },
       shapeRendering: "crispEdges"
@@ -96,7 +96,7 @@ export class Block extends React.PureComponent {
   id = randomid();
 
   render() {
-    const { findXAndWidth, selectHeight, firstBase, lastBase, fullSeq } = this.props;
+    const { findXAndWidth, selectHeight, firstBase, lastBase, fullSeq, selectionColors } = this.props;
     const { clockwise, ref } = this.context;
     let { start, end } = this.context;
 
@@ -132,6 +132,7 @@ export class Block extends React.PureComponent {
               y={-10}
               height={selectHeight + 5}
               width={secBlockWidth}
+              fill={selectionColors.block}
               className="la-vz-linear-sel-block"
             />
           );
@@ -163,6 +164,7 @@ export class Block extends React.PureComponent {
               height={selectHeight + 5}
               width={secBlockWidth}
               className="la-vz-linear-sel-block"
+              fill={selectionColors.block}
               shapeRendering="auto"
             />
           );
@@ -185,6 +187,7 @@ export class Block extends React.PureComponent {
       <React.Fragment>
         <rect
           className="la-vz-linear-sel-block"
+          fill={selectionColors.block}
           x={x}
           y={-10}
           height={selectHeight + 5}
