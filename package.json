@@ -1,8 +1,8 @@
 {
   "name": "seqviz",
   "version": "3.0.43",
+  "private": false,
   "description": "A DNA sequence viewer supporting custom, GenBank, FASTA, NCBI accession, and iGEM input",
-  "private": true,
   "scripts": {
     "build": "rm -rf ./dist && webpack --config ./config/webpack.config.js --display-error-details --verbose",
     "demo": "cd demo && npm run deploy && cd .. && git add . && git commit -m \"Update demo\"",
@@ -16,7 +16,6 @@
     "test": "node ./config/scripts/test.js",
     "test:ci": "CI=true npm run test && npm run build"
   },
-  "npmClient": "yarn",
   "keywords": [
     "seqviz",
     "DNA",
