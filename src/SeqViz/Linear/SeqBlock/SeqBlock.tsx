@@ -41,6 +41,10 @@ interface SeqBlockProps {
   reversePrimerRows: Primer[];
   searchRows: SearchResult[];
   selection: SeqVizSelection;
+  selectionColors: {
+    block: string;
+    edge: string;
+  };
   seq: string;
   seqFontSize: number;
   showComplement: boolean;
@@ -176,6 +180,7 @@ export default class SeqBlock extends React.PureComponent<SeqBlockProps> {
       showComplement,
       showPrimers,
       selection,
+      selectionColors,
       seqFontSize,
       firstBase,
       size,
@@ -295,6 +300,7 @@ export default class SeqBlock extends React.PureComponent<SeqBlockProps> {
         <g transform="translate(0, 10)">
           <Selection.Block
             selection={selection}
+            selectionColors={selectionColors}
             selectHeight={selectHeight}
             findXAndWidth={this.findXAndWidth}
             inputRef={inputRef}
@@ -308,6 +314,7 @@ export default class SeqBlock extends React.PureComponent<SeqBlockProps> {
             findXAndWidth={this.findXAndWidth}
             firstBase={firstBase}
             fullSeq={fullSeq}
+            selectionColors={selectionColors}
             selectEdgeHeight={selectEdgeHeight}
           />
           <LinearFind

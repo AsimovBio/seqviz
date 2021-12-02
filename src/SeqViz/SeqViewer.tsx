@@ -18,6 +18,10 @@ interface SeqViewerProps {
   selection: SeqVizSelection;
   setSelection: (update: SeqVizSelection) => void;
   annotations: Annotation[];
+  selectionColors: {
+    block: string;
+    edge: string;
+  };
   showComplement: boolean;
   seq: string;
   cutSites: ICutSite[];

@@ -50,6 +50,10 @@ interface LinearProps {
   showIndex: boolean;
   showPrimers: boolean;
   selection: SeqVizSelection;
+  selectionColors: {
+    block: string;
+    edge: string;
+  };
   size: ISize;
   totalRows: number;
   translations: Translation[];
@@ -112,6 +116,7 @@ class Linear extends React.Component<LinearProps> {
       size,
       onUnmount,
       search,
+      selectionColors
     } = this.props;
 
     let { primers } = this.props;
@@ -249,6 +254,7 @@ class Linear extends React.Component<LinearProps> {
           y={yDiff}
           zoom={zoom}
           zoomed={zoomed}
+          selectionColors={selectionColors}
         />
       );
       yDiff += blockHeights[i];

@@ -43,6 +43,10 @@ export interface SeqVizProps {
     end: number,
     ref: string
   },
+  selectionColors: {
+    block: string,
+    edge: string
+  },
   showComplement: boolean;
   showAnnotations: boolean;
   showIndex: boolean;
@@ -77,6 +81,7 @@ export default class SeqViz extends React.Component<SeqVizProps, any> {
     onSelection: (selection: SeqVizSelection) => selection,
     rotateOnScroll: true,
     search: { query: "", mismatch: 0 },
+    selectionColors: {block: '#def6ff', edge: '#000'},
     seq: "",
     showComplement: true,
     showIndex: true,
@@ -247,7 +252,7 @@ export default class SeqViz extends React.Component<SeqVizProps, any> {
   };
 
   render() {
-    const { style, viewer } = this.props;
+    const { style, viewer, selectionColors } = this.props;
     let { compSeq, name, seq, showComplement } = this.props;
     const { centralIndex, cutSites, part, search, selection } = this.state;
     let { annotations } = this.state;
@@ -275,6 +280,7 @@ export default class SeqViz extends React.Component<SeqVizProps, any> {
         {...this.props}
         search={search}
         selection={selection}
+        selectionColors={selectionColors}
         setSelection={this.setSelection}
         annotations={annotations}
         showComplement={showComplement}

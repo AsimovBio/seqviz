@@ -8,6 +8,10 @@ import { FindXAndWidthType } from "./SeqBlock";
 interface EdgesProps {
   findXAndWidth: FindXAndWidthType;
   selectEdgeHeight: number;
+  selectionColors: {
+    block: string;
+    edge: string;
+  },
   firstBase: number;
   lastBase: number;
   fullSeq: string;
@@ -25,7 +29,7 @@ export class Edges extends React.PureComponent<EdgesProps> {
   id = randomid();
 
   render() {
-    const { findXAndWidth, selectEdgeHeight, firstBase, lastBase, fullSeq } = this.props;
+    const { findXAndWidth, selectEdgeHeight, firstBase, lastBase, fullSeq, selectionColors } = this.props;
     const { ref, start, end, clockwise } = this.context;
 
     let startEdge: number | undefined;
@@ -87,8 +91,8 @@ export class Edges extends React.PureComponent<EdgesProps> {
     const rect = {
       y: "-10",
       style: {
-        fill: "black",
-        width: start === end ? 1 : 2,
+        fill: selectionColors.edge,
+        width: start === end ? 1 : 2
       },
       shapeRendering: "crispEdges",
     };
@@ -111,6 +115,10 @@ interface BlockProps {
   lastBase: number;
   fullSeq: string;
   selection: SeqVizSelection;
+  selectionColors: {
+    block: string;
+    edge: string;
+  },
   inputRef: InputRefFuncType;
   onUnmount: (a: string) => void;
 }
@@ -121,7 +129,7 @@ export class Block extends React.PureComponent<BlockProps> {
   id = randomid();
 
   render() {
-    const { findXAndWidth, selectHeight, firstBase, lastBase, fullSeq } = this.props;
+    const { findXAndWidth, selectHeight, firstBase, lastBase, fullSeq, selectionColors } = this.props;
     const { clockwise, ref } = this.context;
     let { start, end } = this.context;
 
@@ -157,6 +165,7 @@ export class Block extends React.PureComponent<BlockProps> {
               y={-10}
               height={selectHeight + 5}
               width={secBlockWidth}
+              fill={selectionColors.block}
               className="la-vz-linear-sel-block"
             />
           );
@@ -188,6 +197,7 @@ export class Block extends React.PureComponent<BlockProps> {
               height={selectHeight + 5}
               width={secBlockWidth}
               className="la-vz-linear-sel-block"
+              fill={selectionColors.block}
               shapeRendering="auto"
             />
           );
@@ -204,23 +214,22 @@ export class Block extends React.PureComponent<BlockProps> {
     }
 
     // nothing was set for this selection block
-    if (!x && !width) {
-      return null;
-    } else {
-      return (
-        <>
-          <rect
-            className="la-vz-linear-sel-block"
-            x={x || undefined}
-            y={-10}
-            height={selectHeight + 5}
-            width={width || undefined}
-            shapeRendering="auto"
-          />
-          {secondBlock}
-        </>
-      );
-    }
+    if (!x && !width) return null;
+
+    return (
+      <React.Fragment>
+        <rect
+          className="la-vz-linear-sel-block"
+          fill={selectionColors.block}
+          x={x || undefined}
+          y={-10}
+          height={selectHeight + 5}
+          width={width || undefined}
+          shapeRendering="auto"
+        />
+        {secondBlock}
+      </React.Fragment>
+    );
   }
 }
 
