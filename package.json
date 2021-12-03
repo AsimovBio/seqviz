@@ -102,6 +102,7 @@
     }
   },
   "prettier": {
+    "trailingComma": "none",
     "arrowParens": "avoid",
     "printWidth": 120
   },
