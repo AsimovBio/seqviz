@@ -68,10 +68,12 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
 
     if (!isEqual(selection, prevProps.selection)) {
       const targetSeqBlockIndex = seqBlocks.findIndex(block => {
-        const { props: { firstBase, bpsPerBlock } } = block;
+        const {
+          props: { firstBase, bpsPerBlock }
+        } = block;
         return selection.start >= firstBase && selection.start < firstBase + bpsPerBlock;
       });
-      if ((targetSeqBlockIndex > -1) && !visibleBlocks.includes(targetSeqBlockIndex)) {
+      if (targetSeqBlockIndex > -1 && !visibleBlocks.includes(targetSeqBlockIndex)) {
         this.scrollToIndex(targetSeqBlockIndex);
       }
     }
@@ -102,7 +104,7 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
     return { blockY, blockIndex };
   };
 
-  scrollToIndex = (index) => {
+  scrollToIndex = index => {
     const {
       seqBlocks,
       blockHeights,
@@ -111,12 +113,6 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
     } = this.props;
     const { visibleBlocks } = this.state;
     const { clientHeight, scrollHeight } = this.scroller.current;
-    // const centralIndex = this.context.linear;
-
-    // find the first block that contains the new central index
-    // const centerBlockIndex = seqBlocks.findIndex(
-    //   block => block.props.firstBase <= centralIndex && block.props.firstBase + bpsPerBlock >= centralIndex
-    // );
 
     // build up the list of blocks that are visible just beneath this first block
     let newVisibleBlocks = [];
@@ -151,7 +147,7 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
         visibleBlocks: newVisibleBlocks
       });
     }
-  }
+  };
 
   /**
    * Scroll to centralIndex. Likely from circular clicking on an element
