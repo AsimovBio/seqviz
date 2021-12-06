@@ -8,6 +8,7 @@
 
 // from http://arep.med.harvard.edu/labgc/adnan/projects/Utilities/revcomp.html
 const DNAComplement = {
+  "+": "+",
   a: "t",
   t: "a",
   c: "g",
