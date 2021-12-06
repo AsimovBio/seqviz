@@ -160,6 +160,7 @@
   "dependencies": {
     "base64-js": "^1.5.1",
     "bufferpack": "0.0.6",
+    "events": "^3.3.0",
     "ieee754": "^1.2.1",
     "isarray": "^2.0.5",
     "node-fetch": "^2.6.1",

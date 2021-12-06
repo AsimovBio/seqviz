@@ -8,6 +8,7 @@
 
 // from http://arep.med.harvard.edu/labgc/adnan/projects/Utilities/revcomp.html
 const DNAComplement = {
+  "+": "+",
   a: "t",
   t: "a",
   c: "g",
@@ -82,10 +83,7 @@ export const dnaComplement = origSeq => {
  */
 export const reverseComplement = inputSeq => {
   const { compSeq } = dnaComplement(inputSeq);
-  return compSeq
-    .split("")
-    .reverse()
-    .join("");
+  return compSeq.split("").reverse().join("");
 };
 
 export const extractDate = data => {
