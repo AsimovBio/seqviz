@@ -166,8 +166,7 @@
     "prop-types": "^15.7.2",
     "react-sizeme": "^2.6.12",
     "string_decoder": "^1.3.0",
-    "xml2js": "^0.4.23",
-    "yarn": "^1.22.17"
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
@@ -272,6 +271,5 @@
       "name": "Raymond Chung",
       "url": "https://github.com/RazzYoshi"
     }
-  ],
-  "packageManager": "yarn@3.1.1"
+  ]
 }
