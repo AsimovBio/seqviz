@@ -43,7 +43,7 @@ export default class InfiniteScroll extends React.PureComponent {
       return;
     }
 
-    const { seqBlocks, size } = this.props;
+    const { selection, seqBlocks, size } = this.props;
     const { centralIndex, visibleBlocks } = this.state;
 
     if (this.context && centralIndex !== this.context.linear) {
@@ -52,6 +52,18 @@ export default class InfiniteScroll extends React.PureComponent {
       this.handleScrollOrResize(); // reset
     } else if (isEqual(prevState.visibleBlocks, visibleBlocks)) {
       this.restoreSnapshot(snapshot); // something, like ORFs or index view, has changed
+    }
+
+    if (!isEqual(selection, prevProps.selection)) {
+      const targetSeqBlockIndex = seqBlocks.findIndex(block => {
+        const {
+          props: { firstBase, bpsPerBlock }
+        } = block;
+        return selection.start >= firstBase && selection.start < firstBase + bpsPerBlock;
+      });
+      if (targetSeqBlockIndex > -1 && !visibleBlocks.includes(targetSeqBlockIndex)) {
+        this.scrollToIndex(targetSeqBlockIndex);
+      }
     }
   };
 
@@ -78,6 +90,51 @@ export default class InfiniteScroll extends React.PureComponent {
 
     const blockY = top - accumulatedY; // last extra distance
     return { blockY, blockIndex };
+  };
+
+  scrollToIndex = index => {
+    const {
+      seqBlocks,
+      blockHeights,
+      totalHeight,
+      size: { height }
+    } = this.props;
+    const { visibleBlocks } = this.state;
+    const { clientHeight, scrollHeight } = this.scroller.current;
+
+    // build up the list of blocks that are visible just beneath this first block
+    let newVisibleBlocks = [];
+    if (scrollHeight <= clientHeight) {
+      newVisibleBlocks = visibleBlocks;
+    } else if (index > -1) {
+      const centerBlock = seqBlocks[index];
+
+      // create some padding above the new center block
+      const topAdjust = index > 0 ? blockHeights[index - 1] : 0;
+      let top = centerBlock.props.y - topAdjust;
+      let bottom = top + height;
+      if (bottom > totalHeight) {
+        bottom = totalHeight;
+        top = totalHeight - height;
+      }
+      blockHeights.reduce((total, h, i) => {
+        if (total >= top && total <= bottom) {
+          newVisibleBlocks.push(i);
+        }
+        return total + h;
+      }, 0);
+
+      // Don't scroll exactly to centralIndex because most of the time
+      // item of interest is at centralIndex and if this is at the top
+      // it can be obscured by things like the search box
+      this.scroller.current.scrollTop = centerBlock.props.y - blockHeights[0] / 2;
+    }
+
+    if (!isEqual(newVisibleBlocks, visibleBlocks)) {
+      this.setState({
+        visibleBlocks: newVisibleBlocks
+      });
+    }
   };
 
   /**

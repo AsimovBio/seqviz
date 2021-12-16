@@ -47,6 +47,15 @@ export default class SeqViz extends React.Component {
       query: PropTypes.string,
       mismatch: PropTypes.number
     }).isRequired,
+    selectedRange: PropTypes.shape({
+      start: PropTypes.number,
+      end: PropTypes.number,
+      ref: PropTypes.string
+    }),
+    selectionColors: PropTypes.shape({
+      block: PropTypes.string,
+      edge: PropTypes.string
+    }),
     seq: PropTypes.string,
     showComplement: PropTypes.bool.isRequired,
     showIndex: PropTypes.bool.isRequired,
@@ -82,6 +91,7 @@ export default class SeqViz extends React.Component {
     onSelection: selection => selection,
     rotateOnScroll: true,
     search: { query: "", mismatch: 0 },
+    selectionColors: {block: '#def6ff', edge: '#000'},
     seq: "",
     showComplement: true,
     showIndex: true,
@@ -254,7 +264,7 @@ export default class SeqViz extends React.Component {
   };
 
   render() {
-    const { style, viewer } = this.props;
+    const { style, viewer, selectionColors } = this.props;
     let { compSeq, name, seq } = this.props;
     const { centralIndex, cutSites, part, search, selection } = this.state;
     let { annotations } = this.state;
@@ -275,6 +285,7 @@ export default class SeqViz extends React.Component {
         {...this.props}
         search={search}
         selection={selection}
+        selectionColors={selectionColors}
         setSelection={this.setSelection}
         annotations={annotations}
         compSeq={compSeq}

@@ -65,7 +65,8 @@ class Linear extends React.Component {
       size,
       onUnmount,
 
-      search
+      search,
+      selectionColors
     } = this.props;
 
     let { primers } = this.props;
@@ -190,6 +191,7 @@ class Linear extends React.Component {
           fullSeq={seq}
           size={{ ...size }}
           zoomed={zoomed}
+          selectionColors={selectionColors}
         />
       );
       yDiff += blockHeights[i];

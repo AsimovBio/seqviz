@@ -1,4 +1,5 @@
 import * as React from "react";
+import isEqual from "../../utils/isEqual";
 
 import { calcGC, calcTm } from "../../utils/sequence";
 
@@ -13,7 +14,7 @@ export const defaultSelection = {
   start: 0,
   end: 0,
   length: 0,
-  clockwise: true
+  clockwise: true,
 };
 
 /** Default context object */
@@ -32,8 +33,13 @@ const withSelectionHandler = WrappedComp =>
   class extends React.Component {
     static displayName = `SelectionHandler`;
 
-    /** Only state is the selection range */
     state = { ...defaultSelection };
+
+    /**
+     * a map between the id of child elements and their associated SelectRanges
+     * @type {Object.<string, SelectRange>}
+     */
+    idToRange = new Map();
 
     previousBase = null; // previous base cursor is over, used in circular drag select
 
@@ -49,18 +55,25 @@ const withSelectionHandler = WrappedComp =>
 
     lastClick = Date.now(); // unix time of the last click (awful attempt at detecting double clicks)
 
-    /**
-     * a map between the id of child elements and their associated SelectRanges
-     * @type {Object.<string, SelectRange>}
-     */
-    idToRange = new Map();
-
     componentDidMount = () => {
       document.addEventListener("mouseup", this.stopDrag);
     };
 
     componentWillUnmount = () => {
       document.removeEventListener("mouseup", this.stopDrag);
+    };
+
+    componentDidUpdate = prevProps => {
+      if (!isEqual(this.props.selectedRange, prevProps.selectedRange)) {
+        if (!!this.props.selectedRange) {
+          this.setSelection({
+            ...defaultSelection,
+            ...this.props.selectedRange
+          });
+        } else if (this.props.selection?.type === 'ANNOTATION' || this.props.selection?.type === '') {
+          this.setSelection({ ...defaultSelection });
+        }
+      }
     };
 
     /** Stop the current drag event from happening */
@@ -119,6 +132,7 @@ const withSelectionHandler = WrappedComp =>
       let knownRange = this.dragEvent
         ? this.idToRange.get(e.currentTarget.id) // only look for SeqBlocks
         : this.idToRange.get(e.target.id) || this.idToRange.get(e.currentTarget.id); // elements and SeqBlocks
+
       if (!knownRange) {
         return; // there isn't a known range with the id of the element
       }
@@ -146,7 +160,7 @@ const withSelectionHandler = WrappedComp =>
             ...knownRange,
             start: selectionStart,
             end: selectionEnd,
-            clockwise: clockwise
+            clockwise: clockwise,
           });
 
           this.dragEvent = false;
@@ -172,7 +186,7 @@ const withSelectionHandler = WrappedComp =>
             ...knownRange,
             start: selectionStart,
             end: selectionEnd,
-            clockwise: clockwise
+            clockwise: clockwise,
           });
 
           this.dragEvent = false;
@@ -206,7 +220,8 @@ const withSelectionHandler = WrappedComp =>
           ...defaultSelection, // clears other meta
           start: e.shiftKey ? selection.start : currBase,
           end: currBase,
-          clockwise: clockwiseDrag
+          clockwise: clockwiseDrag,
+          type: 'SEQ'
         });
         this.dragEvent = true;
       } else if (this.dragEvent && currBase !== null) {
@@ -215,7 +230,8 @@ const withSelectionHandler = WrappedComp =>
           ...defaultSelection, // clears other meta
           start: selection.start,
           end: currBase,
-          clockwise: clockwiseDrag
+          clockwise: clockwiseDrag,
+          type: 'SEQ'
         });
       }
     };
@@ -244,7 +260,7 @@ const withSelectionHandler = WrappedComp =>
           start: selStart,
           end: currBase,
           ref: "",
-          clockwise: clockwise
+          clockwise: clockwise,
         });
       } else if (e.type === "mousemove" && this.dragEvent && currBase && currBase !== this.previousBase) {
         const increased = currBase > this.previousBase; // bases increased
@@ -314,7 +330,7 @@ const withSelectionHandler = WrappedComp =>
           start: start,
           end: end,
           ref: ref,
-          clockwise: clockwise
+          clockwise: clockwise,
         });
       }
     };
@@ -396,7 +412,7 @@ const withSelectionHandler = WrappedComp =>
 
       const { clockwise, start, end, ref, type, element, name } = {
         ...this.props.selection,
-        ...newSelection
+        ...newSelection,
       };
 
       const length = this.calcSelectionLength(start, end, clockwise);
@@ -415,7 +431,7 @@ const withSelectionHandler = WrappedComp =>
         end,
         length,
         clockwise,
-        element
+        element,
       };
 
       setSelection(selection);
