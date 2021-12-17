@@ -212,11 +212,7 @@ export const calcLength = (start, end, seqLength) => {
  * Reverses a string sequence
  * @param {string} sequence
  */
-export const reverse = sequence =>
-  sequence
-    .split("")
-    .reverse()
-    .join("");
+export const reverse = sequence => sequence.split("").reverse().join("");
 
 export const annotationFactory = (i = -1, colors = null) => ({
   id: randomid(),
@@ -278,6 +274,15 @@ export const translateDNA = seqInput => {
  * only the first 3 will be used. so the actual start is 1 and the actual end is 3 (inclusive)
  */
 export const createLinearTranslations = (translations, dnaSeq) => {
+  // If translations already contain AASeq prop, we just need to add an id
+  if (translations[0].AAseq) {
+    return translations.map(t => ({
+      ...t,
+      id: randomid(),
+      name: "translation"
+    }));
+  }
+
   // elongate the original sequence to account for translations that cross the zero index
   const dnaDoubled = dnaSeq + dnaSeq;
   return translations.map(t => {
@@ -289,19 +294,10 @@ export const createLinearTranslations = (translations, dnaSeq) => {
     const subDNASeq =
       direction === 1
         ? dnaDoubled.substring(start, end)
-        : dnaComplement(dnaDoubled.substring(start, end))
-            .compSeq.split("")
-            .reverse()
-            .join(""); // get reverse complement
+        : dnaComplement(dnaDoubled.substring(start, end)).compSeq.split("").reverse().join(""); // get reverse complement
 
     // translate the DNA sub sequence
-    const AAseq =
-      direction === 1
-        ? translateDNA(subDNASeq)
-        : translateDNA(subDNASeq)
-            .split("")
-            .reverse()
-            .join(""); // translate
+    const AAseq = direction === 1 ? translateDNA(subDNASeq) : translateDNA(subDNASeq).split("").reverse().join(""); // translate
 
     // the starting point for the translation, reading left to right (regardless of translation
     // direction). this is later needed to calculate the number of bps needed in the first
