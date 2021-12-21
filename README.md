@@ -71,9 +71,11 @@ npm install seqviz
 #### CDN
 
 <!-- cdn-example(cmd:) -->
+
 ```html
 <script src="https://unpkg.com/seqviz"></script>
 ```
+
 <!-- /cdn-example -->
 
 ### Instantiation
@@ -184,6 +186,8 @@ In the example above, the "Strong promoter" would span the first to twenty-secon
 #### `options.translations (=[])`
 
 An array of `translation` objects for rendering ranges of amino acids beneath the DNA sequence. Like `annotation`'s, `translation` objects requires 0-based start (inclusive) and end (exclusive) indexes relative the DNA sequence. A direction is required (1 (FWD) or -1 (REV)).
+
+A pre-defined amino acid sequence can be passed within each translation using the optional AAseq prop. If AAseq is provided, that sequence will be used instead of the one parsed from the DNA sequence.
 
 ```js
 [
