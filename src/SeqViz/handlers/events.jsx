@@ -66,13 +66,21 @@ const withEventRouter = WrappedComp =>
         return "Copy";
       }
 
-      const { key, shiftKey } = e;
+      const { key, shiftKey, metaKey } = e;
       switch (key) {
         case "ArrowLeft":
         case "ArrowRight":
         case "ArrowUp":
         case "ArrowDown":
-          return shiftKey ? `Shift${key}` : key;
+          if(shiftKey && metaKey){
+            `ShiftMeta${key}`
+          }
+          else if(shiftKey && !metaKey){
+            return `Shift${key}`
+          }
+          else {
+            return key
+          }
         default:
           return null;
       }
@@ -104,32 +112,32 @@ const withEventRouter = WrappedComp =>
         case "ArrowRight":
         case "ArrowDown":
         case "ArrowLeft":
-        case "ShiftArrowUp":
-        case "ShiftArrowRight":
-        case "ShiftArrowDown":
-        case "ShiftArrowLeft": {
+        case "ShiftMetaArrowUp":
+        case "ShiftMetaArrowRight":
+        case "ShiftMetaArrowDown":
+        case "ShiftMetaArrowLeft": {
           const { selection, setSelection } = this.props;
           const { start, end } = selection;
           if (Linear) {
             let { clockwise } = selection;
             let newPos = end;
-            if (type === "ArrowUp" || type === "ShiftArrowUp") {
+            if (type === "ArrowUp" || type === "ShiftMetaArrowUp") {
               // if there are multiple blocks or just one. If one, just inc by one
               if (seqLength / bpsPerBlock > 1) {
                 newPos -= bpsPerBlock;
               } else {
                 newPos -= 1;
               }
-            } else if (type === "ArrowRight" || type === "ShiftArrowRight") {
+            } else if (type === "ArrowRight" || type === "ShiftMetaArrowRight") {
               newPos += 1;
-            } else if (type === "ArrowDown" || type === "ShiftArrowDown") {
+            } else if (type === "ArrowDown" || type === "ShiftMetaArrowDown") {
               // if there are multiple blocks or just one. If one, just inc by one
               if (seqLength / bpsPerBlock > 1) {
                 newPos += bpsPerBlock;
               } else {
                 newPos += 1;
               }
-            } else if (type === "ArrowLeft" || type === "ShiftArrowLeft") {
+            } else if (type === "ArrowLeft" || type === "ShiftMetaArrowLeft") {
               newPos -= 1;
             }
 
@@ -143,9 +151,9 @@ const withEventRouter = WrappedComp =>
             clockwise =
               selLength === 0
                 ? type === "ArrowRight" ||
-                  type === "ShiftArrowRight" ||
+                  type === "ShiftMetaArrowRight" ||
                   type === "ArrowDown" ||
-                  type === "ShiftArrowDown"
+                  type === "ShiftMetaArrowDown"
                 : clockwise;
             if (newPos !== start && !type.startsWith("Shift")) {
               setSelection({
