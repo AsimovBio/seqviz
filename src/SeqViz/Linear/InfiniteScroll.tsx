@@ -67,14 +67,30 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
     }
 
     if (!isEqual(selection, prevProps.selection)) {
-      const targetSeqBlockIndex = seqBlocks.findIndex(block => {
+      const { start: selectionSeqBlockStart, end: selectionSeqBlockEnd } = seqBlocks.reduce((acc, block, i) => {
         const {
           props: { firstBase, bpsPerBlock }
         } = block;
-        return selection.start >= firstBase && selection.start < firstBase + bpsPerBlock;
-      });
-      if (targetSeqBlockIndex > -1 && !visibleBlocks.includes(targetSeqBlockIndex)) {
-        this.scrollToIndex(targetSeqBlockIndex);
+
+        if (selection.start >= firstBase && selection.start < firstBase + bpsPerBlock) {
+          acc.start = i;
+        }
+
+        if (selection.end >= firstBase && selection.end < firstBase + bpsPerBlock) {
+          acc.end = i;
+        }
+
+        return acc;
+      }, {});
+
+      // If a new selection has been made and no part of the new selection is already visible, scroll to start index of selection
+      if (
+        selection.ref !== null &&
+        !!selectionSeqBlockStart &&
+        !!selectionSeqBlockEnd &&
+        !visibleBlocks.some(i => i >= selectionSeqBlockStart && i <= selectionSeqBlockEnd)
+      ) {
+        this.scrollToIndex(selectionSeqBlockStart);
       }
     }
   };
