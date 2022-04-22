@@ -256,6 +256,10 @@ Style for `seqviz`'s outer container div. Empty by default. Useful for setting t
 { height: "100vh", width: "100vw" }
 ```
 
+#### `options.selectedRange (={start: number, end: number} | null)`
+
+The `selectedRange` property enables selection within SeqViz via an external trigger. At minimum, this object should include start and end indexes to denote the start and end positions within the sequence that should be selected. To clear a selection externally, pass `null`.
+
 #### `options.onSelection (=null)`
 
 Callback function executed after selection events. Should accept a single `selection` argument: `(selection) => {}`.
