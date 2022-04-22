@@ -55,15 +55,18 @@ export default class InfiniteScroll extends React.PureComponent {
     }
 
     if (!isEqual(selection, prevProps.selection)) {
+      // Get the start and end seqBlocks that encompass the new selection
       const { start: selectionSeqBlockStart, end: selectionSeqBlockEnd } = seqBlocks.reduce((acc, block, i) => {
         const {
           props: { firstBase, bpsPerBlock }
         } = block;
 
+        // If the start index of the selection exists within the current seqBlock, set that seqBlock index as `start`
         if (selection.start >= firstBase && selection.start < firstBase + bpsPerBlock) {
           acc.start = i;
         }
 
+        // If the last index of the selection exists in the current seqBlock, set that seqBlock index as `end`
         if (selection.end >= firstBase && selection.end < firstBase + bpsPerBlock) {
           acc.end = i;
         }
@@ -71,14 +74,21 @@ export default class InfiniteScroll extends React.PureComponent {
         return acc;
       }, {});
 
+      // If selection is made externally, scroll to start index of selection
+      if (selection.type === "EXTERNAL") {
+        this.scrollToIndex(selectionSeqBlockStart);
+        return;
+      }
+
       // If a new selection has been made and no part of the new selection is already visible, scroll to start index of selection
       if (
         selection.ref !== null &&
-        !!selectionSeqBlockStart &&
-        !!selectionSeqBlockEnd &&
+        selectionSeqBlockStart >= 0 &&
+        selectionSeqBlockEnd >= 0 &&
         !visibleBlocks.some(i => i >= selectionSeqBlockStart && i <= selectionSeqBlockEnd)
       ) {
         this.scrollToIndex(selectionSeqBlockStart);
+        return;
       }
     }
   };
