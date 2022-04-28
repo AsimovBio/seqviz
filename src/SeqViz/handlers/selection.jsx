@@ -14,7 +14,7 @@ export const defaultSelection = {
   start: 0,
   end: 0,
   length: 0,
-  clockwise: true,
+  clockwise: true
 };
 
 /** Default context object */
@@ -63,15 +63,19 @@ const withSelectionHandler = WrappedComp =>
       document.removeEventListener("mouseup", this.stopDrag);
     };
 
-    componentDidUpdate = prevProps => {
-      if (!isEqual(this.props.selectedRange, prevProps.selectedRange)) {
-        if (!!this.props.selectedRange) {
+    componentDidUpdate = () => {
+      if (this.props.selectedRange === null) {
+        // Don't reset selection for SEQ type because it clears the range on initial mouse event
+        if (this.props.selection.type !== "SEQ" && this.props.selection?.ref !== "") {
+          this.setSelection({ ...defaultSelection });
+        }
+      } else {
+        if (this.props.selectedRange.ref !== this.props.selection?.ref) {
           this.setSelection({
             ...defaultSelection,
-            ...this.props.selectedRange
+            ...this.props.selectedRange,
+            type: "EXTERNAL"
           });
-        } else if (this.props.selection?.type === 'ANNOTATION' || this.props.selection?.type === '') {
-          this.setSelection({ ...defaultSelection });
         }
       }
     };
@@ -160,7 +164,7 @@ const withSelectionHandler = WrappedComp =>
             ...knownRange,
             start: selectionStart,
             end: selectionEnd,
-            clockwise: clockwise,
+            clockwise: clockwise
           });
 
           this.dragEvent = false;
@@ -186,7 +190,7 @@ const withSelectionHandler = WrappedComp =>
             ...knownRange,
             start: selectionStart,
             end: selectionEnd,
-            clockwise: clockwise,
+            clockwise: clockwise
           });
 
           this.dragEvent = false;
@@ -221,7 +225,7 @@ const withSelectionHandler = WrappedComp =>
           start: e.shiftKey ? selection.start : currBase,
           end: currBase,
           clockwise: clockwiseDrag,
-          type: 'SEQ'
+          type: "SEQ"
         });
         this.dragEvent = true;
       } else if (this.dragEvent && currBase !== null) {
@@ -231,7 +235,7 @@ const withSelectionHandler = WrappedComp =>
           start: selection.start,
           end: currBase,
           clockwise: clockwiseDrag,
-          type: 'SEQ'
+          type: "SEQ"
         });
       }
     };
@@ -260,7 +264,7 @@ const withSelectionHandler = WrappedComp =>
           start: selStart,
           end: currBase,
           ref: "",
-          clockwise: clockwise,
+          clockwise: clockwise
         });
       } else if (e.type === "mousemove" && this.dragEvent && currBase && currBase !== this.previousBase) {
         const increased = currBase > this.previousBase; // bases increased
@@ -330,7 +334,7 @@ const withSelectionHandler = WrappedComp =>
           start: start,
           end: end,
           ref: ref,
-          clockwise: clockwise,
+          clockwise: clockwise
         });
       }
     };
@@ -412,7 +416,7 @@ const withSelectionHandler = WrappedComp =>
 
       const { clockwise, start, end, ref, type, element, name } = {
         ...this.props.selection,
-        ...newSelection,
+        ...newSelection
       };
 
       const length = this.calcSelectionLength(start, end, clockwise);
@@ -431,7 +435,7 @@ const withSelectionHandler = WrappedComp =>
         end,
         length,
         clockwise,
-        element,
+        element
       };
 
       setSelection(selection);

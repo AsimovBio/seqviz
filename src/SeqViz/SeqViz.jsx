@@ -91,7 +91,7 @@ export default class SeqViz extends React.Component {
     onSelection: selection => selection,
     rotateOnScroll: true,
     search: { query: "", mismatch: 0 },
-    selectionColors: {block: '#def6ff', edge: '#000'},
+    selectionColors: { block: "#def6ff", edge: "#000" },
     seq: "",
     showComplement: true,
     showIndex: true,
