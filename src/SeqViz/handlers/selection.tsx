@@ -31,7 +31,7 @@ export const defaultSelection: SeqVizSelection = {
   start: 0,
   end: 0,
   length: 0,
-  clockwise: true,
+  clockwise: true
 };
 
 /** Default context object */
@@ -83,19 +83,23 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
       document.removeEventListener("mouseup", this.stopDrag);
     };
 
-    componentDidUpdate = prevProps => {
+    componentDidUpdate = () => {
       // @ts-expect-error ts-migrate(2339) FIXME: Property 'selectedRange' does not exist on type 'Reado... Remove this comment to see the full error message
-      if (!isEqual(this.props.selectedRange, prevProps.selectedRange)) {
-        // @ts-expect-error ts-migrate(2339) FIXME: Property 'selectedRange' does not exist on type 'Reado... Remove this comment to see the full error message
-        if (!!this.props.selectedRange) {
+      if (this.props.selectedRange === null) {
+        // Don't reset selection for SEQ type because it clears the range on initial mouse event
+        // @ts-expect-error ts-migrate(2339) FIXME: Property 'selection' does not exist on type 'Reado... Remove this comment to see the full error message
+        if (this.props.selection.type !== "SEQ" && this.props.selection?.ref !== "") {
+          this.setSelection({ ...defaultSelection });
+        }
+      } else {
+        // @ts-expect-error ts-migrate(2339) FIXME: Property 'selection' does not exist on type 'Reado... Remove this comment to see the full error message
+        if (this.props.selectedRange.ref !== this.props.selection?.ref) {
           this.setSelection({
             ...defaultSelection,
             // @ts-expect-error ts-migrate(2339) FIXME: Property 'selectedRange' does not exist on type 'Reado... Remove this comment to see the full error message
-            ...this.props.selectedRange
+            ...this.props.selectedRange,
+            type: "EXTERNAL"
           });
-        // @ts-expect-error ts-migrate(2339) FIXME: Property 'selection' does not exist on type 'Reado... Remove this comment to see the full error message
-        } else if (this.props.selection?.type === 'ANNOTATION' || this.props.selection?.type === '') {
-          this.setSelection({ ...defaultSelection });
         }
       }
     };
@@ -183,7 +187,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
             ...knownRange,
             start: selectionStart,
             end: selectionEnd,
-            clockwise: clockwise,
+            clockwise: clockwise
           });
 
           this.dragEvent = false;
@@ -209,7 +213,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
             ...knownRange,
             start: selectionStart,
             end: selectionEnd,
-            clockwise: clockwise,
+            clockwise: clockwise
           });
 
           this.dragEvent = false;
@@ -247,7 +251,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
           start: e.shiftKey ? selection.start : currBase,
           end: currBase,
           clockwise: clockwiseDrag,
-          type: 'SEQ'
+          type: "SEQ"
         });
         this.dragEvent = true;
       } else if (this.dragEvent && currBase !== null) {
@@ -257,7 +261,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
           start: selection.start,
           end: currBase,
           clockwise: clockwiseDrag,
-          type: 'SEQ'
+          type: "SEQ"
         });
       }
     };
@@ -287,7 +291,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
           start: selStart,
           end: currBase,
           ref: "",
-          clockwise: clockwise,
+          clockwise: clockwise
         });
       } else if (e.type === "mousemove" && this.dragEvent && currBase && currBase !== this.previousBase) {
         // @ts-expect-error ts-migrate(2531) FIXME: Object is possibly 'null'.
@@ -364,7 +368,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
           start: start,
           end: end,
           ref: ref,
-          clockwise: clockwise,
+          clockwise: clockwise
         });
       }
     };
@@ -448,7 +452,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
       const { clockwise, start, end, ref, type, element, name }: any = {
         // @ts-expect-error ts-migrate(2339) FIXME: Property 'selection' does not exist on type 'Reado... Remove this comment to see the full error message
         ...this.props.selection,
-        ...newSelection,
+        ...newSelection
       };
 
       const length = this.calcSelectionLength(start, end, clockwise);
@@ -467,7 +471,7 @@ const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
         end,
         length,
         clockwise,
-        element,
+        element
       };
 
       setSelection(selection);
