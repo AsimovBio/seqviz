@@ -1,5 +1,4 @@
 import * as React from "react";
-import isEqual from "../../utils/isEqual";
 
 import { calcGC, calcTm } from "../../utils/sequence";
 
@@ -49,7 +48,7 @@ export type SeqVizMouseEvent = React.MouseEvent & {
  * the higher of the two HOCs
  *
  */
-const withSelectionHandler = (WrappedComp: React.ComponentType<any>) =>
+const withSelectionHandler = (WrappedComp) =>
   class extends React.Component {
     static displayName = `SelectionHandler`;
 

@@ -40,6 +40,8 @@ export const App = () => {
       { id: "sample annotation", color: "green", type: "enzyme", direction: 1, start: 8, end: 19, name: "test" },
     ],
     backbone: "pSB1C3",
+    selectedRange: { start: 0, end: 0, ref: "seq" },
+    selectionColors: { block: "#def6ff", edge: "#000" },
     showAnnotations: true,
     showPrimers: true,
     showComplement: true,

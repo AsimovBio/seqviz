@@ -263,6 +263,7 @@ class Linear extends React.Component<LinearProps> {
     return (
       seqBlocks.length && (
         <InfiniteScroll
+          selection={this.props.selection}
           seqBlocks={seqBlocks}
           blockHeights={blockHeights}
           totalHeight={blockHeights.reduce((acc, h) => acc + h, 0)}

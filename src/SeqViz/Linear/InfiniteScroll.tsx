@@ -3,11 +3,13 @@ import * as React from "react";
 import isEqual from "../../utils/isEqual";
 import { ISize } from "../common";
 import CentralIndexContext from "../handlers/centralIndex";
+import { SeqVizSelection } from "../handlers/selection";
 
 interface InfiniteScrollProps {
   seqBlocks: JSX.Element[];
   blockHeights: number[];
   totalHeight: number;
+  selection: SeqVizSelection;
   size: ISize;
   bpsPerBlock: number;
 }
@@ -84,10 +86,10 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
         }
 
         return acc;
-      }, {});
+      }, {} as SeqVizSelection);
 
       // If selection is made externally, scroll to start index of selection
-      if (selection.type === "EXTERNAL") {
+      if (selection.type === "EXTERNAL" as any) {
         this.scrollToIndex(selectionSeqBlockStart);
         return;
       }
@@ -141,7 +143,7 @@ export default class InfiniteScroll extends React.PureComponent<InfiniteScrollPr
     const { clientHeight, scrollHeight } = this.scroller.current;
 
     // build up the list of blocks that are visible just beneath this first block
-    let newVisibleBlocks = [];
+    let newVisibleBlocks:number[] = [];
     if (scrollHeight <= clientHeight) {
       newVisibleBlocks = visibleBlocks;
     } else if (index > -1) {

@@ -316,6 +316,7 @@ const withEventRouter = WrappedComp =>
           // Need tabIndex for onKeyDown to work
           tabIndex={-1}
         >
+          {/* @ts-expect-error ts-migrate(2339) FIXME: Property 'selection' does not exist on type 'Reado... Remove this comment to see the full error message */}
           <WrappedComp {...rest} mouseEvent={this.handleMouseEvent} selection={this.props.selection} />
         </div>
       );
