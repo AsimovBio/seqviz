@@ -2,8 +2,9 @@
   "name": "seqviz",
   "description": "A viewer for DNA, RNA, and protein sequences that supports many input formats",
   "version": "3.10.7",
+  "module": "src",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "src/index.ts",
   "unpkg": "dist/seqviz.min.js",
   "scripts": {
     "build": "rm -rf ./dist && webpack",
@@ -82,7 +83,7 @@
     "ts-jest": "^28.0.0",
     "ts-loader": "^8.3.0",
     "typescript": "^4.5.2",
-    "webpack": "^5.73.0",
+    "webpack": "5.92.1",
     "webpack-cli": "^4.10.0",
     "webpack-dev-server": "^4.9.3",
     "webpack-node-externals": "^3.0.0"

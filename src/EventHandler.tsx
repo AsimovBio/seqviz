@@ -72,7 +72,7 @@ export class EventHandler extends React.PureComponent<EventsHandlerProps> {
    * 	Copy: cmd + C, copy
    * 	Up, Right, Down, Left: some directional movement of the cursor
    */
-  handleSeqInteraction = async type => {
+  handleSeqInteraction = async (type: string) => {
     const { seq } = this.props;
     const seqLength = seq.length;
     const bpsPerBlock = this.props.bpsPerBlock || 1;

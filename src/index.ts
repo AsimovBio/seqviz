@@ -6,6 +6,8 @@ import Circular from "./Circular/Circular";
 import Linear from "./Linear/Linear";
 import SeqViz, { SeqVizProps } from "./SeqViz";
 import enzymes from "./enzymes";
+export * from "./selectionContext";
+export * from "./elements";
 
 /**
  * Export a React component directly for React-based development

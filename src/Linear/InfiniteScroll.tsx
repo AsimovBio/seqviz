@@ -36,7 +36,8 @@ export class InfiniteScroll extends React.PureComponent<InfiniteScrollProps, Inf
 
   scroller: React.RefObject<HTMLDivElement> = React.createRef(); // ref to a div for scrolling
   insideDOM: React.RefObject<HTMLDivElement> = React.createRef(); // ref to a div inside the scroller div
-  timeoutID;
+  timeoutID: NodeJS.Timeout | null = null;
+  isInternalEvent = false; // isInternalEvent allows us to specifically target mouse events that initiated within the InfiniteScroll container
 
   constructor(props: InfiniteScrollProps) {
     super(props);
@@ -220,7 +221,7 @@ export class InfiniteScroll extends React.PureComponent<InfiniteScrollProps, Inf
     }
   };
 
-  incrementScroller = incAmount => {
+  incrementScroller = (incAmount: number) => {
     this.stopIncrementingScroller();
     this.timeoutID = setTimeout(() => {
       if (!this.scroller.current) {
@@ -253,8 +254,8 @@ export class InfiniteScroll extends React.PureComponent<InfiniteScrollProps, Inf
       return;
     }
 
-    // not relevant, some other type of event, not a selection drag
-    if (e.buttons !== 1) {
+    // Ignore event if event did not start internally, is some other type of event, or is not a selection drag
+    if (e.buttons !== 1 || !this.isInternalEvent) {
       if (this.timeoutID) {
         this.stopIncrementingScroller();
       }
@@ -306,8 +307,10 @@ export class InfiniteScroll extends React.PureComponent<InfiniteScrollProps, Inf
         onFocus={() => {
           // do nothing
         }}
-        onMouseOver={this.handleMouseOver}
         onScroll={this.handleScrollOrResize}
+        onMouseOver={this.handleMouseOver}
+        onMouseDown={() => (this.isInternalEvent = true)}
+        onMouseUp={() => (this.isInternalEvent = false)}
       >
         <div ref={this.insideDOM} className="la-vz-seqblock-container" style={{ height, width: "100%" }}>
           <div className="la-vz-seqblock-padding-top" style={{ height: spaceAbove, width: width || 0 }} />

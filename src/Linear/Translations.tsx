@@ -1,13 +1,13 @@
 import * as React from "react";
 
 import { InputRefFunc } from "../SelectionHandler";
-import { borderColorByIndex, colorByIndex } from "../colors";
+import { borderColorByIndex, colorByIndex, darkerColor, TRANSLATIONS_COLORS } from "../colors";
 import { NameRange, SeqType, Translation } from "../elements";
 import { randomID } from "../sequence";
 import { translationAminoAcidLabel, translationHandle, translationHandleLabel } from "../style";
 import { FindXAndWidthElementType, FindXAndWidthType } from "./SeqBlock";
 
-const hoverOtherTranshlationHandleRows = (className: string, opacity: number) => {
+const hoverOtherTranslationHandleRows = (className: string, opacity: number) => {
   if (!document) return;
   const elements = document.getElementsByClassName(className) as HTMLCollectionOf<HTMLElement>;
   for (let i = 0; i < elements.length; i += 1) {
@@ -25,7 +25,7 @@ interface TranslationRowsProps {
   fullSeq: string;
   inputRef: InputRefFunc;
   lastBase: number;
-  onUnmount: (a: unknown) => void;
+  onUnmount: (a: string) => void;
   seqType: SeqType;
   translationRows: Translation[][];
   yDiff: number;
@@ -93,7 +93,7 @@ const TranslationRow = (props: {
   height: number;
   inputRef: InputRefFunc;
   lastBase: number;
-  onUnmount: (a: unknown) => void;
+  onUnmount: (a: string) => void;
   seqType: SeqType;
   translations: Translation[];
   y: number;
@@ -129,7 +129,7 @@ interface SingleNamedElementAminoacidsProps {
   height: number;
   inputRef: InputRefFunc;
   lastBase: number;
-  onUnmount: (a: unknown) => void;
+  onUnmount: (a: string) => void;
   seqType: SeqType;
   translation: Translation;
   y: number;
@@ -270,10 +270,10 @@ class SingleNamedElementAminoacids extends React.PureComponent<SingleNamedElemen
             >
               <path
                 d={path}
-                fill={colorByIndex(a.charCodeAt(0))}
+                fill={TRANSLATIONS_COLORS[a as keyof typeof TRANSLATIONS_COLORS] ?? colorByIndex(a.charCodeAt(0))}
                 id={aaId}
                 shapeRendering="geometricPrecision"
-                stroke={borderColorByIndex(a.charCodeAt(0))}
+                stroke={TRANSLATIONS_COLORS[a as keyof typeof TRANSLATIONS_COLORS] ? darkerColor(TRANSLATIONS_COLORS[a as keyof typeof TRANSLATIONS_COLORS]) : borderColorByIndex(a.charCodeAt(0))}                
                 style={{
                   cursor: "pointer",
                   opacity: 0.7,
@@ -390,8 +390,8 @@ const SingleNamedElementHandle = (props: {
           onFocus={() => {
             // do nothing
           }}
-          onMouseOut={() => hoverOtherTranshlationHandleRows(element.id, 0.7)}
-          onMouseOver={() => hoverOtherTranshlationHandleRows(element.id, 1.0)}
+          onMouseOut={() => hoverOtherTranslationHandleRows(element.id, 0.7)}
+          onMouseOver={() => hoverOtherTranslationHandleRows(element.id, 1.0)}
         />
         <text
           className="la-vz-handle-label"
@@ -409,8 +409,8 @@ const SingleNamedElementHandle = (props: {
           onFocus={() => {
             // do nothing
           }}
-          onMouseOut={() => hoverOtherTranshlationHandleRows(element.id, 0.7)}
-          onMouseOver={() => hoverOtherTranshlationHandleRows(element.id, 1.0)}
+          onMouseOut={() => hoverOtherTranslationHandleRows(element.id, 0.7)}
+          onMouseOver={() => hoverOtherTranslationHandleRows(element.id, 1.0)}
         >
           {displayName}
         </text>

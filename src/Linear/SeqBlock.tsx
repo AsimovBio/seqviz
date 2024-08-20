@@ -11,6 +11,7 @@ import IndexRow from "./Index";
 import PrimeRows from "./Primers";
 import Selection from "./Selection";
 import { TranslationRows } from "./Translations";
+import { COLORS } from "../colors";
 
 export type FindXAndWidthType = (
   n1?: number | null,
@@ -146,7 +147,7 @@ export class SeqBlock extends React.PureComponent<SeqBlockProps> {
    *
    * If an element and elements are provided, it also factors in whether the element circles around the 0-index.
    */
-  findXAndWidth = (firstIndex = 0, lastIndex = 0) => {
+  findXAndWidth: FindXAndWidthType = (firstIndex = 0, lastIndex = 0) => {
     const {
       bpsPerBlock,
       charWidth,
@@ -155,27 +156,27 @@ export class SeqBlock extends React.PureComponent<SeqBlockProps> {
       size,
     } = this.props;
 
-    firstIndex |= 0;
-    lastIndex |= 0;
+    firstIndex! |= 0;
+    lastIndex! |= 0;
 
     const lastBase = Math.min(firstBase + bpsPerBlock, seqLength);
     const multiBlock = seqLength >= bpsPerBlock;
 
     let x = 0;
-    if (firstIndex >= firstBase) {
-      x = (firstIndex - firstBase) * charWidth;
+    if (firstIndex! >= firstBase) {
+      x = (firstIndex! - firstBase) * charWidth;
       x = Math.max(x, 0) || 0;
     }
 
     // find the width for the current element
     let width = size.width;
-    if (firstIndex === lastIndex) {
+    if (firstIndex! === lastIndex) {
       // it starts on the last bp
       width = 0;
-    } else if (firstIndex >= firstBase || lastIndex < lastBase) {
+    } else if (firstIndex! >= firstBase || lastIndex! < lastBase) {
       // it starts or ends in this SeqBlock
-      const start = Math.max(firstIndex, firstBase);
-      const end = Math.min(lastIndex, lastBase);
+      const start = Math.max(firstIndex!, firstBase);
+      const end = Math.min(lastIndex!, lastBase);
 
       width = size.width * ((end - start) / bpsPerBlock);
       width = Math.abs(width) || 0;
@@ -338,6 +339,37 @@ export class SeqBlock extends React.PureComponent<SeqBlockProps> {
         onMouseMove={handleMouseEvent}
         onMouseUp={handleMouseEvent}
       >
+        <defs>
+          {COLORS.map((color) => (
+            <pattern
+              height="5"
+              id={`pattern_stripe_${color}`}
+              key={`pattern_stripe_${color}`}
+              patternTransform="rotate(-45)"
+              patternUnits="userSpaceOnUse"
+              width="5"
+            >
+              <line
+                opacity="0.3"
+                stroke={color}
+                stroke-width="5"
+                x1="0"
+                x2="0"
+                y="0"
+                y2="5"
+              />
+              <line
+                stroke={color}
+                stroke-width="5"
+                transform="translate(5)"
+                x1="0"
+                x2="0"
+                y="0"
+                y2="5"
+              />
+            </pattern>
+          ))}
+        </defs>
         {showIndex && (
           <IndexRow
             charWidth={charWidth}

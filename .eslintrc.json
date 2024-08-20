@@ -3,6 +3,8 @@
     "browser": true,
     "es2021": true
   },
+  // NOTE: This eslint config explicitly does not extend our broader Kernel
+  // config because this code is largely pulled in from external sources.
   "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/recommended"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {

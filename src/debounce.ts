@@ -6,16 +6,16 @@
  *
  * from: https://davidwalsh.name/javascript-debounce-function
  */
-export default (func, wait, immediate = true) => {
-  let timeout;
-  return function (...args) {
-    const later = function () {
+export default (func: Function, wait: number, immediate = true) => {
+  let timeout: NodeJS.Timeout | null = null;
+  return function (this: any, ...args: unknown[]) {
+    const later = function (this: any) {
       timeout = null;
       if (!immediate) func.apply(this, args);
     };
 
     const callNow = immediate && !timeout;
-    clearTimeout(timeout);
+    timeout && clearTimeout(timeout);
     timeout = setTimeout(later, wait);
     if (callNow) {
       func.apply(this, args);

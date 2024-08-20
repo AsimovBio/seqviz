@@ -200,14 +200,19 @@ export class Index extends React.PureComponent<IndexProps> {
     return (
       <g>
         {/* A label showing the name of the plasmid */}
-        <text fontSize={20} fontWeight={500} style={svgText} textAnchor="middle">
-          {nameSpans.map((n, i) => (
-            <tspan key={n} x={nameCoor.x} y={nameCoor.y + i * 25}>
-              {n}
-            </tspan>
-          ))}
-        </text>
-
+        {/*
+          * Don't display at all if there's no name. Workaround for Safari
+          * getBBox bug: https://github.com/AsimovBio/kernel-universal/issues/5891
+          */
+          nameSpans.length > 0 &&
+          <text fontSize={20} fontWeight={500} style={svgText} textAnchor="middle">
+            {nameSpans.map((n, i) => (
+              <tspan key={n} x={nameCoor.x} y={nameCoor.y + i * 25}>
+                {n}
+              </tspan>
+            ))}
+          </text>
+        }
         {/* A label for the length of the plasmid */}
         <text x={nameCoor.x} y={nameCoor.y + 14 + 25 * (nameSpans.length - 1)} {...subtitleStyle} style={svgText}>
           {`${seqLength} bp`}

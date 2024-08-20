@@ -90,10 +90,11 @@ const AnnotationRow = (props: {
 
 /**
  * SingleNamedElement is a single rectangular element in the SeqBlock.
- * It does a bunch of stuff to avoid edge-cases from wrapping around the 0-index, edge of blocks, etc.
+ * It does a bunch of stuff to avoid edge-cases from wrapping around the 0-index,
+ * edge of blocks, etc.
  */
 const SingleNamedElement = (props: {
-  element: NameRange;
+  element: NameRange & { onDoubleClick?: () => void };
   elements: NameRange[];
   findXAndWidth: FindXAndWidthElementType;
   firstBase: number;
@@ -104,7 +105,7 @@ const SingleNamedElement = (props: {
 }) => {
   const { element, elements, findXAndWidth, firstBase, index, inputRef, lastBase } = props;
 
-  const { color, direction, end, name, start } = element;
+  const { bgType, color, direction, end, name, onDoubleClick, start } = element;
   const forward = direction === 1;
   const reverse = direction === -1;
   const { overflowLeft, overflowRight, width, x: origX } = findXAndWidth(index, element, elements);
@@ -199,7 +200,7 @@ const SingleNamedElement = (props: {
   }
 
   return (
-    <g id={element.id} transform={`translate(${x}, ${0.1 * height})`}>
+    <g id={element.id} transform={`translate(${x}, ${0.1 * height})`} data-testid={element.id}>
       {/* <title> provides a hover tooltip on most browsers */}
       <title>{name}</title>
       <path
@@ -214,13 +215,14 @@ const SingleNamedElement = (props: {
         className={`${element.id} la-vz-annotation`}
         cursor="pointer"
         d={linePath}
-        fill={color}
+        fill={bgType === 'stripe' ? `url(#pattern_stripe_${color})` : color}
         id={element.id}
-        stroke={color ? COLOR_BORDER_MAP[color] || darkerColor(color) : "gray"}
+        stroke={color ? COLOR_BORDER_MAP[color as keyof typeof COLOR_BORDER_MAP] || darkerColor(color) : "gray"}
         style={annotation}
         onBlur={() => {
           // do nothing
         }}
+        onDoubleClick={onDoubleClick}
         onFocus={() => {
           // do nothing
         }}
@@ -240,6 +242,7 @@ const SingleNamedElement = (props: {
         onBlur={() => {
           // do nothing
         }}
+        onDoubleClick={onDoubleClick}
         onFocus={() => {
           // do nothing
         }}

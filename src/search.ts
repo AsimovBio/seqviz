@@ -11,7 +11,7 @@ export default (query: string, mismatch = 0, seq = "", seqType: SeqType): NameRa
   }
 
   // Only start searching after query is at least 2 letters, lowest meaningful length
-  if (query.length - mismatch < 2) {
+  if (query.trim().length - mismatch < 2) {
     return [];
   }
 
@@ -73,12 +73,13 @@ const searchWithMismatch = (query: string, subject: string, mismatch: number, fw
     for (let j = 0; j < query.length; j += 1) {
       const targetChar = subject[i + j].toLowerCase();
       const queryChar = query[j].toLowerCase();
-      if (nucleotides[queryChar]) {
+      if (nucleotides[queryChar as keyof typeof nucleotides]) {
         if (targetChar !== queryChar) {
           missed += 1;
         }
-      } else if (alphabet[queryChar]) {
-        if (!alphabet[queryChar][targetChar]) {
+      } else if (alphabet[queryChar as keyof typeof alphabet]) {
+        const found = alphabet[queryChar as keyof typeof alphabet];
+        if (!found[targetChar as keyof typeof found]) {
           missed += 1;
         }
       }
@@ -109,11 +110,10 @@ const searchWithMismatch = (query: string, subject: string, mismatch: number, fw
  */
 export const createRegex = (query: string, seqType: SeqType): RegExp => {
   const alphabet = getAlphabet(seqType);
-
   const pattern = query
     .toLowerCase()
     .split("")
-    .map(symbol => (alphabet[symbol] ? `(${Object.keys(alphabet[symbol]).join("|")})` : symbol))
+    .map(symbol => (alphabet[symbol as keyof typeof alphabet] ? `(${Object.keys(alphabet[symbol as keyof typeof alphabet]).join("|")})` : symbol))
     .join("");
 
   return new RegExp(pattern.trim(), "gi");

@@ -86,7 +86,7 @@ export class Annotations extends React.PureComponent<AnnotationsProps> {
 }
 
 interface SingleAnnotationProps {
-  annotation: Annotation;
+  annotation: Annotation & { onDoubleClick?: () => void };
   calcBorderColor: (c: string) => string;
   centralIndex: number;
   currBRadius: number;
@@ -157,6 +157,7 @@ const SingleAnnotation = (props: SingleAnnotationProps) => {
   });
 
   const circAnnID = `la-vz-${a.id}-circular`;
+
   return (
     <g id={`la-vz-${a.id}-annotation-circular`} transform={rotation}>
       <path d={namePath} fill="transparent" id={circAnnID} stroke="transparent" />
@@ -173,13 +174,14 @@ const SingleAnnotation = (props: SingleAnnotationProps) => {
         className={`${a.id} la-vz-annotation`}
         cursor="pointer"
         d={path}
-        fill={a.color}
+        fill={a.bgType === 'stripe' ? `url(#pattern_stripe_${a.color})` : a.color}
         id={a.id}
-        stroke={a.color ? COLOR_BORDER_MAP[a.color] || calcBorderColor(a.color) : "gray"}
+        stroke={a.color ? COLOR_BORDER_MAP[a.color as keyof typeof COLOR_BORDER_MAP] || calcBorderColor(a.color) : "gray"}
         style={annotation}
         onBlur={() => {
           // do nothing
         }}
+        onDoubleClick={a?.onDoubleClick}
         onFocus={() => {
           // do nothing
         }}

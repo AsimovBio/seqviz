@@ -155,9 +155,9 @@ const aminoAcidRegex = new RegExp(`^[${aminoAcids}BJXZ]+$`, "i");
  */
 export const guessType = (seq: string): SeqType => {
   seq = seq.substring(0, 1000);
-  if (/^[atgcn.]+$/i.test(seq)) {
+  if (/^[atgcn.+]+$/i.test(seq)) {
     return "dna";
-  } else if (/^[augcn.]+$/i.test(seq)) {
+  } else if (/^[augcn.+]+$/i.test(seq)) {
     return "rna";
   } else if (aminoAcidRegex.test(seq)) {
     return "aa";
@@ -189,10 +189,11 @@ let dnaComp = {
   w: "w",
   x: "x",
   y: "r",
+  "+": "+"
 };
 dnaComp = {
   ...dnaComp,
-  ...Object.keys(dnaComp).reduce((acc, k) => ({ ...acc, [k.toUpperCase()]: dnaComp[k].toUpperCase() }), {}),
+  ...Object.keys(dnaComp).reduce((acc, k) => ({ ...acc, [k.toUpperCase()]: dnaComp[k as keyof typeof dnaComp].toUpperCase() }), {}),
 };
 
 /**
@@ -219,7 +220,7 @@ export const complement = (origSeq: string, seqType: SeqType): { compSeq: string
   if (!origSeq) {
     return { compSeq: "", seq: "" };
   }
-  const compMap = typeToCompMap[seqType];
+  const compMap = typeToCompMap[seqType as keyof typeof typeToCompMap];
 
   // filter out unrecognized base pairs and build up the complement
   let seq = "";
@@ -227,7 +228,7 @@ export const complement = (origSeq: string, seqType: SeqType): { compSeq: string
   for (let i = 0, origLength = origSeq.length; i < origLength; i += 1) {
     if (origSeq[i] in compMap) {
       seq += origSeq[i];
-      compSeq += compMap[origSeq[i]];
+      compSeq += compMap[origSeq[i] as keyof typeof compMap];
     }
   }
   return { compSeq, seq };
@@ -266,7 +267,7 @@ export const directionality = (direction: number | string | undefined): -1 | 0 |
 };
 
 const rnaCodonToAminoAcid = Object.keys(dnaCodonToAminoAcid).reduce(
-  (acc, k) => ({ ...acc, [k.replace(/T/gi, "U")]: dnaCodonToAminoAcid[k] }),
+  (acc, k) => ({ ...acc, [k.replace(/T/gi, "U")]: dnaCodonToAminoAcid[k as keyof typeof dnaCodonToAminoAcid] }),
   {}
 );
 
@@ -303,7 +304,7 @@ export const createTranslations = (translations: NameRange[], seq: string, seqTy
   const bpPerBlock = seqType === "aa" ? 1 : 3;
 
   return translations.map(t => {
-    const { direction, start } = t;
+    const { AAseq: providedAASeq, direction, start } = t;
     let { end } = t;
     if (start > end) end += seq.length;
 
@@ -313,9 +314,11 @@ export const createTranslations = (translations: NameRange[], seq: string, seqTy
     const subSeq =
       direction === 1 ? seqDoubled.substring(start, end) : reverseComplement(seqDoubled.substring(start, end), seqType);
 
+    const translatedSeq = providedAASeq ?? translate(subSeq, seqType)
+    
     // translate the subsequence
-    const aaSeq =
-      direction === 1 ? translate(subSeq, seqType) : translate(subSeq, seqType).split("").reverse().join(""); // translate
+    const aaSeq = 
+      direction === 1 ? translatedSeq : reverse(translatedSeq); // translate
 
     // the starting point for the translation, reading left to right (regardless of translation
     // direction). this is later needed to calculate the number of bps needed in the first

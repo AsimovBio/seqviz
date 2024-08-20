@@ -229,7 +229,7 @@ const SingleNamedElement = (props: {
         d={linePath}
         fill={color}
         id={element.id}
-        stroke={color ? COLOR_BORDER_MAP[color] || darkerColor(color) : "gray"}
+        stroke={color ? COLOR_BORDER_MAP[color as keyof typeof COLOR_BORDER_MAP] || darkerColor(color) : "gray"}
         style={annotation}
         onBlur={() => {
           // do nothing

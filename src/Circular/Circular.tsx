@@ -13,6 +13,7 @@ import { Find } from "./Find";
 import { Index } from "./Index";
 import { Labels } from "./Labels";
 import { Selection } from "./Selection";
+import { COLORS } from "../colors";
 
 /** Sequence length cutoff below which the circular viewer's sequence won't be rendered. */
 export const RENDER_SEQ_LENGTH_CUTOFF = 250;
@@ -362,6 +363,37 @@ export default class Circular extends React.Component<CircularProps, CircularSta
         onMouseUp={handleMouseEvent}
         onWheel={this.handleScrollEvent}
       >
+        <defs>
+          {COLORS.map((color) => (
+            <pattern
+              height="5"
+              id={`pattern_stripe_${color}`}
+              key={`pattern_stripe_${color}`}
+              patternTransform="rotate(-45)"
+              patternUnits="userSpaceOnUse"
+              width="5"
+            >
+              <line
+                opacity="0.3"
+                stroke={color}
+                stroke-width="5"
+                x1="0"
+                x2="0"
+                y="0"
+                y2="5"
+              />
+              <line
+                stroke={color}
+                stroke-width="5"
+                transform="translate(5)"
+                x1="0"
+                x2="0"
+                y="0"
+                y2="5"
+              />
+            </pattern>
+          ))}
+        </defs>
         <g className="la-vz-circular-root" transform={`translate(0, ${yDiff})`}>
           <Selection {...props} seq={seq} totalRows={totalRows} />
           <CutSites {...props} cutSites={cutSites} selectionRows={4} />

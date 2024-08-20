@@ -19,11 +19,11 @@ export interface SelectionHandlerProps {
   children: (
     inputRef: InputRefFunc,
     handleMouseEvent: (e: SeqVizMouseEvent) => void,
-    onUnmount: (ref: string) => void
+    onUnmount: (ref: unknown) => void
   ) => React.ReactNode;
   seq: string;
   setCentralIndex: (viewer: "LINEAR" | "CIRCULAR", index: number) => void;
-  setSelection: (selection: Selection) => void;
+  setSelection: (selection: Selection, force?: boolean) => void;
   yDiff: number;
 }
 
@@ -101,8 +101,8 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
   /**
    * remove the ref by ID.
    */
-  removeMountedBlock = (ref: string) => {
-    this.idToRange.delete(ref);
+  removeMountedBlock = (ref: unknown) => {
+    this.idToRange.delete(ref as string);
   };
 
   /**
@@ -211,14 +211,53 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
     const currBase = this.calculateBaseLinear(e, knownRange);
     const clockwiseDrag = selection.start !== null && currBase >= (selection.start || 0);
 
+    const isContextMenu = e.type === "mousedown" && (e.button === 2 || (e.button === 0 && e.ctrlKey));
+
+    if (isContextMenu) {
+      const { currentTarget, clientX, clientY } = e;
+      const selectionBoxes = currentTarget?.querySelectorAll(".la-vz-selection-block");
+
+      if (selectionBoxes?.length > 0) {
+        const checkInsideClick = ({
+          mouseX,
+          mouseY,
+          box: { left, right, top, bottom },
+        }: {
+          mouseX: number;
+          mouseY: number;
+          box: { left: number; right: number; top: number; bottom: number };
+        }) => left <= mouseX && right >= mouseX && top <= mouseY && bottom >= mouseY;
+
+        for (let index = 0; index < selectionBoxes.length; index++) {
+          const selectionBox = selectionBoxes[index];
+          const { left, right, top, bottom } = selectionBox.getBoundingClientRect();
+
+          // disabled start selection when using the context menu and the right click was on the selection block
+          if (
+            checkInsideClick({
+              mouseX: clientX,
+              mouseY: clientY,
+              box: { left, right, top, bottom },
+            })
+          ) {
+            return;
+          }
+        }
+      }
+    }
+
     if (e.type === "mousedown" && currBase !== null) {
       // this is the start of a drag event
-      this.setSelection({
-        ...defaultSelection,
-        clockwise: clockwiseDrag,
-        end: currBase,
-        start: e.shiftKey ? selection.start : currBase,
-      });
+      this.setSelection(
+        {
+          ...defaultSelection,
+          clockwise: clockwiseDrag,
+          end: currBase,
+          start: e.shiftKey ? selection.start : currBase,
+          type: "SEQ",
+        },
+        true
+      );
       this.dragEvent = true;
     } else if (this.dragEvent && currBase !== null) {
       // continue a drag event that's currently happening
@@ -227,6 +266,7 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
         clockwise: clockwiseDrag,
         end: currBase,
         start: selection.start,
+        type: "SEQ",
       });
     }
   };
@@ -398,7 +438,7 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
    * Update the selection in state. Only update the specified
    * properties of the selection that should be updated.
    */
-  setSelection = (newSelection: Selection) => {
+  setSelection = (newSelection: Selection, force = false) => {
     const selection = this.context;
     const { setSelection } = this.props;
 
@@ -418,15 +458,18 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
 
     const length = this.calcSelectionLength(start, end, clockwise);
 
-    setSelection({
-      clockwise,
-      end,
-      length,
-      name,
-      ref,
-      start,
-      type,
-    });
+    setSelection(
+      {
+        clockwise,
+        end,
+        length,
+        name,
+        ref,
+        start,
+        type,
+      },
+      force
+    );
   };
 
   /**

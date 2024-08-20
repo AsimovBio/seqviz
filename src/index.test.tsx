@@ -16,7 +16,6 @@ const props = {
   ],
   name: "test_part",
   seq: "ATGGTAGTTAGATAGGGATACCGATAGACTTGAGAGATACCGCATCTATTTACGACCAGCGAGCAG",
-  testSize: { height: 900, width: 800 },
 };
 
 describe("SeqViz rendering (React)", () => {
@@ -70,7 +69,7 @@ describe("SeqViz rendering (React)", () => {
     expect(getByTestId("la-vz-viewer-linear")).toBeTruthy();
     expect(getAllByTestId("la-vz-viewer-linear")).toHaveLength(1);
 
-    const seqs = getAllByTestId("la-vz-linear-aa-translation");
+    const seqs = getAllByTestId("la-vz-linear-translation");
     const seq = seqs.map(s => s.textContent).join("");
     expect(seq.length).toBeGreaterThan(0);
     expect(aaSeq).toContain(seq);

@@ -20,6 +20,34 @@ export const COLORS = [
   "#85A6FF", // light blue
 ];
 
+export const TRANSLATIONS_COLORS = {
+  'A': '#C8C8C8',
+  'C': '#E6E600',
+  'D': '#E60A0A',
+  'E': '#E60A0A',
+  'F': '#3232AA',
+  'G': '#EBEBEB',
+  'H': '#8282D2',
+  'I': '#0F820F',
+  'K': '#145AFF',
+  'L': '#0F820F',
+  'M': '#E6E600',
+  'N': '#00DCDC',
+  'P': '#DC9682',
+  'Q': '#00DCDC',
+  'R': '#145AFF',
+  'S': '#FA9600',
+  'T': '#FA9600',
+  'U': '#707070',
+  'V': '#0F820F',
+  'W': '#B45AB4',
+  'Y': '#3232AA',
+  'B': '#707070',
+  'Z': '#707070',
+  'X': '#707070',
+  '*': '#E605E3',
+}
+
 export const COLOR_BORDER_MAP = {
   // purple
   "#6B81FF": "#2E3B85",
@@ -68,10 +96,10 @@ export const chooseRandomColor = (colors?: string[]) => {
 export const colorByIndex = (i: number, colors?: string[]) => (colors || COLORS)[i % (colors || COLORS).length];
 
 /** get an "indexed" color from the colors array */
-export const borderColorByIndex = (i: number) => COLOR_BORDER_MAP[COLORS[i % COLORS.length]];
+export const borderColorByIndex = (i: number) => COLOR_BORDER_MAP[COLORS[i % COLORS.length] as keyof typeof COLOR_BORDER_MAP];
 
 /** cache for input color to those 50% darker */
-const darkerColorCache = {};
+const darkerColorCache: Record<string, string> = {};
 
 /** darken a HEX color by 50% */
 export const darkerColor = (c: string): string => {
@@ -79,7 +107,7 @@ export const darkerColor = (c: string): string => {
     return darkerColorCache[c];
   }
 
-  const darkerColor = pSBC(-0.5, c);
+  const darkerColor = pSBC(-0.5, c) ?? '';
   darkerColorCache[c] = darkerColor;
   return darkerColor || c;
 };

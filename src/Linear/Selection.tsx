@@ -165,6 +165,7 @@ class Block extends React.PureComponent<BlockProps> {
 
     // props shared between all 3 possible components.
     const blockProps = {
+      className: "la-vz-selection-block",
       "data-testid": "la-vz-selection-block",
       height: selectHeight,
       style: selection,

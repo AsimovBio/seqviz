@@ -32,6 +32,7 @@ export interface ExternalSelection {
   clockwise?: boolean;
   end: number;
   start: number;
+  type: SelectionTypeEnum;
 }
 
 /** Initial/default selection */

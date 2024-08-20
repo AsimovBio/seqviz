@@ -22,7 +22,7 @@ export interface CustomChildrenProps {
   handleMouseEvent: React.MouseEventHandler;
   inputRef: InputRefFunc;
   linearProps: Omit<LinearProps, "handleMouseEvent" | "inputRef" | "onUnmount">;
-  onUnmount: (ref: string) => void;
+  onUnmount: (ref: unknown) => void;
 }
 
 export interface SeqVizChildRefs {
@@ -52,8 +52,6 @@ interface SeqViewerContainerProps {
   showComplement: boolean;
   showIndex: boolean;
   targetRef: React.LegacyRef<HTMLDivElement>;
-  /** testSize is a forced height/width that overwrites anything from sizeMe. For testing */
-  testSize?: { height: number; width: number };
   translations: NameRange[];
   viewer: "linear" | "circular" | "both" | "both_flip";
   width: number;
@@ -74,6 +72,8 @@ export interface SeqViewerContainerState {
  * the linear and circular sequence viewers. The Header is an example
  */
 class SeqViewerContainer extends React.Component<SeqViewerContainerProps, SeqViewerContainerState> {
+  static defaultProps: { width: number; height: number };
+
   constructor(props: SeqViewerContainerProps) {
     super(props);
 
@@ -88,7 +88,7 @@ class SeqViewerContainer extends React.Component<SeqViewerContainerProps, SeqVie
   }
 
   selectionIsProgramatic(selection: any): selection is Selection {
-    // If the selection was done programatically, it has not type
+    // If the selection was done programatically, it has no type
     if (selection) return !selection.type;
     return false;
   }
@@ -118,8 +118,7 @@ class SeqViewerContainer extends React.Component<SeqViewerContainerProps, SeqVie
     if (type !== "LINEAR" && type !== "CIRCULAR") {
       throw new Error(`Unknown central index type: ${type}`);
     }
-
-    if (this.state.centralIndex[type.toLowerCase()] === value) {
+    if (this.state.centralIndex[type.toLowerCase() as Lowercase<typeof type>] === value) {
       return; // nothing changed
     }
 
@@ -129,10 +128,10 @@ class SeqViewerContainer extends React.Component<SeqViewerContainerProps, SeqVie
   /**
    * Update selection in state. Should only be performed from handlers/selection.jsx
    */
-  setSelection = (selection: Selection) => {
+  setSelection = (selection: Selection, force = false) => {
     // If the user passed a selection, do not update our state here
-    const { parent: _, ref: __, ...rest } = selection;
-    if (!this.props.selection) this.setState({ selection });
+    const { parent: _, ...rest } = selection;
+    if (force || !this.props.selection) this.setState({ selection });
     if (this.props.onSelection) this.props.onSelection(rest);
   };
 
@@ -152,7 +151,7 @@ class SeqViewerContainer extends React.Component<SeqViewerContainerProps, SeqVie
    */
   linearProps = () => {
     const { seq, seqType, viewer } = this.props;
-    const size = this.props.testSize || { height: this.props.height, width: this.props.width };
+    const size = { height: this.props.height, width: this.props.width };
     const zoom = this.props.zoom.linear;
 
     if (this.props.refs?.linear?.current && this.props.children) {
@@ -218,7 +217,7 @@ class SeqViewerContainer extends React.Component<SeqViewerContainerProps, SeqVie
       seq: { length: seqLength },
       viewer,
     } = this.props;
-    const size = this.props.testSize || { height: this.props.height, width: this.props.width };
+    const size = { height: this.props.height, width: this.props.width };
     const zoom = this.props.zoom.circular;
 
     if (this.props.refs?.circular?.current) {
@@ -365,5 +364,11 @@ class SeqViewerContainer extends React.Component<SeqViewerContainerProps, SeqVie
     );
   }
 }
+
+// Add default width and height, so seqviz can be rendered in Jest tests
+SeqViewerContainer.defaultProps = {
+  width: 500,
+  height: 500,
+};
 
 export default withResizeDetector(SeqViewerContainer);

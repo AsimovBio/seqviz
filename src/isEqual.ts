@@ -4,7 +4,7 @@
  * copy-paste from StackOverflow: https://stackoverflow.com/a/25456134
  *
  */
-export const isEqual = (x, y) => {
+export const isEqual = (x: any, y: any) => {
   if (x === y) {
     return true;
   } else if (typeof x === "object" && x !== null && typeof y === "object" && y !== null) {
