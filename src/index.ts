@@ -6,6 +6,7 @@ import Circular from "./Circular/Circular";
 import Linear from "./Linear/Linear";
 import SeqViz, { SeqVizProps } from "./SeqViz";
 import enzymes from "./enzymes";
+
 export * from "./selectionContext";
 export * from "./elements";
 
@@ -51,6 +52,7 @@ const Viewer = (element: string | HTMLElement = "root", options: SeqVizProps) =>
    */
   const render = () => {
     rendered = true;
+    // eslint-disable-next-line react/no-deprecated
     ReactDOM.render(viewer, domElement);
     return viewer;
   };
@@ -70,6 +72,7 @@ const Viewer = (element: string | HTMLElement = "root", options: SeqVizProps) =>
     viewer = React.createElement(SeqViz, options, null);
 
     if (rendered) {
+      // eslint-disable-next-line react/no-deprecated
       ReactDOM.render(viewer, domElement);
     }
     return viewer;

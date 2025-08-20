@@ -1,7 +1,7 @@
 import * as React from "react";
 
 import { InputRefFunc } from "../SelectionHandler";
-import { borderColorByIndex, colorByIndex, darkerColor, TRANSLATIONS_COLORS } from "../colors";
+import { TRANSLATIONS_COLORS, borderColorByIndex, colorByIndex, darkerColor } from "../colors";
 import { NameRange, SeqType, Translation } from "../elements";
 import { randomID } from "../sequence";
 import { translationAminoAcidLabel, translationHandle, translationHandleLabel } from "../style";
@@ -27,6 +27,7 @@ interface TranslationRowsProps {
   lastBase: number;
   onUnmount: (a: string) => void;
   seqType: SeqType;
+  styleAtIndex?: (i: number) => React.CSSProperties;
   translationRows: Translation[][];
   yDiff: number;
 }
@@ -44,6 +45,7 @@ export const TranslationRows = ({
   lastBase,
   onUnmount,
   seqType,
+  styleAtIndex,
   translationRows,
   yDiff,
 }: TranslationRowsProps) => (
@@ -69,6 +71,7 @@ export const TranslationRows = ({
           inputRef={inputRef}
           lastBase={lastBase}
           seqType={seqType}
+          styleAtIndex={styleAtIndex || (() => ({}))}
           translations={translations}
           y={currentElementY}
           onUnmount={onUnmount}
@@ -95,6 +98,7 @@ const TranslationRow = (props: {
   lastBase: number;
   onUnmount: (a: string) => void;
   seqType: SeqType;
+  styleAtIndex: (i: number) => React.CSSProperties;
   translations: Translation[];
   y: number;
 }) => (
@@ -131,6 +135,7 @@ interface SingleNamedElementAminoacidsProps {
   lastBase: number;
   onUnmount: (a: string) => void;
   seqType: SeqType;
+  styleAtIndex: (i: number) => React.CSSProperties;
   translation: Translation;
   y: number;
 }
@@ -177,6 +182,7 @@ class SingleNamedElementAminoacids extends React.PureComponent<SingleNamedElemen
       inputRef,
       lastBase,
       seqType,
+      styleAtIndex,
       translation,
       y,
     } = this.props;
@@ -273,11 +279,16 @@ class SingleNamedElementAminoacids extends React.PureComponent<SingleNamedElemen
                 fill={TRANSLATIONS_COLORS[a as keyof typeof TRANSLATIONS_COLORS] ?? colorByIndex(a.charCodeAt(0))}
                 id={aaId}
                 shapeRendering="geometricPrecision"
-                stroke={TRANSLATIONS_COLORS[a as keyof typeof TRANSLATIONS_COLORS] ? darkerColor(TRANSLATIONS_COLORS[a as keyof typeof TRANSLATIONS_COLORS]) : borderColorByIndex(a.charCodeAt(0))}                
+                stroke={
+                  TRANSLATIONS_COLORS[a as keyof typeof TRANSLATIONS_COLORS]
+                    ? darkerColor(TRANSLATIONS_COLORS[a as keyof typeof TRANSLATIONS_COLORS])
+                    : borderColorByIndex(a.charCodeAt(0))
+                }
                 style={{
                   cursor: "pointer",
                   opacity: 0.7,
                   strokeWidth: 0.8,
+                  ...styleAtIndex(i),
                 }}
               />
 

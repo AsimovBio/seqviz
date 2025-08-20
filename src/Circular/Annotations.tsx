@@ -174,9 +174,11 @@ const SingleAnnotation = (props: SingleAnnotationProps) => {
         className={`${a.id} la-vz-annotation`}
         cursor="pointer"
         d={path}
-        fill={a.bgType === 'stripe' ? `url(#pattern_stripe_${a.color})` : a.color}
+        fill={a.bgType === "stripe" ? `url(#pattern_stripe_${a.color})` : a.color}
         id={a.id}
-        stroke={a.color ? COLOR_BORDER_MAP[a.color as keyof typeof COLOR_BORDER_MAP] || calcBorderColor(a.color) : "gray"}
+        stroke={
+          a.color ? COLOR_BORDER_MAP[a.color as keyof typeof COLOR_BORDER_MAP] || calcBorderColor(a.color) : "gray"
+        }
         style={annotation}
         onBlur={() => {
           // do nothing

@@ -13,7 +13,7 @@ describe("Sequence utilities", () => {
       "kInm*": "aa",
     };
 
-    Object.keys(types).forEach(k => {
+    (Object.keys(types) as Array<keyof typeof types>).forEach(k => {
       expect(guessType(k)).toEqual(types[k]);
     });
   });

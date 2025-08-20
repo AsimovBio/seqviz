@@ -8,7 +8,7 @@ export interface Range {
 /** NameRange elements have been parsed to include an id and name */
 export interface NameRange extends Range {
   AAseq?: string;
-  bgType?: 'solid' | 'stripe'
+  bgType?: "solid" | "stripe";
   color?: string;
   id: string;
   name: string;
@@ -16,7 +16,7 @@ export interface NameRange extends Range {
 
 /** AnnotationProp is an annotation provided to SeqViz via the annotations prop. */
 export interface AnnotationProp {
-  bgType?: 'solid' | 'stripe'
+  bgType?: "solid" | "stripe";
   color?: string;
   direction?: number | string;
   end: number;

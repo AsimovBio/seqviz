@@ -307,10 +307,10 @@ export class InfiniteScroll extends React.PureComponent<InfiniteScrollProps, Inf
         onFocus={() => {
           // do nothing
         }}
-        onScroll={this.handleScrollOrResize}
-        onMouseOver={this.handleMouseOver}
         onMouseDown={() => (this.isInternalEvent = true)}
+        onMouseOver={this.handleMouseOver}
         onMouseUp={() => (this.isInternalEvent = false)}
+        onScroll={this.handleScrollOrResize}
       >
         <div ref={this.insideDOM} className="la-vz-seqblock-container" style={{ height, width: "100%" }}>
           <div className="la-vz-seqblock-padding-top" style={{ height: spaceAbove, width: width || 0 }} />

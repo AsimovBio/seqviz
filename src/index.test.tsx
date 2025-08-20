@@ -79,14 +79,14 @@ describe("SeqViz rendering (React)", () => {
     const { getAllByTestId } = render(
       <SeqViz
         {...props}
-        selection={{ end: 15, start: 1 }}
+        selection={{ end: 15, start: 1, type: "" }}
         seq="MSKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKQHDRAEVK"
         viewer="linear"
       />
     );
     expect(getAllByTestId("la-vz-seqviz")).toBeTruthy();
     expect(getAllByTestId("la-vz-selection-block")).toBeTruthy();
-    expect(getAllByTestId("la-vz-selection-edge")).toHaveLength(1);
+    expect(getAllByTestId("la-vz-selection-edge")).toHaveLength(2);
   });
 
   // https://github.com/Lattice-Automation/seqviz/issues/203
@@ -95,7 +95,7 @@ describe("SeqViz rendering (React)", () => {
     const compSeq = "00TA";
 
     const { getAllByTestId } = render(
-      <SeqViz {...props} compSeq={compSeq} selection={{ end: 15, start: 1 }} seq={seq} viewer="linear" />
+      <SeqViz {...props} compSeq={compSeq} selection={{ end: 15, start: 1, type: "" }} seq={seq} viewer="linear" />
     );
     expect(getAllByTestId("la-vz-seqviz")).toBeTruthy();
 
