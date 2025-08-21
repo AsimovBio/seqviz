@@ -8,7 +8,7 @@ import { reverseComplement } from "./sequence";
  *
  * This is slow enough to impact rendering so shouldn't be ran on each prop change.
  */
-export default (
+export const digest = (
   seq: string,
   seqType: SeqType,
   enzymes: (Enzyme | string)[] = [],

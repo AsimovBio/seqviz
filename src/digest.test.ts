@@ -1,4 +1,4 @@
-import digest, { findCutSites } from "./digest";
+import { digest, findCutSites } from "./digest";
 import { CutSite, Enzyme } from "./elements";
 
 describe("Digest", () => {

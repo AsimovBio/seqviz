@@ -1,10 +1,10 @@
 {
-  "name": "seqviz",
+  "name": "@asimovbio/seqviz",
   "description": "A viewer for DNA, RNA, and protein sequences that supports many input formats",
-  "version": "3.10.7",
+  "version": "3.10.10",
   "module": "src",
   "main": "dist/index.js",
-  "types": "src/index.ts",
+  "types": "dist/index.d.ts",
   "unpkg": "dist/seqviz.min.js",
   "scripts": {
     "build": "rm -rf ./dist && webpack",
@@ -27,17 +27,12 @@
     "vector",
     "viewer"
   ],
-  "homepage": "https://github.com/Lattice-Automation/seqviz",
-  "bugs": {
-    "url": "https://github.com/Lattice-Automation/seqviz/issues",
-    "email": "contact@latticeautomation.com"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Lattice-Automation/seqviz.git"
+    "url": "https://github.com/AsimovBio/seqviz.git"
   },
   "license": "MIT",
-  "author": "Lattice Automation (https://latticeautomation.com/)",
+  "author": "Asimov (https://www.asimov.com/)",
   "files": [
     "dist",
     "LICENSE",
