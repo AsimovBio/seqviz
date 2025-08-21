@@ -3,7 +3,7 @@ import seqparse, { ParseOptions, parseFile } from "seqparse";
 
 import SeqViewerContainer, { CustomChildrenProps, SeqVizChildRefs } from "./SeqViewerContainer";
 import { COLORS, colorByIndex } from "./colors";
-import digest from "./digest";
+import { digest } from "./digest";
 import {
   Annotation,
   AnnotationProp,

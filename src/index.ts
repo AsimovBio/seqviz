@@ -7,8 +7,12 @@ import Linear from "./Linear/Linear";
 import SeqViz, { SeqVizProps } from "./SeqViz";
 import enzymes from "./enzymes";
 
-export * from "./selectionContext";
+export * from "./colors";
+export * from "./digest";
 export * from "./elements";
+export * from "./selectionContext";
+export * from "./sequence";
+export * from "./style";
 
 /**
  * Export a React component directly for React-based development
