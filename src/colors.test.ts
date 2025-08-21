@@ -17,7 +17,7 @@ describe("Colors", () => {
     };
 
     Object.keys(hexMap).forEach(k => {
-      expect(darkerColor(k)).toEqual(hexMap[k]);
+      expect(darkerColor(k)).toEqual(hexMap[k as keyof typeof hexMap]);
     });
   });
 });

@@ -4,6 +4,7 @@ import { InputRefFunc } from "../SelectionHandler";
 import { Annotation, CutSite, Highlight, NameRange, Primer, SeqType, Size } from "../elements";
 import { createMultiRows, createSingleRows, stackElements } from "../elementsToRows";
 import { isEqual } from "../isEqual";
+import { SearchResult } from "../search";
 import { createTranslations } from "../sequence";
 import { InfiniteScroll } from "./InfiniteScroll";
 import { SeqBlock } from "./SeqBlock";
@@ -22,13 +23,14 @@ export interface LinearProps {
   lineHeight: number;
   onUnmount: (id: string) => void;
   primers: Primer[];
-  search: NameRange[];
+  search: SearchResult[];
   seq: string;
   seqFontSize: number;
   seqType: SeqType;
   showComplement: boolean;
   showIndex: boolean;
   size: Size;
+  styleAtIndex?: (index: number) => React.CSSProperties;
   translations: NameRange[];
   zoom: { linear: number };
 }
@@ -127,8 +129,16 @@ export default class Linear extends React.Component<LinearProps> {
       arrSize
     );
 
-    const searchRows: NameRange[][] =
-      search && search.length ? createSingleRows(search, bpsPerBlock, arrSize) : new Array(arrSize).fill([]);
+    const nucleicAcidSearch = search.filter(s => s.sequenceType === "dna" || s.sequenceType === "rna");
+    const nucleicAcidSearchRows: NameRange[][] =
+      nucleicAcidSearch && nucleicAcidSearch.length
+        ? createSingleRows(nucleicAcidSearch, bpsPerBlock, arrSize)
+        : new Array(arrSize).fill([]);
+    const aminoAcidSearch = search.filter(s => s.sequenceType === "aa");
+    const aminoAcidSearchRows: NameRange[][] =
+      aminoAcidSearch && aminoAcidSearch.length
+        ? createSingleRows(aminoAcidSearch, bpsPerBlock, arrSize)
+        : new Array(arrSize).fill([]);
 
     const highlightRows = createSingleRows(highlights, bpsPerBlock, arrSize);
 
@@ -184,6 +194,7 @@ export default class Linear extends React.Component<LinearProps> {
       seqBlocks.push(
         <SeqBlock
           key={ids[i]}
+          aminoAcidSearchRows={aminoAcidSearchRows[i]}
           annotationRows={annotationRows[i]}
           blockHeight={blockHeights[i]}
           bpColors={this.props.bpColors}
@@ -199,15 +210,16 @@ export default class Linear extends React.Component<LinearProps> {
           id={ids[i]}
           inputRef={this.props.inputRef}
           lineHeight={lineHeight}
+          nucleicAcidSearchRows={nucleicAcidSearchRows[i]}
           primerFwdRows={primerFwdRows[i]}
           primerRevRows={primerRevRows[i]}
-          searchRows={searchRows[i]}
           seq={seqs[i]}
           seqFontSize={this.props.seqFontSize}
           seqType={seqType}
           showComplement={showComplement}
           showIndex={showIndex}
           size={size}
+          styleAtIndex={this.props.styleAtIndex}
           translationRows={translationRows[i]}
           y={yDiff}
           zoom={zoom}

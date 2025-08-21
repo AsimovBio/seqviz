@@ -200,7 +200,7 @@ const SingleNamedElement = (props: {
   }
 
   return (
-    <g id={element.id} transform={`translate(${x}, ${0.1 * height})`} data-testid={element.id}>
+    <g data-testid={element.id} id={element.id} transform={`translate(${x}, ${0.1 * height})`}>
       {/* <title> provides a hover tooltip on most browsers */}
       <title>{name}</title>
       <path
@@ -215,7 +215,7 @@ const SingleNamedElement = (props: {
         className={`${element.id} la-vz-annotation`}
         cursor="pointer"
         d={linePath}
-        fill={bgType === 'stripe' ? `url(#pattern_stripe_${color})` : color}
+        fill={bgType === "stripe" ? `url(#pattern_stripe_${color})` : color}
         id={element.id}
         stroke={color ? COLOR_BORDER_MAP[color as keyof typeof COLOR_BORDER_MAP] || darkerColor(color) : "gray"}
         style={annotation}

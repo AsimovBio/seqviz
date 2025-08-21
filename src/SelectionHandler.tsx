@@ -214,30 +214,30 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
     const isContextMenu = e.type === "mousedown" && (e.button === 2 || (e.button === 0 && e.ctrlKey));
 
     if (isContextMenu) {
-      const { currentTarget, clientX, clientY } = e;
+      const { clientX, clientY, currentTarget } = e;
       const selectionBoxes = currentTarget?.querySelectorAll(".la-vz-selection-block");
 
       if (selectionBoxes?.length > 0) {
         const checkInsideClick = ({
+          box: { bottom, left, right, top },
           mouseX,
           mouseY,
-          box: { left, right, top, bottom },
         }: {
+          box: { bottom: number; left: number; right: number; top: number };
           mouseX: number;
           mouseY: number;
-          box: { left: number; right: number; top: number; bottom: number };
         }) => left <= mouseX && right >= mouseX && top <= mouseY && bottom >= mouseY;
 
         for (let index = 0; index < selectionBoxes.length; index++) {
           const selectionBox = selectionBoxes[index];
-          const { left, right, top, bottom } = selectionBox.getBoundingClientRect();
+          const { bottom, left, right, top } = selectionBox.getBoundingClientRect();
 
           // disabled start selection when using the context menu and the right click was on the selection block
           if (
             checkInsideClick({
+              box: { bottom, left, right, top },
               mouseX: clientX,
               mouseY: clientY,
-              box: { left, right, top, bottom },
             })
           ) {
             return;

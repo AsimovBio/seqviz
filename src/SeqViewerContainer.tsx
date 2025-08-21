@@ -8,6 +8,7 @@ import SelectionHandler, { InputRefFunc } from "./SelectionHandler";
 import CentralIndexContext from "./centralIndexContext";
 import { Annotation, CutSite, Highlight, NameRange, Primer, SeqType } from "./elements";
 import { isEqual } from "./isEqual";
+import { SearchResult } from "./search";
 import SelectionContext, { ExternalSelection, Selection, defaultSelection } from "./selectionContext";
 
 /**
@@ -44,7 +45,7 @@ interface SeqViewerContainerProps {
   primers: Primer[];
   refs?: SeqVizChildRefs;
   rotateOnScroll: boolean;
-  search: NameRange[];
+  search: SearchResult[];
   selectAllEvent: (event: React.KeyboardEvent<HTMLElement>) => boolean;
   selection?: ExternalSelection;
   seq: string;
@@ -72,7 +73,7 @@ export interface SeqViewerContainerState {
  * the linear and circular sequence viewers. The Header is an example
  */
 class SeqViewerContainer extends React.Component<SeqViewerContainerProps, SeqViewerContainerState> {
-  static defaultProps: { width: number; height: number };
+  static defaultProps: { height: number; width: number };
 
   constructor(props: SeqViewerContainerProps) {
     super(props);
@@ -367,8 +368,8 @@ class SeqViewerContainer extends React.Component<SeqViewerContainerProps, SeqVie
 
 // Add default width and height, so seqviz can be rendered in Jest tests
 SeqViewerContainer.defaultProps = {
-  width: 500,
   height: 500,
+  width: 500,
 };
 
 export default withResizeDetector(SeqViewerContainer);

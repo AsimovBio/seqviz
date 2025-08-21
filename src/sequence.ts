@@ -172,6 +172,7 @@ export const reverse = (seq: string): string => seq.split("").reverse().join("")
 
 // from http://arep.med.harvard.edu/labgc/adnan/projects/Utilities/revcomp.html
 let dnaComp = {
+  "+": "+",
   a: "t",
   b: "v",
   c: "g",
@@ -189,11 +190,13 @@ let dnaComp = {
   w: "w",
   x: "x",
   y: "r",
-  "+": "+"
 };
 dnaComp = {
   ...dnaComp,
-  ...Object.keys(dnaComp).reduce((acc, k) => ({ ...acc, [k.toUpperCase()]: dnaComp[k as keyof typeof dnaComp].toUpperCase() }), {}),
+  ...Object.keys(dnaComp).reduce(
+    (acc, k) => ({ ...acc, [k.toUpperCase()]: dnaComp[k as keyof typeof dnaComp].toUpperCase() }),
+    {}
+  ),
 };
 
 /**
@@ -314,11 +317,10 @@ export const createTranslations = (translations: NameRange[], seq: string, seqTy
     const subSeq =
       direction === 1 ? seqDoubled.substring(start, end) : reverseComplement(seqDoubled.substring(start, end), seqType);
 
-    const translatedSeq = providedAASeq ?? translate(subSeq, seqType)
-    
+    const translatedSeq = providedAASeq ?? translate(subSeq, seqType);
+
     // translate the subsequence
-    const aaSeq = 
-      direction === 1 ? translatedSeq : reverse(translatedSeq); // translate
+    const aaSeq = direction === 1 ? translatedSeq : reverse(translatedSeq); // translate
 
     // the starting point for the translation, reading left to right (regardless of translation
     // direction). this is later needed to calculate the number of bps needed in the first

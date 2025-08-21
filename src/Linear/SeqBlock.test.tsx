@@ -59,6 +59,7 @@ describe("SeqBlock", () => {
     render(
       <SeqBlock
         {...defaultProps}
+        aminoAcidSearchRows={[]}
         annotationRows={[
           [
             {
@@ -73,6 +74,7 @@ describe("SeqBlock", () => {
         ]}
         compSeq="cgctttttagttattcctccgttgttctacacgctttttgtagaattagtacgccacctcccaaagattac"
         fullSeq={seq}
+        nucleicAcidSearchRows={[]}
         seq={seq}
       />
     );

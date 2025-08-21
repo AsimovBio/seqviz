@@ -1,5 +1,6 @@
 import * as React from "react";
 
+import { onCutSiteHover } from "../Linear/CutSites";
 import { CHAR_WIDTH } from "../SeqViewerContainer";
 import { Coor, Size } from "../elements";
 import { circularLabel, circularLabelLine } from "../style";
@@ -322,8 +323,14 @@ export class Labels extends React.Component<LabelsProps, LabelsState> {
                   dominantBaseline="middle"
                   style={circularLabel}
                   textAnchor={g.textAnchor}
-                  onMouseEnter={() => setHoveredLabelUnderline(first.id || "", true)}
-                  onMouseLeave={() => setHoveredLabelUnderline(first.id || "", false)}
+                  onMouseEnter={() => {
+                    setHoveredLabelUnderline(first.id || "", true);
+                    onCutSiteHover(first.id!, true);
+                  }}
+                  onMouseLeave={() => {
+                    setHoveredLabelUnderline(first.id || "", false);
+                    onCutSiteHover(first.id!, false);
+                  }}
                 >
                   {g.name}
                 </text>
