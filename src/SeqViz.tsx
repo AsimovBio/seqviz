@@ -224,20 +224,6 @@ export default class SeqViz extends React.Component<SeqVizProps, SeqVizState> {
    * If an accession was provided, query it here.
    */
   componentDidMount(): void {
-    if (typeof window !== "undefined") {
-      // Allow the user to choose whether to load fonts from Google Fonts or from another source
-      if (!this.props.disableExternalFonts) {
-        // Fetch Roboto Mono, the only font used by SeqViz (at the time of writing)
-        // https://github.com/typekit/webfontloader/issues/383#issuecomment-389627920
-        /* eslint-disable */
-        require("webfontloader").load({
-          google: {
-            families: ["Roboto Mono:300,400,500"],
-          },
-        });
-      }
-    }
-
     // Check if an accession was passed, we'll query it here if so
     const { accession } = this.props;
     if (!accession || !accession.length) {
@@ -380,7 +366,7 @@ export default class SeqViz extends React.Component<SeqVizProps, SeqVizState> {
    * Search for the query sequence in the part sequence, set in state.
    */
   search = (props: SeqVizProps, seq: string): { search: SearchResult[] } => {
-    const { onSearch, search: searchProp, translations, seqType } = props;
+    const { onSearch, search: searchProp, seqType, translations } = props;
 
     if (!searchProp || !seq || !seq.length) {
       return { search: [] };
@@ -426,14 +412,13 @@ export default class SeqViz extends React.Component<SeqVizProps, SeqVizState> {
     // If the seqType is aa, make the entire sequence the "translation"
     if (seqType === "aa") {
       // TODO: during some grand future refactor, make this cleaner and more transparent to the user
-      translations = [{ direction: 1, end: seq.length, start: 0, name: "" }];
+      translations = [{ direction: 1, end: seq.length, name: "", start: 0 }];
     }
 
     // Since all the props are optional, we need to parse them to defaults.
     const props = {
       bpColors: this.props.bpColors || {},
       copyEvent: this.props.copyEvent || (() => false),
-      selectAllEvent: this.props.selectAllEvent || (() => false),
       cutSites: this.state.cutSites,
       highlights: (highlights || []).concat(highlightedRegions || []).map(
         (h, i): Highlight => ({
@@ -452,17 +437,18 @@ export default class SeqViz extends React.Component<SeqVizProps, SeqVizState> {
         }),
       primers: primers.map((p, i) => ({ color: colorByIndex(i), id: `primer${p.name}${i}${p.start}${p.end}`, ...p })),
       rotateOnScroll: !!this.props.rotateOnScroll,
+      selectAllEvent: this.props.selectAllEvent || (() => false),
       showComplement: (!!compSeq && (typeof showComplement !== "undefined" ? showComplement : true)) || false,
       showIndex: !!showIndex,
       translations: (translations || []).map(
         (t, i): NameRange => ({
           AAseq: t.AAseq,
+          color: t.color || colorByIndex(i, COLORS),
           direction: t.direction ? (t.direction < 0 ? -1 : 1) : 1,
           end: seqType === "aa" ? t.end : t.start + Math.floor((t.end - t.start) / 3) * 3,
-          start: t.start % seq.length,
-          color: t.color || colorByIndex(i, COLORS),
           id: `translation${t.name}${i}${t.start}${t.end}`,
           name: t.name,
+          start: t.start % seq.length,
         })
       ),
       viewer: this.props.viewer || "both",
