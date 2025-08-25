@@ -1,12 +1,20 @@
 {
   "name": "@asimovbio/seqviz",
   "description": "A viewer for DNA, RNA, and protein sequences that supports many input formats",
-  "version": "3.10.10",
-  "module": "src",
+  "version": "3.10.15",
+  "module": "dist/index.mjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "unpkg": "dist/seqviz.min.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "import": "./dist/index.mjs"
+    }
+  },
   "scripts": {
+    "asimov-build": "rm -rf ./dist && tsup src/index.ts --format esm,cjs --dts --out-dir dist",
     "build": "rm -rf ./dist && webpack",
     "demo": "cd demo && npm run deploy",
     "fix": "prettier ./src/** --write && eslint src --ext ts,tsx --fix",
@@ -44,10 +52,10 @@
   ],
   "dependencies": {
     "react-resize-detector": "^7.1.2",
-    "seqparse": "^0.2.1",
-    "webfontloader": "^1.6.28"
+    "seqparse": "^0.2.1"
   },
   "devDependencies": {
+    "@swc/core": "^1.13.4",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^13.4.0",
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
@@ -77,6 +85,7 @@
     "timers-browserify": "^2.0.12",
     "ts-jest": "29.2.5",
     "ts-loader": "^8.3.0",
+    "tsup": "^8.5.0",
     "typescript": "^4.5.2",
     "webpack": "5.92.1",
     "webpack-cli": "^4.10.0",
