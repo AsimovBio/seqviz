@@ -1,5 +1,5 @@
 import * as React from "react";
-import { withResizeDetector } from "react-resize-detector";
+import { useResizeDetector } from "react-resize-detector";
 
 import Circular, { CircularProps } from "./Circular/Circular";
 import { EventHandler } from "./EventHandler";
@@ -372,4 +372,9 @@ SeqViewerContainer.defaultProps = {
   width: 500,
 };
 
-export default withResizeDetector(SeqViewerContainer);
+const SeqViewerContainerWrapper = (props: Omit<SeqViewerContainerProps, "height" | "targetRef" | "width">) => {
+  const { height, ref, width } = useResizeDetector();
+  return <SeqViewerContainer {...props} height={height || 500} targetRef={ref} width={width || 500} />;
+};
+
+export default SeqViewerContainerWrapper;
