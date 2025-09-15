@@ -349,24 +349,6 @@ export default () => {
 };
 ```
 
-### Without React
-
-For usability in non-React apps, we provide a thin wrapper around the React component. The viewer's constructor accepts two arguments:
-
-- `element`: either an element id or an [HTMLElement](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement)
-- `props`: props as documented [above](#optionsprops)
-
-```js
-const element = document.getElementById("root");
-const viewer = seqviz.Viewer(element, props);
-// Render the viewer to the DOM at the node passed in $element`.
-viewer.render();
-// To later update the viewer's configuration and re-renders.
-viewer.setState(props);
-// To render the viewer, eg for server-side rendering, and returns it as an HTML string.
-viewer.renderToString();
-```
-
 ## Contact Us
 
 This library is maintained by <!-- pkg-author(cmd:) -->[Lattice Automation](https://latticeautomation.com/)<!-- /pkg-author -->.

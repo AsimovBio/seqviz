@@ -1,7 +1,7 @@
 {
   "name": "@asimovbio/seqviz",
   "description": "A viewer for DNA, RNA, and protein sequences that supports many input formats",
-  "version": "3.10.15",
+  "version": "3.10.16",
   "module": "dist/index.mjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
