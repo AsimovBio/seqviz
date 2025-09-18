@@ -1,7 +1,7 @@
 {
   "name": "@asimovbio/seqviz",
   "description": "A viewer for DNA, RNA, and protein sequences that supports many input formats",
-  "version": "3.11.0",
+  "version": "3.11.1",
   "module": "dist/index.mjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "rm -rf ./dist && tsup src/index.ts --format esm,cjs --dts --out-dir dist",
+    "build": "rm -rf ./dist && tsup src/index.ts --format esm,cjs --dts --out-dir dist --minify",
     "fix": "prettier ./src/** --write && eslint src --ext ts,tsx --fix",
     "lint": "prettier ./src/** --check && eslint src --ext ts,tsx --quiet",
     "start": "cd demo && npm run start",
