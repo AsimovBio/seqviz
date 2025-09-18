@@ -16,7 +16,7 @@ import seqparse from "seqparse";
 
 import Circular from "../../src/Circular/Circular";
 import Linear from "../../src/Linear/Linear";
-import SeqViz from "../../src/SeqViz";
+import { SeqViz } from "../../src/SeqViz";
 import { chooseRandomColor } from "../../src/colors";
 import { AnnotationProp, Primer, TranslationProp } from "../../src/elements";
 import Header from "./Header";

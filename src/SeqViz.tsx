@@ -181,7 +181,7 @@ export interface SeqVizState {
 /**
  * SeqViz is a viewer for rendering sequences in a linear and/or circular viewer.
  */
-export default class SeqViz extends React.Component<SeqVizProps, SeqVizState> {
+export class SeqViz extends React.Component<SeqVizProps, SeqVizState> {
   static defaultProps: SeqVizProps = {
     accession: "",
     annotations: [],
