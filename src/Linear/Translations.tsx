@@ -59,7 +59,7 @@ export const TranslationRows = ({
       }
       return (
         <TranslationRow
-          key={`i-${firstBase}`}
+          key={`${i}-${firstBase}`}
           bpsPerBlock={bpsPerBlock}
           charWidth={charWidth}
           elementHeight={elementHeight}
@@ -104,22 +104,17 @@ const TranslationRow = (props: {
 }) => (
   <>
     {props.translations.map((t, i) => (
-      <>
-        <SingleNamedElementAminoacids
-          {...props}
-          key={`translation-linear-${t.id}-${i}-${props.firstBase}-${props.lastBase}`}
-          translation={t}
-        />
+      <React.Fragment key={`translation-linear-${t.id}-${i}-${props.firstBase}-${props.lastBase}`}>
+        <SingleNamedElementAminoacids {...props} translation={t} />
         {t.name && (
           <SingleNamedElementHandle
             {...props}
-            key={`translation-handle-linear-${t.id}-${i}-${props.firstBase}-${props.lastBase}`}
             element={t}
             elements={props.translations}
             index={i}
           />
         )}
-      </>
+      </React.Fragment>
     ))}
   </>
 );

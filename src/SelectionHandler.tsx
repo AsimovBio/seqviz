@@ -62,6 +62,13 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
   /* unix time of the last click (awful attempt at detecting double clicks) */
   lastClick = Date.now();
 
+  /* anchor range for shift+click selections - tracks both ends of the original selection */
+  selectionAnchorStart: number | null = null;
+  selectionAnchorEnd: number | null = null;
+
+  /* established direction for shift+click - once set, preserved until new anchor */
+  selectionClockwise: boolean | null = null;
+
   /** a map between the id of child elements and their associated SelectRanges */
   idToRange = new Map<string, Selection>();
 
@@ -100,9 +107,133 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
 
   /**
    * remove the ref by ID.
+   *
+   * NOTE: We intentionally do NOT remove entries from idToRange on unmount.
+   * This is because React's timing can cause unmount callbacks to fire AFTER
+   * new components have registered, which would incorrectly remove valid entries.
+   * Stale entries are harmless - they'll be overwritten when the block re-registers.
    */
-  removeMountedBlock = (ref: unknown) => {
-    this.idToRange.delete(ref as string);
+  removeMountedBlock = (_ref: unknown) => {
+    // Intentionally empty - see comment above
+  };
+
+  /**
+   * Handle shift+click to extend selection to include a clicked element.
+   * Returns true if this was a shift+click and was handled, false otherwise.
+   */
+  handleShiftClickExtend = (
+    e: SeqVizMouseEvent,
+    clickedStart: number,
+    clickedEnd: number,
+    viewer: "LINEAR" | "CIRCULAR"
+  ): boolean => {
+    const selection = this.context;
+
+    if (!e.shiftKey || selection.start === undefined || selection.end === undefined) {
+      return false;
+    }
+
+    // Use anchor range if available, otherwise fall back to selection boundaries
+    const anchorStart = this.selectionAnchorStart ?? selection.start;
+    const anchorEnd = this.selectionAnchorEnd ?? selection.end;
+    const seqLength = this.props.seq.length;
+
+    let newStart: number;
+    let newEnd: number;
+    let clockwise: boolean;
+
+    if (viewer === "LINEAR") {
+      // LINEAR viewer: simple min/max union, never wrap around
+      newStart = Math.min(anchorStart, clickedStart);
+      newEnd = Math.max(anchorEnd, clickedEnd);
+      clockwise = true;
+    } else {
+      // CIRCULAR viewer: handle wrap-around and direction
+
+      // Check if anchor range is inside the clicked element
+      const anchorInsideClicked = clickedStart <= anchorStart && anchorEnd <= clickedEnd;
+
+      if (anchorInsideClicked) {
+        // Select the entire element since the anchor is inside it
+        newStart = clickedStart;
+        newEnd = clickedEnd;
+        clockwise = true;
+        this.selectionClockwise = null; // Reset since we're selecting a whole element
+      } else if (this.selectionClockwise !== null) {
+        // Direction already established and LOCKED until next non-shift click
+        clockwise = this.selectionClockwise;
+
+        // Helper: clockwise distance from 'from' to 'to'
+        const clockwiseDist = (from: number, to: number): number =>
+          to >= from ? to - from : seqLength - from + to;
+
+        // Helper: counter-clockwise distance
+        const counterClockwiseDist = (from: number, to: number): number =>
+          to <= from ? from - to : from + seqLength - to;
+
+        // Points that must be included in the selection
+        const points = [anchorStart, anchorEnd, clickedStart, clickedEnd];
+
+        if (clockwise) {
+          // Clockwise: fixed start at anchorStart, find furthest point clockwise
+          newStart = anchorStart;
+          newEnd = anchorEnd;
+          let maxDist = 0;
+          for (const p of points) {
+            const dist = clockwiseDist(anchorStart, p);
+            if (dist > maxDist) {
+              maxDist = dist;
+              newEnd = p;
+            }
+          }
+        } else {
+          // Counter-clockwise: fixed start at anchorEnd, find furthest point counter-clockwise
+          newStart = anchorEnd;
+          newEnd = anchorStart;
+          let maxDist = 0;
+          for (const p of points) {
+            const dist = counterClockwiseDist(anchorEnd, p);
+            if (dist > maxDist) {
+              maxDist = dist;
+              newEnd = p;
+            }
+          }
+        }
+      } else {
+        // First shift+click - use UNION with SHORTEST PATH
+        // Calculate the shortest arc that includes both elements fully
+        const union = this.calcCircularUnion(anchorStart, anchorEnd, clickedStart, clickedEnd, seqLength);
+        newStart = union.start;
+        newEnd = union.end;
+        clockwise = union.clockwise;
+
+        // Determine extension direction based on which arc was picked:
+        // - If union starts at anchorStart, we're extending forward (clockwise from anchor)
+        // - If union starts at clickedStart, we're extending backward (counter-clockwise from anchor)
+        this.selectionClockwise = (union.start === anchorStart);
+      }
+    }
+
+    this.setSelection({
+      clockwise,
+      end: newEnd,
+      start: newStart,
+      type: "SEQ",
+    }, true);
+
+    this.dragEvent = false;
+    this.lastClick = Date.now();
+    return true;
+  };
+
+  /**
+   * Set anchor range for future shift+clicks. Normalizes to [min, max].
+   * Clears established direction so next shift+click calculates shortest path.
+   */
+  setAnchorRange = (start: number, end: number) => {
+    this.selectionAnchorStart = Math.min(start, end);
+    this.selectionAnchorEnd = Math.max(start, end);
+    this.selectionClockwise = null; // Reset direction for new anchor
   };
 
   /**
@@ -124,6 +255,7 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
     let knownRange = this.dragEvent
       ? this.idToRange.get(e.currentTarget.id) // only look for SeqBlocks
       : this.idToRange.get(e.target.id) || this.idToRange.get(e.currentTarget.id); // elements and SeqBlocks
+
     if (!knownRange) {
       return; // there isn't a known range with the id of the element
     }
@@ -144,11 +276,17 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
           setCentralIndex("LINEAR", start || 0);
         }
 
-        // Annotation or find selection range
-        const clockwise = direction ? direction === 1 : true;
-        const selectionStart = clockwise ? start : end;
-        const selectionEnd = clockwise ? end : start;
+        // Handle shift+click to extend selection
+        if (this.handleShiftClickExtend(e, start || 0, end || 0, viewer || "LINEAR")) {
+          return;
+        }
 
+        // Normal click - select just this element and set anchor range
+        const clockwise = direction ? direction === 1 : true;
+        const selectionStart = clockwise ? (start || 0) : (end || 0);
+        const selectionEnd = clockwise ? (end || 0) : (start || 0);
+
+        this.setAnchorRange(selectionStart, selectionEnd);
         this.setSelection({
           ...knownRange,
           clockwise: clockwise,
@@ -162,19 +300,25 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
         break;
       }
       case "AMINOACID": {
-        // Annotation or find selection range
-        const clockwise = direction ? direction === 1 : true;
-        let selectionStart = clockwise ? start : end;
-        let selectionEnd = clockwise ? end : start;
+        const aaClockwise = direction ? direction === 1 : true;
+        let selectionStart = aaClockwise ? (start || 0) : (end || 0);
+        let selectionEnd = aaClockwise ? (end || 0) : (start || 0);
+        let clockwise = aaClockwise;
 
         // if they double clicked, select the whole translation
         // https://en.wikipedia.org/wiki/Double-click#Speed_and_timing
         if (msSinceLastClick < 300 && knownRange.parent) {
           knownRange = { ...knownRange.parent, end: knownRange.parent.end || 0, start: knownRange.parent.start || 0 };
-          selectionStart = clockwise ? knownRange.start : knownRange.end;
-          selectionEnd = clockwise ? knownRange.end : knownRange.start;
+          selectionStart = aaClockwise ? (knownRange.start || 0) : (knownRange.end || 0);
+          selectionEnd = aaClockwise ? (knownRange.end || 0) : (knownRange.start || 0);
+        } else if (this.handleShiftClickExtend(e, start || 0, end || 0, viewer || "LINEAR")) {
+          // Shift+click handled - stop propagation and return
+          e.stopPropagation();
+          return;
         }
 
+        // Normal click or double-click - set anchor and selection
+        this.setAnchorRange(selectionStart, selectionEnd);
         this.setSelection({
           ...knownRange,
           clockwise: clockwise,
@@ -248,17 +392,47 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
 
     if (e.type === "mousedown" && currBase !== null) {
       // this is the start of a drag event
+      let newStart = currBase;
+      let newEnd = currBase;
+
+      if (e.shiftKey && selection.start !== undefined && selection.end !== undefined) {
+        // Extending selection with shift+click - use anchor range
+        const anchorStart = this.selectionAnchorStart ?? selection.start;
+        const anchorEnd = this.selectionAnchorEnd ?? selection.end;
+
+        if (currBase < anchorStart) {
+          // Extending upstream: move start to clicked position, keep anchor end
+          newStart = currBase;
+          newEnd = anchorEnd;
+        } else if (currBase > anchorEnd) {
+          // Extending downstream: keep anchor start, move end to clicked position
+          newStart = anchorStart;
+          newEnd = currBase;
+        } else {
+          // Clicked within anchor range - shrink selection to point
+          newStart = currBase;
+          newEnd = currBase;
+        }
+      } else {
+        // Normal click - set new anchor range (single point)
+        this.setAnchorRange(currBase, currBase);
+      }
+
       this.setSelection(
         {
           ...defaultSelection,
-          clockwise: clockwiseDrag,
-          end: currBase,
-          start: e.shiftKey ? selection.start : currBase,
+          clockwise: true,
+          end: newEnd,
+          start: newStart,
           type: "SEQ",
         },
         true
       );
-      this.dragEvent = true;
+      // Don't start drag event for shift+click - it's a one-shot selection extension
+      // Starting a drag would cause mousemove to overwrite the selection with stale context values
+      if (!e.shiftKey) {
+        this.dragEvent = true;
+      }
     } else if (this.dragEvent && currBase !== null) {
       // continue a drag event that's currently happening
       this.setSelection({
@@ -285,20 +459,28 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
     const seqLength = seq.length;
 
     if (e.type === "mousedown") {
-      const selStart = e.shiftKey ? start || 0 : currBase;
-      const lookahead = e.shiftKey
-        ? this.calcSelectionLength(selStart, currBase, false)
-        : this.calcSelectionLength(selStart, currBase, true); // check clockwise selection length
-      this.selectionStarted = lookahead > 0; // update check for whether there is a prior selection
-      this.resetCircleDragVars(selStart); // begin drag event
-      setCentralIndex?.("LINEAR", selStart);
+      // Handle shift+click to extend selection using same logic as annotations
+      if (e.shiftKey && selection.start !== undefined && selection.end !== undefined) {
+        // Use handleShiftClickExtend for consistent shortest-path behavior
+        if (this.handleShiftClickExtend(e, currBase, currBase, "CIRCULAR")) {
+          return;
+        }
+      }
+
+      // Normal click - set new anchor and start drag
+      const lookahead = this.calcSelectionLength(currBase, currBase, true);
+      this.selectionStarted = lookahead > 0;
+      this.resetCircleDragVars(currBase);
+      setCentralIndex?.("LINEAR", currBase);
+
+      this.setAnchorRange(currBase, currBase);
 
       this.setSelection({
         ...defaultSelection,
         clockwise: clockwise,
         end: currBase,
         ref: "",
-        start: selStart,
+        start: currBase,
         type: "SEQ",
       });
     } else if (
@@ -490,6 +672,63 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
       return seq.length - start + base;
     }
     return 0;
+  };
+
+  /**
+   * Calculate the shortest union arc that includes both ranges on a circular sequence.
+   * Returns the start, end, and direction of the union arc.
+   */
+  calcCircularUnion = (
+    anchorStart: number,
+    anchorEnd: number,
+    clickedStart: number,
+    clickedEnd: number,
+    seqLength: number
+  ): { start: number; end: number; clockwise: boolean } => {
+    // Helper to check if a point is within a clockwise arc from start to end
+    const inClockwiseArc = (point: number, start: number, end: number): boolean => {
+      if (start <= end) {
+        return point >= start && point <= end;
+      } else {
+        // Arc wraps around origin
+        return point >= start || point <= end;
+      }
+    };
+
+    // Calculate arc length for clockwise arc from start to end
+    const arcLength = (start: number, end: number): number => {
+      return end >= start ? end - start : seqLength - start + end;
+    };
+
+    // Two candidate union arcs:
+    // Arc 1: Clockwise from anchorStart to clickedEnd
+    // Arc 2: Clockwise from clickedStart to anchorEnd
+
+    const arc1Len = arcLength(anchorStart, clickedEnd);
+    const arc2Len = arcLength(clickedStart, anchorEnd);
+
+    // Check which arcs include all four endpoints (and thus both full ranges)
+    const arc1Valid =
+      inClockwiseArc(anchorEnd, anchorStart, clickedEnd) &&
+      inClockwiseArc(clickedStart, anchorStart, clickedEnd);
+
+    const arc2Valid =
+      inClockwiseArc(anchorStart, clickedStart, anchorEnd) &&
+      inClockwiseArc(clickedEnd, clickedStart, anchorEnd);
+
+    // Pick the shortest valid arc
+    if (arc1Valid && (!arc2Valid || arc1Len <= arc2Len)) {
+      return { clockwise: true, end: clickedEnd, start: anchorStart };
+    } else if (arc2Valid) {
+      return { clockwise: true, end: anchorEnd, start: clickedStart };
+    } else {
+      // Fallback - use simple min/max (shouldn't happen for valid ranges)
+      return {
+        clockwise: true,
+        end: Math.max(anchorEnd, clickedEnd),
+        start: Math.min(anchorStart, clickedStart),
+      };
+    }
   };
 
   render() {
