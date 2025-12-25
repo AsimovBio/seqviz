@@ -686,7 +686,7 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
     clickedStart: number,
     clickedEnd: number,
     seqLength: number
-  ): { clockwise: boolean, end: number; start: number; } => {
+  ): { clockwise: boolean; end: number; start: number } => {
     // Helper to check if a point is within a clockwise arc from start to end
     const inClockwiseArc = (point: number, start: number, end: number): boolean => {
       if (start <= end) {
