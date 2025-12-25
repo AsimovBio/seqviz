@@ -164,8 +164,7 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
         clockwise = this.selectionClockwise;
 
         // Helper: clockwise distance from 'from' to 'to'
-        const clockwiseDist = (from: number, to: number): number =>
-          to >= from ? to - from : seqLength - from + to;
+        const clockwiseDist = (from: number, to: number): number => (to >= from ? to - from : seqLength - from + to);
 
         // Helper: counter-clockwise distance
         const counterClockwiseDist = (from: number, to: number): number =>
@@ -210,16 +209,19 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
         // Determine extension direction based on which arc was picked:
         // - If union starts at anchorStart, we're extending forward (clockwise from anchor)
         // - If union starts at clickedStart, we're extending backward (counter-clockwise from anchor)
-        this.selectionClockwise = (union.start === anchorStart);
+        this.selectionClockwise = union.start === anchorStart;
       }
     }
 
-    this.setSelection({
-      clockwise,
-      end: newEnd,
-      start: newStart,
-      type: "SEQ",
-    }, true);
+    this.setSelection(
+      {
+        clockwise,
+        end: newEnd,
+        start: newStart,
+        type: "SEQ",
+      },
+      true
+    );
 
     this.dragEvent = false;
     this.lastClick = Date.now();
@@ -283,8 +285,8 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
 
         // Normal click - select just this element and set anchor range
         const clockwise = direction ? direction === 1 : true;
-        const selectionStart = clockwise ? (start || 0) : (end || 0);
-        const selectionEnd = clockwise ? (end || 0) : (start || 0);
+        const selectionStart = clockwise ? start || 0 : end || 0;
+        const selectionEnd = clockwise ? end || 0 : start || 0;
 
         this.setAnchorRange(selectionStart, selectionEnd);
         this.setSelection({
@@ -301,16 +303,16 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
       }
       case "AMINOACID": {
         const aaClockwise = direction ? direction === 1 : true;
-        let selectionStart = aaClockwise ? (start || 0) : (end || 0);
-        let selectionEnd = aaClockwise ? (end || 0) : (start || 0);
-        let clockwise = aaClockwise;
+        let selectionStart = aaClockwise ? start || 0 : end || 0;
+        let selectionEnd = aaClockwise ? end || 0 : start || 0;
+        const clockwise = aaClockwise;
 
         // if they double clicked, select the whole translation
         // https://en.wikipedia.org/wiki/Double-click#Speed_and_timing
         if (msSinceLastClick < 300 && knownRange.parent) {
           knownRange = { ...knownRange.parent, end: knownRange.parent.end || 0, start: knownRange.parent.start || 0 };
-          selectionStart = aaClockwise ? (knownRange.start || 0) : (knownRange.end || 0);
-          selectionEnd = aaClockwise ? (knownRange.end || 0) : (knownRange.start || 0);
+          selectionStart = aaClockwise ? knownRange.start || 0 : knownRange.end || 0;
+          selectionEnd = aaClockwise ? knownRange.end || 0 : knownRange.start || 0;
         } else if (this.handleShiftClickExtend(e, start || 0, end || 0, viewer || "LINEAR")) {
           // Shift+click handled - stop propagation and return
           e.stopPropagation();
@@ -684,7 +686,7 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
     clickedStart: number,
     clickedEnd: number,
     seqLength: number
-  ): { start: number; end: number; clockwise: boolean } => {
+  ): { clockwise: boolean, end: number; start: number; } => {
     // Helper to check if a point is within a clockwise arc from start to end
     const inClockwiseArc = (point: number, start: number, end: number): boolean => {
       if (start <= end) {
@@ -709,12 +711,10 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
 
     // Check which arcs include all four endpoints (and thus both full ranges)
     const arc1Valid =
-      inClockwiseArc(anchorEnd, anchorStart, clickedEnd) &&
-      inClockwiseArc(clickedStart, anchorStart, clickedEnd);
+      inClockwiseArc(anchorEnd, anchorStart, clickedEnd) && inClockwiseArc(clickedStart, anchorStart, clickedEnd);
 
     const arc2Valid =
-      inClockwiseArc(anchorStart, clickedStart, anchorEnd) &&
-      inClockwiseArc(clickedEnd, clickedStart, anchorEnd);
+      inClockwiseArc(anchorStart, clickedStart, anchorEnd) && inClockwiseArc(clickedEnd, clickedStart, anchorEnd);
 
     // Pick the shortest valid arc
     if (arc1Valid && (!arc2Valid || arc1Len <= arc2Len)) {

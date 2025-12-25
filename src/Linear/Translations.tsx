@@ -106,14 +106,7 @@ const TranslationRow = (props: {
     {props.translations.map((t, i) => (
       <React.Fragment key={`translation-linear-${t.id}-${i}-${props.firstBase}-${props.lastBase}`}>
         <SingleNamedElementAminoacids {...props} translation={t} />
-        {t.name && (
-          <SingleNamedElementHandle
-            {...props}
-            element={t}
-            elements={props.translations}
-            index={i}
-          />
-        )}
+        {t.name && <SingleNamedElementHandle {...props} element={t} elements={props.translations} index={i} />}
       </React.Fragment>
     ))}
   </>
