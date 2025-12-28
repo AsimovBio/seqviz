@@ -15,7 +15,9 @@ export default (func: (...args: unknown[]) => void, wait: number, immediate = tr
     };
 
     const callNow = immediate && !timeout;
-    timeout && clearTimeout(timeout);
+    if (timeout) {
+      clearTimeout(timeout);
+    }
     timeout = setTimeout(later, wait);
     if (callNow) {
       func.apply(this, args);

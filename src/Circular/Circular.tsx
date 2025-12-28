@@ -129,7 +129,7 @@ export default class Circular extends React.Component<CircularProps, CircularSta
         ...c,
         start: c.fcut,
         type: "enzyme",
-      })
+      }),
     );
 
     // sort all the labels so they're in ascending order

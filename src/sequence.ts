@@ -195,7 +195,7 @@ dnaComp = {
   ...dnaComp,
   ...Object.keys(dnaComp).reduce(
     (acc, k) => ({ ...acc, [k.toUpperCase()]: dnaComp[k as keyof typeof dnaComp].toUpperCase() }),
-    {}
+    {},
   ),
 };
 
@@ -271,7 +271,7 @@ export const directionality = (direction: number | string | undefined): -1 | 0 |
 
 const rnaCodonToAminoAcid = Object.keys(dnaCodonToAminoAcid).reduce(
   (acc, k) => ({ ...acc, [k.replace(/T/gi, "U")]: dnaCodonToAminoAcid[k as keyof typeof dnaCodonToAminoAcid] }),
-  {}
+  {},
 );
 
 /**

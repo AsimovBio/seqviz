@@ -14,6 +14,7 @@ const defaultProps = {
   elementHeight: 16,
   firstBase: 0,
   forwardPrimerRows: [],
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   handleMouseEvent: () => {},
   highlightedRegions: [],
   highlights: [],
@@ -76,7 +77,7 @@ describe("SeqBlock", () => {
         fullSeq={seq}
         nucleicAcidSearchRows={[]}
         seq={seq}
-      />
+      />,
     );
 
     // Verify it was rendered with the test seq
