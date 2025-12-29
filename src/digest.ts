@@ -12,7 +12,7 @@ export const digest = (
   seq: string,
   seqType: SeqType,
   enzymes: (Enzyme | string)[] = [],
-  enzymesCustom: { [key: string]: Enzyme } = {}
+  enzymesCustom: { [key: string]: Enzyme } = {},
 ): CutSite[] => {
   const seqToCut = seq + seq;
 

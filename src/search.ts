@@ -14,7 +14,7 @@ export default (
   mismatch = 0,
   seq = "",
   seqType: SeqType,
-  translations: TranslationProp[]
+  translations: TranslationProp[],
 ): SearchResult[] => {
   if (!query || !query.length || !seq || !seq.length) {
     return [];
@@ -44,7 +44,7 @@ export default (
       id: `translation${t.name}${i}${t.start}${t.end}`,
     })),
     seq,
-    seqType
+    seqType,
   );
 
   const indices = search(query, seq, mismatch, true, seqType, allTranslations);
@@ -73,7 +73,7 @@ const search = (
   mismatch: number,
   fwd: boolean,
   seqType: SeqType,
-  translations: TranslationProp[]
+  translations: TranslationProp[],
 ) => {
   if (mismatch > 0) {
     return searchWithMismatch(query, subject, mismatch, fwd, seqType);
@@ -103,7 +103,7 @@ const searchSequenceWithRegex = (
   seqLength: number,
   fwd: boolean,
   seqType: SeqType,
-  regex: RegExp
+  regex: RegExp,
 ): SearchResult[] => {
   let match = regex.exec(subject);
   const results: SearchResult[] = [];
@@ -140,7 +140,7 @@ const searchTranslationsWithRegex = (query: string, translations: TranslationPro
 const searchSingleTranslationWithRegex = (
   query: string,
   translation: TranslationProp,
-  aaRegex: RegExp
+  aaRegex: RegExp,
 ): SearchResult[] => {
   const results: SearchResult[] = [];
   const aaSeq = translation.AAseq;
@@ -234,7 +234,7 @@ export const createRegex = (query: string, seqType: SeqType): RegExp => {
     .map(symbol =>
       alphabet[symbol as keyof typeof alphabet]
         ? `(${Object.keys(alphabet[symbol as keyof typeof alphabet]).join("|")})`
-        : symbol
+        : symbol,
     )
     .join("");
 

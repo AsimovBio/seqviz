@@ -82,7 +82,7 @@ describe("SeqViz rendering (React)", () => {
         selection={{ end: 15, start: 1, type: "" }}
         seq="MSKGEELFTGVVPILVELDGDVNGHKFSVSGEGEGDATYGKLTLKFICTTGKLPVPWPTLVTTFSYGVQCFSRYPDHMKQHDRAEVK"
         viewer="linear"
-      />
+      />,
     );
     expect(getAllByTestId("la-vz-seqviz")).toBeTruthy();
     expect(getAllByTestId("la-vz-selection-block")).toBeTruthy();
@@ -95,7 +95,7 @@ describe("SeqViz rendering (React)", () => {
     const compSeq = "00TA";
 
     const { getAllByTestId } = render(
-      <SeqViz {...props} compSeq={compSeq} selection={{ end: 15, start: 1, type: "" }} seq={seq} viewer="linear" />
+      <SeqViz {...props} compSeq={compSeq} selection={{ end: 15, start: 1, type: "" }} seq={seq} viewer="linear" />,
     );
     expect(getAllByTestId("la-vz-seqviz")).toBeTruthy();
 

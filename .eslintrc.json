@@ -3,8 +3,6 @@
     "browser": true,
     "es2021": true
   },
-  // NOTE: This eslint config explicitly does not extend our broader Kernel
-  // config because this code is largely pulled in from external sources.
   "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:@typescript-eslint/recommended"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -25,18 +23,22 @@
   "rules": {
     "@typescript-eslint/ban-ts-comment": "warn",
     "@typescript-eslint/no-empty-function": "warn",
-    "@typescript-eslint/padding-line-between-statements": [
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-unused-vars": [
       "error",
       {
-        "blankLine": "always",
-        "prev": "*",
-        "next": ["class", "export", "function", "interface", "type"]
+        "args": "after-used",
+        "argsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
       }
     ],
     "no-empty": "warn",
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "react/jsx-sort-props": [2, { "reservedFirst": true, "callbacksLast": true }],
-    "react/prop-types": "off", // too many prop types warnings in handlers/selection.tsx. Should revist
+    "react/prop-types": "off",
     "sort-destructure-keys/sort-destructure-keys": 2,
     "sort-keys-fix/sort-keys-fix": "error",
     "typescript-sort-keys/interface": "error",

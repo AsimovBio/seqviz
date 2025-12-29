@@ -32,3 +32,6 @@ yarn-error.log*
 /.next/
 demo/.next/
 /demo/out/
+
+# Claude
+.claude/

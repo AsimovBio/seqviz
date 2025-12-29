@@ -19,7 +19,7 @@ export interface SelectionHandlerProps {
   children: (
     inputRef: InputRefFunc,
     handleMouseEvent: (e: SeqVizMouseEvent) => void,
-    onUnmount: (ref: unknown) => void
+    onUnmount: (ref: unknown) => void,
   ) => React.ReactNode;
   seq: string;
   setCentralIndex: (viewer: "LINEAR" | "CIRCULAR", index: number) => void;
@@ -125,7 +125,7 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
     e: SeqVizMouseEvent,
     clickedStart: number,
     clickedEnd: number,
-    viewer: "LINEAR" | "CIRCULAR"
+    viewer: "LINEAR" | "CIRCULAR",
   ): boolean => {
     const selection = this.context;
 
@@ -220,7 +220,7 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
         start: newStart,
         type: "SEQ",
       },
-      true
+      true,
     );
 
     this.dragEvent = false;
@@ -428,7 +428,7 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
           start: newStart,
           type: "SEQ",
         },
-        true
+        true,
       );
       // Don't start drag event for shift+click - it's a one-shot selection extension
       // Starting a drag would cause mousemove to overwrite the selection with stale context values
@@ -652,7 +652,7 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
         start,
         type,
       },
-      force
+      force,
     );
   };
 
@@ -685,7 +685,7 @@ export default class SelectionHandler extends React.PureComponent<SelectionHandl
     anchorEnd: number,
     clickedStart: number,
     clickedEnd: number,
-    seqLength: number
+    seqLength: number,
   ): { clockwise: boolean; end: number; start: number } => {
     // Helper to check if a point is within a clockwise arc from start to end
     const inClockwiseArc = (point: number, start: number, end: number): boolean => {
