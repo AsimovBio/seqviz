@@ -10,6 +10,10 @@ on:
   pull_request_review:
     types: [submitted]
 
+env:
+  GITHUB_TOKEN: ${{ github.token }}
+  NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
 jobs:
   claude:
     if: |
@@ -28,7 +32,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
 
       - name: Run Claude Code
         id: claude
@@ -40,11 +56,9 @@ jobs:
           additional_permissions: |
             actions: read
 
-          # Optional: Give a custom prompt to Claude. If this is not specified, Claude will perform the instructions specified in the comment that tagged it.
-          # prompt: 'Update the pull request description to include a summary of changes.'
-
-          # Optional: Add claude_args to customize behavior and configuration
-          # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
-          # or https://code.claude.com/docs/en/cli-reference for available options
-          # claude_args: '--allowed-tools Bash(gh pr:*)'
+          # Tool permissions for Claude Code CLI
+          # Note: git push is excluded - the action handles pushing via its own mechanism
+          claude_args: |
+            --model claude-opus-4-5-20251101
+            --allowedTools "Edit,Write,Read,Grep,Glob,View,LS,MultiEdit,WebFetch,WebSearch,Task,TodoRead,TodoWrite,Bash(npm:*),Bash(npx:*),Bash(node:*),Bash(gh:*),Bash(git status:*),Bash(git log:*),Bash(git diff:*),Bash(git show:*),Bash(git branch:*),Bash(git rev-parse:*),Bash(git merge-base:*),Bash(git --no-pager:*),Bash(git ls-files:*),Bash(git blame:*),Bash(ls:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(find:*),Bash(grep:*),Bash(rg:*),Bash(wc:*),Bash(sort:*),Bash(uniq:*),Bash(xargs:*),Bash(echo:*),Bash(pwd),Bash(which:*),Bash(mkdir:*),Bash(cp:*),Bash(mv:*),Bash(rm:*),Bash(touch:*),Bash(sed:*),Bash(awk:*),Bash(cut:*),Bash(tr:*),Bash(jq:*),Bash(diff:*),Bash(env),Bash(test:*),Bash([:*),Bash(true),Bash(false),Bash(date:*),Bash(realpath:*),Bash(dirname:*),Bash(basename:*),Bash(stat:*),Bash(tree:*),Bash(tee:*),Bash(mktemp:*)"
 
